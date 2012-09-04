@@ -2,9 +2,9 @@
 function cura_view_main() {
 	?>
 <div style="float: left;">
-	Filter by Locations: <select id="filter-locations"
+	Select Watershed: <select id="filter-locations"
 		class="ui-button ui-widget ui-state-default ui-corner-all"
-		style="font-size: 12px; height: 30px"></select>
+		style="font-size: 12px; height: 30px; width: 300px"></select>
 </div>
 
 <div style="float: right; margin-bottom: 10px">
@@ -15,6 +15,10 @@ function cura_view_main() {
 	<button id="new-data-entry" type="button" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Add new entry</span>
+	</button>
+	<button id="export_as_csv" type="button" style="font-size: 12px"
+		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+		<span class="ui-button-text">Export as CSV</span>
 	</button>
 </div>
 <ol id="fields-selector" style="float: right;"></ol>

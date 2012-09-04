@@ -99,6 +99,7 @@ function WaterQuality(config) {
 	this.validateForm();
 	this.clickColumnConfig();
 	this.initEventTypeahead();
+	this.initEventExport();
 	
 	this.loadData();
 }
@@ -272,9 +273,6 @@ WaterQuality.prototype = {
 				sortList = [];
 			}
 			
-			var pagesize = $.cookie('pagesize');
-			pagesize && $('.pagesize', me.pager).val(pagesize);
-			
 			if ($.tablesorter) {
 				$( me.table ).tablesorter({
 					headers: headers,
@@ -283,8 +281,14 @@ WaterQuality.prototype = {
 					widgets: ['zebra'],
 				}).bind('sortEnd', function() {
 					$.cookie('sortList', this.config.sortList);
+					$(this).trigger("applyWidgets");
 				});
 			}
+		});
+		jQuery(document).ready(function ($) {
+			var pagesize = $.cookie('pagesize');
+			pagesize && $('.pagesize', me.pager).val(pagesize);
+			
 			if ($.tablesorterPager) {
 				$( me.table ).tablesorterPager({
 					container: $(me.pager),
@@ -292,6 +296,42 @@ WaterQuality.prototype = {
 					positionFixed: false,
 				}).bind('applyWidgets', function() {
 					$.cookie('pagesize', this.config.size);
+					
+					var c = this.config, pager = c.container;
+					if (c.page < 1) {
+						var img = $(config.cssFirst,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
+						img.attr('src', src);
+						
+						var img = $(config.cssPrev,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
+						img.attr('src', src);
+					} else {
+						var img = $(config.cssFirst,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
+						img.attr('src', src);
+						
+						var img = $(config.cssPrev,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
+						img.attr('src', src);
+					}
+					if (c.page >= c.totalPages - 1) {
+						var img = $(config.cssLast,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
+						img.attr('src', src);
+						
+						var img = $(config.cssNext,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
+						img.attr('src', src);
+					} else {
+						var img = $(config.cssLast,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
+						img.attr('src', src);
+						
+						var img = $(config.cssNext,pager);
+						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
+						img.attr('src', src);
+					}
 				});
 			}
 		});
@@ -469,7 +509,7 @@ WaterQuality.prototype = {
 								alert('Entry ' + result.id + ' updated');
 							}
 							
-							me.updateLocations(function() {
+							me.loadLocations(function() {
 								me.loadData();
 							});
 							me.initEventTypeahead(1);
@@ -504,7 +544,7 @@ WaterQuality.prototype = {
 						$( "#entry-" + id).remove();
 						$( me.table ).trigger( "update" );
 						
-						me.updateLocations();
+						me.loadLocations();
 						me.initEventTypeahead(1);
 					} else {
 						alert('Data Entry ' + id + ' does not exist');
@@ -673,5 +713,15 @@ WaterQuality.prototype = {
 				}
 			});
 		});
+	},
+	initEventExport: function() {
+		var me = this;
+		
+		jQuery(function($) {
+			$('#export_as_csv').click(function() {
+				var watershed_name = $(me.filterLocations).val();
+				location.href = "./observations.json?export&" + $.param({watershed: watershed_name});
+			});
+		})
 	}
 }

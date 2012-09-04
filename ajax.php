@@ -83,7 +83,24 @@ array ('field' => 'watershed_name', 'value' => $watershed_name ) ) );
 	$fields = cura_fields ();
 	$result = array ('fields' => $fields, 'observations' => $observations );
 	
-	echo json_encode ( $result );
+	if (isset($_REQUEST['export'])) {
+		header("Content-type:text/csv;charset=utf-8");
+		header("content-Disposition:filename=WaterQualityObservations-" . urlencode($watershed_name) . ".csv");
+		$fp = fopen('php://output', 'w');
+		
+		$headers = array();
+		foreach ($fields as $row) {
+			$headers[] = $row[2];
+		}
+		fputcsv($fp, $headers);
+		foreach ($observations as $row) {
+			fputcsv($fp, $row);
+		}
+		
+		fclose($fp);
+	} else {
+		echo json_encode ( $result );
+	}
 	exit ();
 }
 
