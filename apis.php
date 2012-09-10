@@ -95,8 +95,8 @@ array ('field' => 'b.id', 'value' => $id ) ) );
 	$result = array ('fields' => $fields, 'observations' => $observations );
 	
 	if (isset ( $_REQUEST ['export'] )) {
-		header ( "Content-type:text/csv;charset=utf-8" );
-		header ( "content-Disposition:filename=WaterQualityObservations-" . urlencode ( $watershed_name ) . ".csv" );
+		header ( "Content-type:text/plain;charset=utf-8" );
+		//header ( "content-Disposition:filename=WaterQualityObservations-" . urlencode ( $watershed_name ) . ".csv" );
 		$fp = fopen ( 'php://output', 'w' );
 		
 		$headers = array ();
@@ -111,8 +111,8 @@ array ('field' => 'b.id', 'value' => $id ) ) );
 		fclose ( $fp );
 	} else {
 		echo json_encode ( $result );
-		exit ( 0 );
 	}
+	exit ( 0 );
 }
 /*
  * Ajax - save
@@ -134,6 +134,7 @@ function cura_action_save() {
 	if (empty ( $params ['id'] )) {
 		//cura_check_capability ( 'cura-add' );
 		
+
 		$result = cura_add_entry ( $params );
 	} else {
 		cura_check_capability ( 'cura-edit' );
