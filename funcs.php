@@ -1,4 +1,90 @@
 <?php
+function cura_get_layers() {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	`id`
+				, `name`
+				, `begintime`
+				, `endtime`
+				, `upper`
+				, `right`
+				, `bottom`
+				, `left`
+				, `total`	
+		FROM	`" . CURAH2O_TABLE_LAYERS . "`
+		WHERE	TRUE
+	";
+	return $wpdb->get_results ( $sql );
+}
+function cura_update_layers() {
+	global $wpdb;
+	static $ignored_fields = null;
+	
+	if (! isset ( $ignored_fields )) {
+		$ignored_fields = array_flip ( array (//
+'id', 'location_id', 'station_name', 'watershed_name', 'datetime', 'gps' ) );
+	}
+	
+	$fields = cura_table_info ( CURAH2O_TABLE );
+	foreach ( $fields as $obj ) {
+		$field = $obj->Field;
+		if (isset ( $ignored_fields [$field] )) {
+			continue;
+		}
+		
+		$layer = cura_get_layer_by_name ( $field );
+		if (! $layer) {
+			$layer = cura_create_layer ( $field );
+		}
+	}
+}
+function cura_get_layer_by_name($name) {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	id, name
+				, begintime, endtime
+				, `upper`, `right`, `bottom`, `left`
+		FROM	`" . CURAH2O_TABLE_LAYERS . "`
+		WHERE	name = '" . addslashes ( $name ) . "'
+	";
+	return $wpdb->get_row ( $sql );
+}
+function cura_create_layer($name) {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	MIN(datetime) begintime
+				, MAX(datetime) endtime
+		FROM	`" . CURAH2O_TABLE . "`
+		WHERE	`$name` IS NOT NULL
+	";
+	$row = $wpdb->get_row ( $sql );
+	
+	if ($row) {
+		$sql = "
+			INSERT INTO
+					`" . CURAH2O_TABLE_LAYERS . "`
+			SET		`name` = '" . addslashes ( $name ) . "'
+					, `begintime` = '" . addslashes ( $row->begintime ) . "'
+					, `endtime` = '" . addslashes ( $row->endtime ) . "'
+		";
+		$wpdb->query ( $sql );
+	} else {
+		$sql = "
+			INSERT INTO
+					`" . CURAH2O_TABLE_LAYERS . "`
+			SET		`name` = '" . addslashes ( $name ) . "'
+		";
+		$wpdb->query ( $sql );
+	}
+	
+	return cura_get_layer_by_name ( $name );
+}
+/*
+ * Table information
+ */
 function cura_table_info($tbname) {
 	global $wpdb;
 	
@@ -39,7 +125,9 @@ function cura_add_field($fieldName, $value) {
 			NOT NULL";
 	$wpdb->query ( $sql );
 }
-
+/*
+ * get/add/update/delete entry
+ */
 function cura_get_entry($id) {
 	global $wpdb;
 	
@@ -52,12 +140,15 @@ function cura_get_entry($id) {
 	";
 	return $wpdb->get_row ( $sql, ARRAY_A );
 }
-
 function cura_add_entry($params = array()) {
 	global $wpdb;
 	
 	foreach ( $params as $k => $v ) {
-		$values [] = "`$k` = '" . addslashes ( $v ) . "'";
+		if (is_null($v)) {
+			$values [] = "`$k` = NULL";
+		} else {
+			$values [] = "`$k` = '" . addslashes ( $v ) . "'";
+		}
 	}
 	$sql = "INSERT INTO `" . CURAH2O_TABLE . "` SET
 	" . implode ( "
@@ -72,7 +163,11 @@ function cura_update_entry($id, $params) {
 	
 	$id = intval ( $id );
 	foreach ( $params as $k => $v ) {
-		$values [] = "`$k` = '" . addslashes ( $v ) . "'";
+		if (is_null($v)) {
+			$values [] = "`$k` = NULL";
+		} else {
+			$values [] = "`$k` = '" . addslashes ( $v ) . "'";
+		}
 	}
 	$sql = "UPDATE `" . CURAH2O_TABLE . "` SET
 	" . implode ( "
@@ -99,38 +194,59 @@ function cura_get_observations($params = array()) {
 	$filters = ( array ) $params ['filters'];
 	$sql_filter = array ();
 	foreach ( $filters as $filter ) {
-		$sql_filter [] = sprintf ( "`%s` = '%s'", $filter ['field'], addslashes ( $filter ['value'] ) );
+		$sql_filter [] = sprintf ( "%s = '%s'", //
+preg_match ( '/([^.]+)\.([^.]+)?/', $filter ['field'], $m ) ? //
+"$m[1].`$m[2]`" : "`$filter[field]`", //
+addslashes ( $filter ['value'] ) );
+	}
+	
+	$rows = cura_fields ();
+	$fields = array ();
+	foreach ( $rows as $row ) {
+		$fields [] = $row [0];
 	}
 	
 	$sql = "
-		SELECT	*
+		SELECT	a.id
+				, a.`" . implode ( "`
+				, a.`", $fields ) . "`
 				, DATE_FORMAT(datetime, '%m/%d/%Y %l:%i %p') datetime
-		FROM	`" . CURAH2O_TABLE . "`
+		FROM	`" . CURAH2O_TABLE . "` AS a
+		LEFT JOIN
+				`" . CURAH2O_TABLE_LOCATION . "` AS b
+			ON	a.watershed_name = b.watershed_name
 		WHERE	1" . (empty ( $sql_filter ) ? "" : "
 			AND	" . implode ( "
 			AND	", $sql_filter )) . "
 	";
-	return $wpdb->get_results ( $sql, ARRAY_A );
+	return $wpdb->get_results ( $sql );
 }
 
 function cura_get_locations() {
 	global $wpdb;
 	
 	$sql = "
-		SELECT	*
+		SELECT	id, watershed_name, count
 		FROM	`" . CURAH2O_TABLE_LOCATION . "`
 		WHERE	1
 		ORDER BY
 				count DESC
 	";
-	return $wpdb->get_results ( $sql, ARRAY_A );
+	$rows = $wpdb->get_results ( $sql, ARRAY_A );
+	
+	foreach ( $rows as &$row ) {
+		$row ['id'] = intval ( $row ['id'] );
+		$row ['count'] = intval ( $row ['count'] );
+	}
+	
+	return $rows;
 }
 
 function cura_update_locations() {
 	global $wpdb;
 	
 	$sql = "TRUNCATE TABLE `" . CURAH2O_TABLE_LOCATION . "`";
-	$wpdb->query($sql);
+	$wpdb->query ( $sql );
 	
 	$sql = "
 		INSERT INTO
@@ -153,45 +269,45 @@ function cura_update_locations() {
 
 function cura_update_location($watershed_name) {
 	global $wpdb;
-
+	
 	$sql = "
 		SELECT	watershed_name
 		FROM	`" . CURAH2O_TABLE_LOCATION . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'
 		LIMIT	1
 	";
 	$row = $wpdb->get_row ( $sql, ARRAY_A );
-
+	
 	if ($row) {
 		$sql = "
 			SELECT	count(*)
 			FROM	`" . CURAH2O_TABLE . "`
-			WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+			WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'
 		";
 		$count = $wpdb->get_var ( $sql );
 		
 		$sql = "
 			UPDATE	`" . CURAH2O_TABLE_LOCATION . "`
 			SET		count = $count
-			WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+			WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'
 			LIMIT	1
 		";
-		$wpdb->query($sql);
+		$wpdb->query ( $sql );
 		
 		$sql = "
 			DELETE FROM
 					`" . CURAH2O_TABLE_LOCATION . "`
 			WHERE	count = 0
 		";
-		$wpdb->query($sql);
+		$wpdb->query ( $sql );
 	} else {
 		$sql = "
 			INSERT INTO
 			`" . CURAH2O_TABLE_LOCATION . "`
 			SET		count = 1
-			, watershed_name = '" . addslashes($watershed_name) . "'
+			, watershed_name = '" . addslashes ( $watershed_name ) . "'
 		";
-		$wpdb->query($sql);
+		$wpdb->query ( $sql );
 	}
 }
 
