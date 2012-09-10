@@ -530,7 +530,7 @@ WaterQuality.prototype = {
 		jQuery(document).ready(function ($) {
 			if ($(me.form).validate().form()) {
 				
-				$.post($(me.form).attr('action'), $(me.form).serialize(), function(data, status) {
+				$.post('save.action', $(me.form).serialize(), function(data, status) {
 					if (status == 'success') {
 						var result = eval('(' + data + ')');
 						if (result.affectedRows) {
@@ -563,10 +563,7 @@ WaterQuality.prototype = {
 		jQuery(document).ready(function ($) {
 			var id = parseInt( $('input[name=id]').val() );
 			
-			$.post( $(me.form).attr('action'), {
-				id: id,
-				action: 'delete_data_entry'
-			}, function (data, status) {
+			$.post( 'delete.action', {id: id}, function (data, status) {
 				if (status == 'success') {
 					var result = eval('(' + data + ')');
 					if (result.affectedRows) {

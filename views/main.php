@@ -43,7 +43,7 @@
 
 <div id="dialog-data-entry" style="display: none;"
 	title="Add New Observation">
-	<form id="form-data-entry" method="post" action="./save.action">
+	<form id="form-data-entry" method="post">
 		<input class="field" type="hidden" name="id" />
 		<table style="width: 100%; margin-top: 10px">
 			<?php foreach (cura_fields() as $row) {?>
