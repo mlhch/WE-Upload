@@ -96,7 +96,7 @@ array ('field' => 'b.id', 'value' => $id ) ) );
 	
 	if (isset ( $_REQUEST ['export'] )) {
 		header ( "Content-type:text/plain;charset=utf-8" );
-		//header ( "content-Disposition:filename=WaterQualityObservations-" . urlencode ( $watershed_name ) . ".csv" );
+		header ( "content-Disposition:filename=WaterQualityObservations-" . urlencode ( $watershed_name ) . ".csv" );
 		$fp = fopen ( 'php://output', 'w' );
 		
 		$headers = array ();
