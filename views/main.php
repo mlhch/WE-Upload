@@ -25,7 +25,8 @@
 <table id="data-entry-list" class="tablesorter"
 	style="border-spacing: 1px;"></table>
 <?php $icon_url = CURAH2O_PLUGIN_URL . '/lib/tablesorter/addons/pager/icons'?>
-<div id="data-entry-pager" class="tablesorterPager">
+<div id="data-entry-pager" class="tablesorterPager"
+	style="display: none">
 	<form>
 		<img src="<?php echo $icon_url?>/first.png" class="first" width="30" />
 		<img src="<?php echo $icon_url?>/prev.png" class="prev" width="30" />
@@ -33,19 +34,15 @@
 			src="<?php echo $icon_url?>/next.png" class="next" width="30" /> <img
 			src="<?php echo $icon_url?>/last.png" class="last" width="30" /> <select
 			class="pagesize">
-			<option selected="selected" value="10">10</option>
-			<option value="20">20</option>
-			<option value="50">50</option>
-			<option value="100">100</option>
+			<option selected="selected" value="100">100</option>
 		</select>
 	</form>
 </div>
 
-<div id="dialog-data-entry" style="display: none;"
-	title="Add New Observation">
+<div id="dialog-data-entry" style="display: none; margin-top: 15px">
 	<form id="form-data-entry" method="post">
 		<input class="field" type="hidden" name="id" />
-		<table style="width: 100%; margin-top: 10px">
+		<table style="width: 100%;">
 			<?php foreach (cura_fields() as $row) {?>
 			<?php if ($row[0] == 'coliform') {?>
 			<tr>

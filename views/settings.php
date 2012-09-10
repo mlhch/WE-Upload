@@ -1,5 +1,5 @@
 <div class="wrap">
-	<h2><?php echo esc_html( 'Cura Settings' ); ?></h2>
+	<h2>WaterQuality Settings</h2>
 	<form method="post" action="">
 		<input type="hidden" name="action" value="update" />
 		<table class="form-table">

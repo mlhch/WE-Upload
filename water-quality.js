@@ -299,8 +299,13 @@ WaterQuality.prototype = {
 					size: pagesize || $('.pagesize', me.pager).val(),// .pagesize is loaded after the table render
 					positionFixed: false,
 				}).bind('applyWidgets', function() {
+					if (config.totalPages <= 1) {
+						$(me.pager).hide();
+						return;
+					} else {
+						$(me.pager).show();
+					}
 					$.cookie('pagesize', this.config.size);
-					
 					var c = this.config, pager = c.container;
 					if (c.page < 1) {
 						var img = $(config.cssFirst,pager);
@@ -443,20 +448,25 @@ WaterQuality.prototype = {
 							var i = me.fields[input.name][3];
 							if (input.name == 'lab_id') {
 								input.disabled = row[me.fields['lab_sample'][3]] != 'Y';
+							} else if (input.name == 'datetime') {
+								$(input).timepicker('disable');
 							}
-							if (input.type == 'text' || input.type == 'hidden') {
+							
+							if (input.type == 'text') {
 								input.value = row[i] || '';
+								input.readOnly = !me.canEdit;
 							} else if (input.type == 'radio') {
 								input.checked = row[i] == input.value;
+								input.disabled = me.canEdit ? false : 'disabled';
 							}
 						}
 					})
-					me.showDialog();
+					me.showDialog('Edit Observation');
 				}
 			});
 		});
 	},
-	showDialog: function() {
+	showDialog: function(title) {
 		var me = this;
 		
 		jQuery(document).ready(function ($) {
@@ -490,6 +500,7 @@ WaterQuality.prototype = {
 			});
 			
 			$( me.dialog ).dialog({
+				title: title || '',
 				width: 500,
 				height: 400,
 				zIndex: 99999,
@@ -512,15 +523,26 @@ WaterQuality.prototype = {
 			}
 			
 			$( me.btnAddNew ).click(function () {
-				$( '.field', me.form ).each( function(index, input) {
+				$( 'input', me.form ).each( function(index, input) {
 					if (input.name == 'id') {
 						input.value = 0;
-					} else {
-						input.value = '';
+					} else if (me.fields[input.name]) {
+						var i = me.fields[input.name][3];
+						if (input.name == 'datetime') {
+							$(input).timepicker('enable');
+						}
+						
+						if (input.type == 'text') {
+							input.value = '';
+							input.readOnly = !me.canAdd;
+						} else if (input.type == 'radio') {
+							input.checked = false;
+							input.disabled = me.canAdd ? false : 'disabled';
+						}
 					}
 				})
 				$('input[name=datetime]', me.form).datepicker().datepicker('setDate', new Date);
-				me.showDialog();
+				me.showDialog('Add Observation');
 			});
 		});
 	},

@@ -235,7 +235,7 @@ function cura_main_js_and_css() {
 <style type="text/css">
 #fields-selector:before {
 	display: block;
-	color: lightgray;
+	color: #666;
 	content:
 		"Changing field settings will affect the current list view. To enable field click on its associated checkbox. To reorder fields click, drag and drop fields in position. Changes will persist for your next session."
 }
