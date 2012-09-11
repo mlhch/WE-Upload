@@ -231,12 +231,14 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		include 'apis.php';
 		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_services', 'cura_services' );
+		add_action ( 'wp_ajax_nopriv_cura_services', 'cura_services' );
 		
 		// Layer call
 	} elseif (! $isMobile && 'service/1' == $request) {
 		include 'apis.php';
 		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_service/1', 'cura_service_layers' );
+		add_action ( 'wp_ajax_nopriv_cura_service/1', 'cura_service_layers' );
 		
 		// Data call
 	} elseif (! $isMobile && '' === $request && ! empty ( $phpInput )) {
