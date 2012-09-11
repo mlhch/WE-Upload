@@ -275,7 +275,7 @@ function cura_demo_servicecall() {
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function($) {
-	$.get('services', null, function(jsonText) {
+	$.post('services', null, function(jsonText) {
 		var json = JSON.parse(jsonText);
 		document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
 	})
@@ -292,7 +292,7 @@ function cura_demo_layercall() {
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function($) {
-	$.get('service/1', null, function(jsonText) {
+	$.post('service/1', null, function(jsonText) {
 		var json = JSON.parse(jsonText);
 		document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
 	})

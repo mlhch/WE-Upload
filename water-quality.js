@@ -149,11 +149,12 @@ WaterQuality.prototype = {
 				$(me.filterLocations).empty();
 				for (var i = 0, row; row = data[i++];) {
 					$(me.filterLocations).append('<option value="'
-						+ row.id + '">'
+						+ row.id + '"'
+						+ (row.id == watershed || row.watershed_name == watershed
+								? ' selected="selected"' : '')
+						+ '>'
 						+ row.watershed_name + ' / ' + row.count + '</option>');
 				}
-				
-				$(me.filterLocations).val(watershed);
 				
 				$.isFunction(callback) && callback();
 			});
@@ -571,7 +572,8 @@ WaterQuality.prototype = {
 								alert('Entry ' + result.id + ' updated');
 							}
 							
-							me.loadLocations(function() {
+							var watershed = result.data[me.fields.watershed_name[3]];
+							me.loadLocations(watershed, function() {
 								me.loadData();
 							});
 							me.initEventTypeahead(1);

@@ -7,7 +7,7 @@ function cura_get_services() {
 	
 	$sql = "
 		SELECT	DATE_FORMAT(MIN(`begintime`), '%Y-%m-%dT%H:%i:%sZ') `begintime`
-				, DATE_FORMAT(MIN(`endtime`), '%Y-%m-%dT%H:%i:%sZ') `endtime`
+				, DATE_FORMAT(MAX(`endtime`), '%Y-%m-%dT%H:%i:%sZ') `endtime`
 				, MAX(`upper`) `upper`
 				, MAX(`right`) `right`
 				, MIN(`bottom`) `bottom`
@@ -111,11 +111,45 @@ function cura_update_layers() {
 		if (isset ( $ignored_fields [$field] )) {
 			continue;
 		}
+		
+		$sql = "
+			SELECT	MIN(datetime) `begintime`
+					, MAX(datetime) `endtime`
+					, MAX(latitude) `upper`
+					, MAX(longitude) `right`
+					, MIN(latitude) `bottom`
+					, MIN(longitude) `left`
+			FROM	`" . CURAH2O_TABLE . "`
+					WHERE	`$field` IS NOT NULL
+		";
+		$row = $wpdb->get_row ( $sql );
+		
+		$values = array ();
+		foreach ( $row as $key => $value ) {
+			if (! is_null ( $value )) {
+				$values [] = "`$key` = '" . addslashes ( $value ) . "'";
+			}
+		}
+		
 		$layer = cura_get_layer_by_name ( $field );
 		if (! $layer) {
-			$layer = cura_create_layer ( $field );
-		} else {
-			$layer = cura_update_layer ( $field );
+			$sql = "
+				INSERT INTO
+						`" . CURAH2O_TABLE_LAYERS . "`
+				SET		`name` = '" . addslashes ( $field ) . "'" . 			//
+			(empty ( $values ) ? "" : "
+						, " . implode ( "
+						, ", $values )) . "
+			";
+			$wpdb->query ( $sql );
+		} elseif (! empty ( $value )) {
+			$sql = "
+				UPDATE	`" . CURAH2O_TABLE_LAYERS . "`
+				SET		" . implode ( "
+						, ", $values ) . "
+				WHERE	`name` = '" . addslashes ( $field ) . "'
+			";
+			$wpdb->query ( $sql );
 		}
 	}
 }
@@ -143,80 +177,6 @@ function cura_get_layer_by_name($name) {
 	";
 	return $wpdb->get_row ( $sql );
 }
-function cura_create_layer($name) {
-	global $wpdb;
-	
-	$sql = "
-		SELECT	MIN(datetime) `begintime`
-				, MAX(datetime) `endtime`
-				, MAX(latitude) `upper`
-				, MAX(longitude) `right`
-				, MIN(latitude) `bottom`
-				, MIN(longitude) `left`
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	`$name` IS NOT NULL
-	";
-	$row = $wpdb->get_row ( $sql );
-	
-	if ($row) {
-		$sql = "
-			INSERT INTO
-					`" . CURAH2O_TABLE_LAYERS . "`
-			SET		`name` = '" . addslashes ( $name ) . "'
-					, `begintime` = '" . addslashes ( $row->begintime ) . "'
-					, `endtime` = '" . addslashes ( $row->endtime ) . "'
-					, `upper` = '" . addslashes ( $row->upper ) . "'
-					, `right` = '" . addslashes ( $row->right ) . "'
-					, `bottom` = '" . addslashes ( $row->bottom ) . "'
-					, `left` = '" . addslashes ( $row->left ) . "'
-		";
-		$wpdb->query ( $sql );
-	} else {
-		$sql = "
-			INSERT INTO
-					`" . CURAH2O_TABLE_LAYERS . "`
-			SET		`name` = '" . addslashes ( $name ) . "'
-		";
-		$wpdb->query ( $sql );
-	}
-	
-	return cura_get_layer_by_name ( $name );
-}
-function cura_update_layer($name) {
-	global $wpdb;
-	
-	// $wpdb->query ( "UPDATE `" . CURAH2O_TABLE . "` SET `$name` = NULL WHERE
-	// `$name` = '0'" );
-	
-	$sql = "
-		SELECT	MIN(datetime) `begintime`
-				, MAX(datetime) `endtime`
-				, MAX(latitude) `upper`
-				, MAX(longitude) `right`
-				, MIN(latitude) `bottom`
-				, MIN(longitude) `left`
-		FROM	`" . CURAH2O_TABLE . "`
-			WHERE	`$name` IS NOT NULL
-		";
-	$row = $wpdb->get_row ( $sql );
-	
-	if ($row) {
-		$sql = "
-			UPDATE
-					`" . CURAH2O_TABLE_LAYERS . "`
-			SET		`begintime` = '" . addslashes ( $row->begintime ) . "'
-					, `endtime` = '" . addslashes ( $row->endtime ) . "'
-					, `upper` = '" . addslashes ( $row->upper ) . "'
-					, `right` = '" . addslashes ( $row->right ) . "'
-					, `bottom` = '" . addslashes ( $row->bottom ) . "'
-					, `left` = '" . addslashes ( $row->left ) . "'
-			WHERE	`name` = '" . addslashes ( $name ) . "'
-		";
-		$wpdb->query ( $sql );
-	}
-	
-	return cura_get_layer_by_name ( $name );
-}
 /*
  * Table information
  */
@@ -233,8 +193,18 @@ function cura_get_entry($id) {
 	global $wpdb;
 	
 	$id = intval ( $id );
+	
+	// The fields order is important
+	$rows = cura_fields ();
+	$fields = array ();
+	foreach ( $rows as $row ) {
+		$fields [] = $row [0];
+	}
+	
 	$sql = "
-		SELECT	*
+		SELECT	id
+				, `" . implode ( "`
+				, `", $fields ) . "`
 				, DATE_FORMAT(datetime, '%m/%d/%Y %l:%i %p') datetime
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	id = $id
@@ -308,6 +278,7 @@ function cura_get_observations($params = array()) {
 		addslashes ( $filter ['value'] ) );
 	}
 	
+	// The fields order is important
 	$rows = cura_fields ();
 	$fields = array ();
 	foreach ( $rows as $row ) {
