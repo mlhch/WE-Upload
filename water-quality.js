@@ -450,7 +450,7 @@ WaterQuality.prototype = {
 							if (input.name == 'lab_id') {
 								input.disabled = row[me.fields['lab_sample'][3]] != 'Y';
 							} else if (input.name == 'datetime') {
-								$(input).timepicker(me.canEdit ? 'enable' : 'disabled');
+								$(input).timepicker(me.canEdit ? 'enable' : 'disable');
 							}
 							
 							if (input.type == 'text') {
