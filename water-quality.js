@@ -439,6 +439,7 @@ WaterQuality.prototype = {
 				var el = e.srcElement || e.target;
 				if (el.parentNode.tagName == 'BUTTON') {
 					var tr = el.parentNode.parentNode.parentNode;
+					$('td', tr).css('background-color', 'lightblue');
 					var id = tr.id.substr(6);
 					var row = me.data[id];
 					$('input', me.form).each(function(index, input) {
@@ -449,7 +450,7 @@ WaterQuality.prototype = {
 							if (input.name == 'lab_id') {
 								input.disabled = row[me.fields['lab_sample'][3]] != 'Y';
 							} else if (input.name == 'datetime') {
-								$(input).timepicker('disable');
+								$(input).timepicker(me.canEdit ? 'enable' : 'disabled');
 							}
 							
 							if (input.type == 'text') {
@@ -460,6 +461,12 @@ WaterQuality.prototype = {
 								input.disabled = me.canEdit ? false : 'disabled';
 							}
 						}
+					})
+					$('input.error', me.form).each(function(index, label) {
+						$(label).removeClass('error');
+					})
+					$('label.error', me.form).each(function(index, label) {
+						$(label).html('').removeClass('error');
 					})
 					me.showDialog('Edit Observation');
 				}
@@ -501,8 +508,8 @@ WaterQuality.prototype = {
 			
 			$( me.dialog ).dialog({
 				title: title || '',
-				width: 500,
-				height: 400,
+				width: 600,
+				height: 450,
 				zIndex: 99999,
 				buttons: buttons,
 			});
@@ -640,7 +647,7 @@ WaterQuality.prototype = {
 					longitude: {
 						pattern: /^(-?(\d|[1-9]\d|1[1-7]\d)(\.\d+)?)$/
 					},
-					do_mlg: {
+					do_mgl: {
 						pattern: /^((\d|1[0-4])(\.\d+)?|15)$/
 					},
 					"do_%": {
@@ -706,7 +713,7 @@ WaterQuality.prototype = {
 				messages: {
 					latitude: 'Latitude decimal degrees',
 					longitude: 'Longitude decimal degrees',
-					do_ml: "Typical observed values range from 0-15 mg/l. Values below 7 are not optimal but should be accepted. D.O. is  obviously dependent on temperature (expect lower values with increased temperatures). ",
+					do_mgl: "Typical observed values range from 0-15 mg/l. Values below 7 are not optimal but should be accepted. D.O. is  obviously dependent on temperature (expect lower values with increased temperatures). ",
 					"do_%": "A value between 0 and 110 calculated based on amount of oxygen in the water at the given temperature",
 					cond: "A value between 0 and 1500",
 					salinity: "A value under 1 in fresh water",

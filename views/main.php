@@ -39,37 +39,79 @@
 	</form>
 </div>
 
-<div id="dialog-data-entry" style="display: none; margin-top: 15px">
+<?php
+$fields = cura_fields ();
+function cura_form_field($row, $single = false) {
+	if ($row [0] == 'lab_sample') {
+		?>
+<td class="label"><?php echo $row[2]?></td>
+<td><label><input type="radio" name="<?php echo $row[0]?>" value="Y" />
+		Yes</label> &nbsp; <label><input type="radio"
+		name="<?php echo $row[0]?>" value="N" /> No</label></td>
+<?php
+	} elseif ($row [0] == 'coliform') {
+		?>
+<td class="label"><?php echo $row[2]?></td>
+<td><label><input type="radio" name="<?php echo $row[0]?>"
+		value="Present" /> Present</label> &nbsp; <label><input type="radio"
+		name="<?php echo $row[0]?>" value="Absent" /> Absent</label></td>
+<?php
+	} else {
+		?>
+<td class="label"><?php echo $row[2]?></td>
+<td <?php echo $single ? 'colspan="3"' : ''?>><input class="field"
+	type="text" name="<?php echo $row[0]?>"
+	placeHolder="<?php echo $row[1]?>" style="width: 100%" /></td>
+<?php
+	}
+}
+?>
+<div id="dialog-data-entry" style="display: none; margin: 10px 0 -3px">
 	<form id="form-data-entry" method="post">
 		<input class="field" type="hidden" name="id" />
 		<table style="width: 100%;">
-			<?php foreach (cura_fields() as $row) {?>
-			<?php if ($row[0] == 'coliform') {?>
 			<tr>
-				<td
-					style="text-align: right; width: 40%; padding: 0.5em 2em 0.5em 0;"><?php echo $row[2]?></td>
-				<td><label><input type="radio" name="<?php echo $row[0]?>"
-						value="Present" /> Present</label> &nbsp; <label><input
-						type="radio" name="<?php echo $row[0]?>" value="Absent" /> Absent</label></td>
+				<?php cura_form_field($fields['watershed_name'])?>
+				<?php cura_form_field($fields['datetime'])?>
 			</tr>
-			<?php } elseif ($row[0] == 'lab_sample') {?>
 			<tr>
-				<td
-					style="text-align: right; width: 40%; padding: 0.5em 2em 0.5em 0;"><?php echo $row[2]?></td>
-				<td><label><input type="radio" name="<?php echo $row[0]?>" value="Y" />
-						Yes</label> &nbsp; <label><input type="radio"
-						name="<?php echo $row[0]?>" value="N" /> No</label></td>
+				<?php cura_form_field($fields['station_name'])?>
+				<?php cura_form_field($fields['location_id'])?>
 			</tr>
-			<?php } else {?>
 			<tr>
-				<td
-					style="text-align: right; width: 40%; padding: 0.5em 2em 0.5em 0;"><?php echo $row[2]?></td>
-				<td><input class="field" type="text" name="<?php echo $row[0]?>"
-					placeHolder="<?php echo $row[1]?>" style="width: 100%" /><label
-					class="msg"></label></td>
+				<?php cura_form_field($fields['latitude'])?>
+				<?php cura_form_field($fields['longitude'])?>
 			</tr>
-			<?php }?>
-			<?php }?>
+			<tr>
+				<?php cura_form_field($fields['do_mgl'])?>
+				<?php cura_form_field($fields['do_%'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['cond'])?>
+				<?php cura_form_field($fields['salinity'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['temp'])?>
+				<?php cura_form_field($fields['ph'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['secchi_a'])?>
+				<?php cura_form_field($fields['secchi_b'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['secchi_d'], 1)?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['lab_sample'])?>
+				<?php cura_form_field($fields['lab_id'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['nitrate'])?>
+				<?php cura_form_field($fields['phosphate'])?>
+			</tr>
+			<tr>
+				<?php cura_form_field($fields['coliform'], 1)?>
+			</tr>
 		</table>
 	</form>
 </div>

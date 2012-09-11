@@ -4,13 +4,14 @@
  * @version 1.0
  */
 /*
-Plugin Name: Water Quality Observation
-Plugin URI: http://curah2o.com/wp-content/plugins/water-quality-observation
-Description: This is a data-entry point, data access point and SOS endpoint. It will be used by CuraH2O field staff to create, view and export water quality observations. It will expose an SOS endpoint in order to to export data from remote SOS servers like WEHub.
-Author: Ma Lian
-Version: 1.0
-Author URI: http://mlhch.com
-*/
+ * Plugin Name: Water Quality Observation Plugin URI:
+ * http://curah2o.com/wp-content/plugins/water-quality-observation Description:
+ * This is a data-entry point, data access point and SOS endpoint. It will be
+ * used by CuraH2O field staff to create, view and export water quality
+ * observations. It will expose an SOS endpoint in order to to export data from
+ * remote SOS servers like WEHub. Author: Ma Lian Version: 1.0 Author URI:
+ * http://mlhch.com
+ */
 if (! function_exists ( 'pre' )) {
 	function pre($var, $exit = false) {
 		$s [] = "<xmp>" . gettype ( $var ) . "\n";
@@ -21,7 +22,12 @@ if (! function_exists ( 'pre' )) {
 			foreach ( $trace as $t ) {
 				$file = @$t ['file'];
 				$line = @$t ['line'];
-				if (in_array ( $t ['function'], array ('require', 'require_once', 'do_action', 'call_user_func_array' ) )) {
+				if (in_array ( $t ['function'], array (
+						'require',
+						'require_once',
+						'do_action',
+						'call_user_func_array' 
+				) )) {
 					$args = $t ['args'];
 					$args [0] = preg_replace ( '/.*?wordpress/', '', $args [0] );
 					$s [] = sprintf ( "#%5d $t[function]($args[0]) $file\n", $line );
@@ -42,16 +48,15 @@ if (! function_exists ( 'pre' )) {
 		}
 	}
 }
-////////////////////////////////////////////////////////////
-////////// constants and variables
-////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////
+// //////// constants and variables
+// //////////////////////////////////////////////////////////
 define ( 'CURAH2O_VERSION', '1.0' );
 define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );
 define ( 'CURAH2O_PLUGIN_DIR', plugin_dir_path ( __FILE__ ) );
 define ( 'CURAH2O_TABLE', 'data-entry' );
 define ( 'CURAH2O_TABLE_LOCATION', 'data-entry-location' );
 define ( 'CURAH2O_TABLE_LAYERS', 'data-entry-layers' );
-
 function cura_fields() {
 	static $fields;
 	
@@ -59,50 +64,129 @@ function cura_fields() {
 		return $fields;
 	}
 	
-	$table = array (//
-array ("field" => "watershed_name", //
-"demo" => "", "description" => "Watershed Name", "visible" => 1 ), //
-array ("field" => "station_name", //
-"demo" => "", "description" => "Station Name", "visible" => 1 ), //
-array ("field" => "location_id", //
-"demo" => "Letters and numbers without space", "description" => "Location ID", "visible" => 1 ), //
-array ("field" => "datetime", //
-"demo" => date ( "m/d/Y H:i A" ), "description" => "Date and Time", "visible" => 1 ), //
-array ("field" => "latitude", "demo" => "", "description" => "Latitude" ), //
-array ("field" => "longitude", "demo" => "", "description" => "Longitude" ), //
-array ("field" => "do_mgl", "demo" => "0-15", "description" => "DO (mg/L)" ), //
-array ("field" => "do_%", "demo" => "0-110", "description" => "DO (%) " ), //
-array ("field" => "cond", "demo" => "0-1500", "description" => "Cond. (µS/cm)" ), //
-array ("field" => "salinity", "demo" => "0-1", "description" => "Salinity (ppt)" ), //
-array ("field" => "temp", "demo" => "0-30", "description" => "Temp. (⁰C)" ), //
-array ("field" => "ph", "demo" => "4-8", "description" => "pH" ), //
-array ("field" => "secchi_a", "demo" => "0-20", "description" => "Secchi Disc Reading A" ), //
-array ("field" => "secchi_b", "demo" => "between A+/-2", "description" => "Secchi Disc Reading B" ), //
-array ("field" => "secchi_d", "demo" => "average A and B", "description" => "Secchi Disc Depth" ), //
-array ("field" => "lab_sample", "demo" => "", "description" => "Lab Sample" ), //
-array ("field" => "lab_id", "demo" => "", "description" => "Lab Id" ), //
-array ("field" => "nitrate", "demo" => "0-40", "description" => "Nitrate Count" ), //
-array ("field" => "phosphate", "demo" => "0-4", "description" => "Phosphate Count" ), //
-array ("field" => "coliform", "demo" => "", "description" => "Coliform" ) ); //
+	$table = array ( //
+			array (
+					"field" => "watershed_name", //
+					"demo" => "",
+					"description" => "Watershed Name",
+					"visible" => 1 
+			), //
+			array (
+					"field" => "station_name", //
+					"demo" => "",
+					"description" => "Station Name",
+					"visible" => 1 
+			), //
+			array (
+					"field" => "location_id", //
+					"demo" => "Letters and numbers without space",
+					"description" => "Location ID",
+					"visible" => 1 
+			), //
+			array (
+					"field" => "datetime", //
+					"demo" => date ( "m/d/Y H:i A" ),
+					"description" => "Date and Time",
+					"visible" => 1 
+			), //
+			array (
+					"field" => "latitude",
+					"demo" => "",
+					"description" => "Latitude" 
+			), //
+			array (
+					"field" => "longitude",
+					"demo" => "",
+					"description" => "Longitude" 
+			), //
+			array (
+					"field" => "do_mgl",
+					"demo" => "0-15",
+					"description" => "DO (mg/L)" 
+			), //
+			array (
+					"field" => "do_%",
+					"demo" => "0-110",
+					"description" => "DO (%) " 
+			), //
+			array (
+					"field" => "cond",
+					"demo" => "0-1500",
+					"description" => "Cond. (µS/cm)" 
+			), //
+			array (
+					"field" => "salinity",
+					"demo" => "0-1",
+					"description" => "Salinity (ppt)" 
+			), //
+			array (
+					"field" => "temp",
+					"demo" => "0-30",
+					"description" => "Temp. (⁰C)" 
+			), //
+			array (
+					"field" => "ph",
+					"demo" => "4-8",
+					"description" => "pH" 
+			), //
+			array (
+					"field" => "secchi_a",
+					"demo" => "0-20",
+					"description" => "Secchi Disc Reading A" 
+			), //
+			array (
+					"field" => "secchi_b",
+					"demo" => "between A+/-2",
+					"description" => "Secchi Disc Reading B" 
+			), //
+			array (
+					"field" => "secchi_d",
+					"demo" => "average A and B",
+					"description" => "Secchi Disc Depth" 
+			), //
+			array (
+					"field" => "lab_sample",
+					"demo" => "",
+					"description" => "Lab Sample" 
+			), //
+			array (
+					"field" => "lab_id",
+					"demo" => "",
+					"description" => "Lab Id" 
+			), //
+			array (
+					"field" => "nitrate",
+					"demo" => "0-40",
+					"description" => "Nitrate Count" 
+			), //
+			array (
+					"field" => "phosphate",
+					"demo" => "0-4",
+					"description" => "Phosphate Count" 
+			), //
+			array (
+					"field" => "coliform",
+					"demo" => "",
+					"description" => "Coliform" 
+			) 
+	); //
 	
-
 	$fields = array ();
 	foreach ( $table as $i => $row ) {
-		$fields [$row ['field']] = array (//
-$row ['field'], //
-$row ['demo'], //
-$row ['description'], //
-$i + 1, // a default serial for the UI form
-isset ( $row ['visible'] ) ? 1 : 0 );
+		$fields [$row ['field']] = array ( //
+				$row ['field'], //
+				$row ['demo'], //
+				$row ['description'], //
+				$i + 1, // a default serial for the UI form
+				isset ( $row ['visible'] ) ? 1 : 0 
+		);
 	}
 	return $fields;
 }
 
-////////////////////////////////////////////////////////////
-////////// hooks
-////////////////////////////////////////////////////////////
-
-
+// //////////////////////////////////////////////////////////
+// //////// hooks
+// //////////////////////////////////////////////////////////
 function cura_water_quality_main() {
 	include 'views/main.php';
 }
@@ -132,8 +216,8 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 	// Front end - mobile style
 	if ($isMobile) {
 		add_shortcode ( 'water-quality', 'cura_water_quality_mobile' );
-	
-	// Frond end - screen style
+		
+		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
 		if (false !== strpos ( strtolower ( $_SERVER ['HTTP_USER_AGENT'] ), 'mobile' )) {
 			header ( "Location: ./../m/water-quality/" );
@@ -141,39 +225,41 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		}
 		add_shortcode ( 'water-quality', 'cura_water_quality_main' );
 		add_action ( 'wp_enqueue_scripts', 'cura_main_js_and_css' );
-	
-	// Service call
+		
+		// Service call
 	} elseif (! $isMobile && 'services' == $request) {
 		include 'apis.php';
+		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_services', 'cura_services' );
-	
-	// Layer call
+		
+		// Layer call
 	} elseif (! $isMobile && 'service/1' == $request) {
 		include 'apis.php';
 		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_service/1', 'cura_service_layers' );
-	
-	// Data call
+		
+		// Data call
 	} elseif (! $isMobile && '' === $request && ! empty ( $phpInput )) {
 		if (get_magic_quotes_gpc ()) {
 			$phpInput = stripslashes ( $phpInput );
 		}
 		$obj = json_decode ( $phpInput );
-		$func_name = "cura_data_$obj->request";
+		$func_name = "cura_service_$obj->request";
+		
+		include 'apis.php';
+		include 'funcs.php';
 		if (function_exists ( $func_name )) {
-			$data = $func_name ( $obj );
-			$result = array (//
-'serviceid' => $obj->serviceid, //
-'layerid' => $obj->layerid, //
-'data' => $data );
+			$result = $func_name ( $obj );
 		} else {
-			$result = array ('error' => "Bad data name '$obj->request'" );
+			$result = array (
+					'error' => "Bad data name '$obj->request'" 
+			);
 		}
 		echo json_encode ( $result );
 		exit ( 0 );
-	
-	// Ajax actions
-	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action)/', $request, $m )) {
+		
+		// Ajax actions
+	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action|demo)/', $request, $m )) {
 		include 'apis.php';
 		include 'funcs.php';
 		
@@ -191,23 +277,28 @@ if (is_admin ()) {
 	// 'Settings' menu of admin page
 	add_action ( 'admin_menu', 'cura_menu' );
 }
-
 function cura_main_js_and_css() {
-	/*wp_deregister_script('jquery');
-	$src = CURAH2O_PLUGIN_URL . 'debug/jquery-1.7.2.js';
-	wp_register_script('jquery', $src);
-	wp_enqueue_script('jquery');*/
+	/*
+	 * wp_deregister_script('jquery'); $src = CURAH2O_PLUGIN_URL .
+	 * 'debug/jquery-1.7.2.js'; wp_register_script('jquery', $src);
+	 * wp_enqueue_script('jquery');
+	 */
 	
 	// main js source
 	$src = CURAH2O_PLUGIN_URL . 'water-quality.js';
-	wp_register_script ( 'water-quality', $src, array ('jquery', 'jquery-ui-sortable' ) );
+	wp_register_script ( 'water-quality', $src, array (
+			'jquery',
+			'jquery-ui-sortable' 
+	) );
 	wp_enqueue_script ( 'water-quality' );
 	
 	/*
 	 * jquery.tablesorter.js support
-	*/
+	 */
 	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/jquery.tablesorter.min.js';
-	wp_register_script ( 'tablesorter', $src, array ('jquery' ) );
+	wp_register_script ( 'tablesorter', $src, array (
+			'jquery' 
+	) );
 	wp_enqueue_script ( 'tablesorter' );
 	
 	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/themes/blue/style.css';
@@ -216,9 +307,11 @@ function cura_main_js_and_css() {
 	
 	/*
 	 * add jquery.tablesorter.pager.js support
-	*/
+	 */
 	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/addons/pager/jquery.tablesorter.pager.js';
-	wp_register_script ( 'tablesorter.pager', $src, array ('tablesorter' ) );
+	wp_register_script ( 'tablesorter.pager', $src, array (
+			'tablesorter' 
+	) );
 	wp_enqueue_script ( 'tablesorter.pager' );
 	
 	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/addons/pager/jquery.tablesorter.pager.css';
@@ -227,7 +320,7 @@ function cura_main_js_and_css() {
 	
 	/*
 	 * column sortable and configurable
-	*/
+	 */
 	wp_enqueue_script ( 'jquery-ui-sortable' );
 	add_action ( 'wp_head', 'jquery_ui_sortable_inline_css', 999 );
 	function jquery_ui_sortable_inline_css() {
@@ -261,23 +354,26 @@ function cura_main_js_and_css() {
 	}
 	
 	/*
-	* jQuery UI css
-	*/
+	 * jQuery UI css
+	 */
 	$src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/redmond/jquery-ui.css';
 	wp_register_style ( 'jquery-ui', $src );
 	wp_enqueue_style ( 'jquery-ui' );
 	
 	/*
-	* jQuery UI Dialog
-	*/
+	 * jQuery UI Dialog
+	 */
 	wp_enqueue_script ( 'jquery-ui-dialog' );
 	
 	/*
-	* jQuery UI Datepicker and Timepicker
-	*/
+	 * jQuery UI Datepicker and Timepicker
+	 */
 	wp_enqueue_script ( 'jquery-ui-datepicker' );
 	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-ui-timepicker-addon.js';
-	wp_register_script ( 'jquery-ui-timepicker', $src, array ('jquery-ui-datepicker', 'jquery-ui-slider' ) );
+	wp_register_script ( 'jquery-ui-timepicker', $src, array (
+			'jquery-ui-datepicker',
+			'jquery-ui-slider' 
+	) );
 	wp_enqueue_script ( 'jquery-ui-timepicker' );
 	
 	add_action ( 'wp_head', 'jquery_ui_timepicker_inline_css', 999 );
@@ -344,29 +440,35 @@ function cura_main_js_and_css() {
 	}
 	
 	/*
-	* jQuery validation
-	*/
+	 * jQuery validation
+	 */
 	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-validation-1.9.0/jquery.validate.min.js';
-	wp_register_script ( 'jquery-validation', $src, array ('jquery' ) );
+	wp_register_script ( 'jquery-validation', $src, array (
+			'jquery' 
+	) );
 	wp_enqueue_script ( 'jquery-validation' );
 	
 	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-validation-1.9.0/additional-methods.min.js';
-	wp_register_script ( 'jquery-validation-methods', $src, array ('jquery-validation' ) );
+	wp_register_script ( 'jquery-validation-methods', $src, array (
+			'jquery-validation' 
+	) );
 	wp_enqueue_script ( 'jquery-validation-methods' );
 	
 	/*
-	* typeahead support
-	*/
+	 * typeahead support
+	 */
 	$src = CURAH2O_PLUGIN_URL . 'lib/bootstrap/typeahead.js';
-	wp_register_script ( 'bootstrap-typeahead', $src, array ('jquery' ) );
+	wp_register_script ( 'bootstrap-typeahead', $src, array (
+			'jquery' 
+	) );
 	wp_enqueue_script ( 'bootstrap-typeahead' );
 	
 	$src = CURAH2O_PLUGIN_URL . 'lib/bootstrap/typeahead.css';
 	wp_register_style ( 'bootstrap-typeahead', $src );
 	wp_enqueue_style ( 'bootstrap-typeahead' );
 	/*
-	* Css adjustment
-	*/
+	 * Css adjustment
+	 */
 	add_action ( 'wp_head', 'cura_inline_css', 999 );
 	function cura_inline_css() {
 		?>
@@ -385,7 +487,16 @@ function cura_main_js_and_css() {
 	font-size: 12px;
 }
 
-#form-data-entry label.msg {
+#dialog-data-entry td.label {
+	text-align: right;
+	padding: 0.5em 1em 0.5em 0;
+}
+
+#form-data-entry input.error {
+	border: 1px solid red
+}
+
+#form-data-entry label.error {
 	color: red;
 }
 </style>
