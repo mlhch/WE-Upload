@@ -632,7 +632,7 @@ WaterQuality.prototype = {
 				rules: {
 					location_id: {
 						required: true,
-						pattern: /^[a-z][a-z0-9]*$/i,
+						pattern: /^[a-z][a-z0-9 ]*$/i,
 					},
 					station_name: {
 						required: true,

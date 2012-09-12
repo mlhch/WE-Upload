@@ -57,132 +57,6 @@ define ( 'CURAH2O_PLUGIN_DIR', plugin_dir_path ( __FILE__ ) );
 define ( 'CURAH2O_TABLE', 'data-entry' );
 define ( 'CURAH2O_TABLE_LOCATION', 'data-entry-location' );
 define ( 'CURAH2O_TABLE_LAYERS', 'data-entry-layers' );
-function cura_fields() {
-	static $fields;
-	
-	if ($fields) {
-		return $fields;
-	}
-	
-	$table = array ( //
-			array (
-					"field" => "watershed_name", //
-					"demo" => "",
-					"description" => "Watershed Name",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "station_name", //
-					"demo" => "",
-					"description" => "Station Name",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "location_id", //
-					"demo" => "Letters and numbers without space",
-					"description" => "Location ID",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "datetime", //
-					"demo" => date ( "m/d/Y H:i A" ),
-					"description" => "Date and Time",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "latitude",
-					"demo" => "",
-					"description" => "Latitude" 
-			), //
-			array (
-					"field" => "longitude",
-					"demo" => "",
-					"description" => "Longitude" 
-			), //
-			array (
-					"field" => "do_mgl",
-					"demo" => "0-15",
-					"description" => "DO (mg/L)" 
-			), //
-			array (
-					"field" => "do_%",
-					"demo" => "0-110",
-					"description" => "DO (%) " 
-			), //
-			array (
-					"field" => "cond",
-					"demo" => "0-1500",
-					"description" => "Cond. (µS/cm)" 
-			), //
-			array (
-					"field" => "salinity",
-					"demo" => "0-1",
-					"description" => "Salinity (ppt)" 
-			), //
-			array (
-					"field" => "temp",
-					"demo" => "0-30",
-					"description" => "Temp. (⁰C)" 
-			), //
-			array (
-					"field" => "ph",
-					"demo" => "4-8",
-					"description" => "pH" 
-			), //
-			array (
-					"field" => "secchi_a",
-					"demo" => "0-20",
-					"description" => "Secchi Disc Reading A" 
-			), //
-			array (
-					"field" => "secchi_b",
-					"demo" => "between A+/-2",
-					"description" => "Secchi Disc Reading B" 
-			), //
-			array (
-					"field" => "secchi_d",
-					"demo" => "average A and B",
-					"description" => "Secchi Disc Depth" 
-			), //
-			array (
-					"field" => "lab_sample",
-					"demo" => "",
-					"description" => "Lab Sample" 
-			), //
-			array (
-					"field" => "lab_id",
-					"demo" => "",
-					"description" => "Lab Id" 
-			), //
-			array (
-					"field" => "nitrate",
-					"demo" => "0-40",
-					"description" => "Nitrate Count" 
-			), //
-			array (
-					"field" => "phosphate",
-					"demo" => "0-4",
-					"description" => "Phosphate Count" 
-			), //
-			array (
-					"field" => "coliform",
-					"demo" => "",
-					"description" => "Coliform" 
-			) 
-	); //
-	
-	$fields = array ();
-	foreach ( $table as $i => $row ) {
-		$fields [$row ['field']] = array ( //
-				$row ['field'], //
-				$row ['demo'], //
-				$row ['description'], //
-				$i + 1, // a default serial for the UI form
-				isset ( $row ['visible'] ) ? 1 : 0 
-		);
-	}
-	return $fields;
-}
 
 // //////////////////////////////////////////////////////////
 // //////// hooks
@@ -192,6 +66,7 @@ function cura_water_quality_main() {
 }
 function cura_water_quality_mobile() {
 	include 'views/mobile.php';
+	exit ( 0 );
 }
 /*
  * Front end entrance
@@ -200,6 +75,9 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 	$isMobile = $m [1] == '/m';
 	$request = $m [2];
 	$phpInput = file_get_contents ( 'php://input' );
+	
+	include 'apis.php';
+	include 'funcs.php';
 	
 	// Permission control
 	add_action ( 'init', 'cura_init_roles' );
@@ -215,7 +93,8 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 	
 	// Front end - mobile style
 	if ($isMobile) {
-		add_shortcode ( 'water-quality', 'cura_water_quality_mobile' );
+		add_action ( 'wp_ajax_cura_mobile', 'cura_water_quality_mobile' );
+		add_action ( 'wp_ajax_nopriv_cura_mobile', 'cura_water_quality_mobile' );
 		
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
@@ -228,15 +107,11 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Service call
 	} elseif (! $isMobile && 'services' == $request) {
-		include 'apis.php';
-		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_services', 'cura_services' );
 		add_action ( 'wp_ajax_nopriv_cura_services', 'cura_services' );
 		
 		// Layer call
 	} elseif (! $isMobile && 'service/1' == $request) {
-		include 'apis.php';
-		include 'funcs.php';
 		add_action ( 'wp_ajax_cura_service/1', 'cura_service_layers' );
 		add_action ( 'wp_ajax_nopriv_cura_service/1', 'cura_service_layers' );
 		
@@ -248,8 +123,6 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		$obj = json_decode ( $phpInput );
 		$func_name = "cura_service_$obj->request";
 		
-		include 'apis.php';
-		include 'funcs.php';
 		if (function_exists ( $func_name )) {
 			$result = $func_name ( $obj );
 		} else {
@@ -262,9 +135,6 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Ajax actions
 	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action|demo)/', $request, $m )) {
-		include 'apis.php';
-		include 'funcs.php';
-		
 		add_action ( "wp_ajax_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 		add_action ( "wp_ajax_nopriv_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 	}
