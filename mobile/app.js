@@ -178,6 +178,29 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	 */
 	$('#newob').live('pageinit', function(e, ui) {
 		var form = $(this).find('form');
+		
+		$(this).find("input[name=watershed_name]").typeahead({
+			source: function (query, callback) {
+				$.getJSON(base_url + "/typeaheads.json", function(data) {
+					var data = data.typeaheads;
+					var items = [];
+					for (var i = 0, item; item = data[i++];) {
+						items.push(item[2] + ' (' + item[0] + ', ' + item[1] + ')');
+					}
+					
+					callback(items);
+				});
+			},
+			updater: function(value) {
+				var m = value.match(/^(.*) \((.*), (.*)\)$/);
+				
+				form.find("input[name=location_id]").val(m[2]);
+				form.find("input[name=station_name]").val(m[3]);
+				
+				return m[1];
+			}
+		});
+		
 		$(this).find('#save').click(function() {
 			var params = {}, page = $('#newob');
 			

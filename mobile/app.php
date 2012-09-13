@@ -12,6 +12,8 @@
 	href="<?php echo $base_url?>/lib/jquery.mobile/jquery.mobile-1.1.1.min.css" />
 <link rel="stylesheet"
 	href="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.min.css" />
+<link rel='stylesheet'
+	href="<?php echo $base_url?>/../lib/bootstrap/typeahead.css" />
 <style>
 /* App custom styles */
 #details .field {
@@ -52,6 +54,8 @@
 	src="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.mode.calbox.min.js"></script>
 <script type="text/javascript"
 	src="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.mode.datebox.min.js"></script>
+<script type='text/javascript'
+	src="<?php echo $base_url?>/../lib/bootstrap/typeahead.js"></script>
 <script src="<?php echo $base_url?>/app.js"></script>
 </head>
 
