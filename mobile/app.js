@@ -1,3 +1,9 @@
+jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
+	timeFormat: 12,
+	dateFormat: "%m/%d/%Y",
+	timeOutput: "%l:%M %p",
+});
+
 (function($) {
 	var base_url = '../../water-quality';
 	var currentWatershed = null;
@@ -13,7 +19,7 @@
 		localStorage[key] = JSON.stringify(value);
 	}
 	function clearCache(key) {
-		localStorage[key] = '';
+		localStorage.removeItem(key);
 	}
 	
 	/*
@@ -22,11 +28,20 @@
 	$('#home').live('pageinit', function() {
 		$('#list-locations').click(function(e) {
 			var json = unescape($(e.target).attr('data'));
-			currentWatershed = JSON.parse(json);
-			setCache('currentWatershed', currentWatershed);
+			if (json != 'undefined') { // NOT the divider
+				currentWatershed = JSON.parse(json);
+				setCache('currentWatershed', currentWatershed);
+			}
 		})
 		$('#reload-locations').click(function(e) {
 			clearCache('locationList');
+			for (var i = 0, row; row = locationList[i++];) {
+				var id = 'observationItems_' + row.id;
+				if (getCache(id)) {
+					clearCache(id);
+					observationItems[row.id] = null;
+				}
+			}
 			locationList = null;
 			loadHomePage();
 		})
@@ -34,6 +49,9 @@
 		locationList = getCache('locationList', null);
 	});
 	function loadHomePage() {
+		currentWatershed = null;
+		currentObservation = null;
+		
 		var list = $('#list-locations');
 		list.find('li[role!="heading"]').remove();
 	
@@ -85,6 +103,8 @@
 	$('#observations').live('pagebeforeshow', function(e, ui) {
 		var list = $('#list-observations');
 		list.find('li[role!="heading"]').remove();
+		
+		currentObservation = null;
 	});
 	$('#observations').live('pageshow', function(e, ui) {
 		$(this).find('h3').html(currentWatershed.watershed_name);
@@ -141,12 +161,128 @@
 			var html = ['<div class="ui-grid-a">'];
 			for (var key in observationFields) {
 				html.push(
-						['<div class="ui-block-a">', observationFields[key][2], '</div>',
-						 '<div class="ui-block-b">', obj[observationFields[key][3]], '</div>'].join(''));
+						['<div class="ui-block-a field">', observationFields[key][2], '</div>',
+						 '<div class="ui-block-b value">', obj[observationFields[key][3]],
+						 '</div>'].join(''));
 			}
 			html.push('</div>');
+			//html.push('<a href="#editob" data-role="button">Edit</button>')
 			container.html(html.join(''));
+			
+			container.find('a').button();
 		}
 	});
 	
+	/*
+	 * New Observation Form
+	 */
+	$('#newob').live('pageinit', function(e, ui) {
+		var form = $(this).find('form');
+		$(this).find('#save').click(function() {
+			var params = {}, page = $('#newob');
+			
+			params['id'] = page.find('input[name="id"]').val();
+			for( var i in observationFields) {
+				var row = observationFields[i];
+				var name = row[0];
+				if (name == 'datetime') {
+					params[name] = $('#date').val() + ' ' + $('#time').val();
+				} else if (name == 'lab_sample' || name == 'coliform') {
+					var value = page.find('select[name="' + name + '"]').val();
+					params[name] = value;
+				} else { 
+					var value = page.find('input[name="' + name + '"]').val();
+					params[name] = value;
+				}
+			}
+			
+			$.post(base_url + '/save.action', params, function(data, status) {
+				if (status == 'success') {
+					var result = JSON.parse(data);
+					if (result.affectedRows) {
+						if (result.insertId) {
+							alert('Entry ' + result.insertId + ' added');
+						} else {
+							alert('Entry ' + result.id + ' updated');
+						}
+						
+						clearCache('locationList');
+						for (var i = 0, row; row = locationList[i++];) {
+							var id = 'observationItems_' + row.id;
+							if (getCache(id)) {
+								clearCache(id);
+								observationItems[row.id] = null;
+							}
+						}
+						if (locationList) {
+							locationList = null;
+						}
+						
+						currentObservation = result.data;
+						
+						history.back();
+					} else {
+						alert('No changes updated');
+					}
+				} else {
+					alert('Sorry, the server encountered an error');
+				}
+			});
+		});
+	});
+	$('#newob').live('pagebeforeshow', function(e, ui) {
+		if (location.hash == '#newob') {
+			$(this).find('form')[0].reset();
+			$(this).find('input[name="id"]').val('');
+			var dt = new Date;
+			var inputDate = $(this).find('input[name="date"]');
+			var inputTime = $(this).find('input[name="time"]');
+			var dateFormat = $.mobile.datebox.prototype.options.lang.default.dateFormat;
+			var timeFormat = $.mobile.datebox.prototype.options.lang.default.timeOutput;
+			inputDate.val(inputTime.data('datebox')._formatter(dateFormat, dt));
+			inputTime.val(inputTime.data('datebox')._formatter(timeFormat, dt));
+		}
+	});
+	$('#newob').live('pageshow', function(e, ui) {
+		if (!$(this).find('input[name="id"]').val()) {
+			if (currentWatershed) {
+				$('input[name="watershed_name"]').val(currentWatershed.watershed_name);
+			}
+			if (currentObservation) {
+				var location_id_index = observationFields['location_id'][3];
+				var station_name_index = observationFields['station_name'][3];
+				var watershed_index = observationFields['watershed_name'][3];
+				$('input[name="location_id"]').val(currentObservation[location_id_index]);
+				$('input[name="station_name"]').val(currentObservation[station_name_index]);
+				$('input[name="watershed_name"]').val(currentObservation[watershed_index]);
+			}
+		}
+	});
+	
+	$(document).bind( "pagebeforechange", function( e, data ) {
+		if ( typeof data.toPage === "string" ) {
+			var u = $.mobile.path.parseUrl( data.toPage );
+			if ( u.hash == '#editob' ) {
+				var page = $('#newob');
+				if ( currentObservation && observationFields ) {
+					page.find('input[name="id"]').val(currentObservation[0]);
+					for( var i in observationFields) {
+						var row = observationFields[i];
+						if (row[0] == 'datetime') {
+							var dt = currentObservation[row[3]];
+							page.find('input[name="date"]').val(dt.substr(0, 10))
+							page.find('input[name="time"]').val(dt.substr(11))
+						} else {
+							page.find('input[name="' + row[0] + '"]').val(currentObservation[row[3]]);
+						}
+					}
+				}
+				
+				data.options.dataUrl = u.href;
+				$.mobile.changePage( $('#newob'), data.options );
+				
+				e.preventDefault();
+			}
+		}
+	});
 })(jQuery);

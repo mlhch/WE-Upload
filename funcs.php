@@ -331,7 +331,7 @@ function cura_get_entry($id) {
 		SELECT	id
 				, `" . implode ( "`
 				, `", $fields ) . "`
-				, DATE_FORMAT(datetime, '%m/%d/%Y %l:%i %p') datetime
+				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	id = $id
 	";
@@ -341,7 +341,7 @@ function cura_add_entry($params = array()) {
 	global $wpdb;
 	
 	foreach ( $params as $k => $v ) {
-		if (is_null ( $v )) {
+		if (is_null ( $v ) || '' === $v) {
 			$values [] = "`$k` = NULL";
 		} else {
 			$values [] = "`$k` = '" . addslashes ( $v ) . "'";
@@ -415,7 +415,7 @@ function cura_get_observations($params = array()) {
 		SELECT	a.id
 				, a.`" . implode ( "`
 				, a.`", $fields ) . "`
-				, DATE_FORMAT(datetime, '%m/%d/%Y %l:%i %p') datetime
+				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
 		FROM	`" . CURAH2O_TABLE . "` AS a
 		LEFT JOIN
 				`" . CURAH2O_TABLE_LOCATION . "` AS b
