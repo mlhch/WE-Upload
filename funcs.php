@@ -442,7 +442,7 @@ function cura_get_locations() {
 		FROM	`" . CURAH2O_TABLE_LOCATION . "`
 		WHERE	1
 		ORDER BY
-				count DESC
+				watershed_name
 	";
 	$rows = $wpdb->get_results ( $sql, ARRAY_A );
 	

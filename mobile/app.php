@@ -1,7 +1,3 @@
-<?php
-//$base_url = 'http://192.168.1.8/curah2o/wp-content/plugins/water-quality-observation/mobile';
-//$jq_src = 'http://192.168.1.8/curah2o/wp-content/plugins/water-quality-observation/mobile/lib/jquery-1.7.2.js';
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,6 +39,29 @@
 
 .ui-input-datebox {
 	width: 92% !important;
+}
+
+#list-observations li .date {
+	display: block;
+	color: silver;
+	font-size: 10px;
+	text-align: right;
+	height: 1.5em;
+	margin: -1.5em 40px 0 0;
+}
+
+#lab_sample_label {
+	display: block;
+	margin: 0 0 10px 0;
+}
+
+#div_coliform {
+	text-align: center; margin: 0.5em 0 1.5em 0
+}
+
+div.ui-slider-switch {
+	width: 150px !important;
+	vertical-align: middle;
 }
 </style>
 <script src="<?php echo $jq_src?>"></script>
@@ -98,9 +117,7 @@
 		<div data-theme="a" data-role="header">
 			<a data-role="button" data-inline="true" data-rel="back"
 				data-transition="slide" href="#observations" data-icon="back"
-				class="ui-btn-left">Back</a><a data-role="button"
-				data-transition="slide" href="#newob" data-icon="plus"
-				data-iconpos="right" class="ui-btn-right">New Ob</a>
+				class="ui-btn-left">Back</a>
 			<h3></h3>
 		</div>
 		<div data-role="content" style="padding: 5px"></div>
@@ -143,61 +160,61 @@
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput7"> Latitude </label> <input name="latitude"
-							id="textinput7" type="text" />
+							id="textinput7" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput8"> Longitude </label> <input
-							name="longitude" id="textinput8" type="text" />
+							name="longitude" id="textinput8" type="number" />
 					</div>
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput9"> DO (mg/L) </label> <input name="do_mgl"
-							id="textinput9" placeholder="0-15" type="text" />
+							id="textinput9" placeholder="0-15" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput11"> DO (%) </label> <input name="do_%"
-							id="textinput11" placeholder="0-110" type="text" />
+							id="textinput11" placeholder="0-110" type="number" />
 					</div>
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput12"> Cond. (µS/cm) </label> <input
-							name="cond" id="textinput12" placeholder="0-1500" type="text" />
+							name="cond" id="textinput12" placeholder="0-1500" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput13"> Salinity (ppt) </label> <input
-							name="salinity" id="textinput13" placeholder="0-1" type="text" />
+							name="salinity" id="textinput13" placeholder="0-1" type="number" />
 					</div>
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput14"> Temp. (⁰C) </label> <input name="temp"
-							id="textinput14" placeholder="0-30" type="text" />
+							id="textinput14" placeholder="0-30" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput15"> pH </label> <input name="ph"
-							id="textinput15" placeholder="4-8" type="text" />
+							id="textinput15" placeholder="4-8" type="number" />
 					</div>
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput16"> Secchi Disc Reading A </label> <input
-							name="secchi_a" id="textinput16" placeholder="0-20" type="text" />
+							name="secchi_a" id="textinput16" placeholder="0-20" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput17"> Secchi Disc Reading B </label> <input
 							name="secchi_b" id="textinput17" placeholder="between A+/-2"
-							value="" type="text" />
+							value="" type="number" />
 					</div>
 				</div>
 				<label for="textinput18"> Secchi Disc Depth </label> <input
 					name="secchi_d" id="textinput18" placeholder="average A and B"
-					value="" type="text" />
+					value="" type="number" />
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
-						<label for="toggleswitch1"> Lab Sample </label> <select
-							name="lab_sample" id="lab_sample" data-theme="b"
+						<label id="lab_sample_label" for="toggleswitch1"> Lab Sample </label>
+						<select name="lab_sample" id="lab_sample" data-theme="b"
 							data-role="slider" data-mini="true">
 							<option value="N">No</option>
 							<option value="Y">Yes</option>
@@ -205,25 +222,27 @@
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput19"> Lab ID </label> <input name="lab_id"
-							id="textinput19" type="text" />
+							id="textinput19" type="number" />
 					</div>
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
 						<label for="textinput20"> Nitrate Count </label> <input
-							name="nitrate" id="textinput20" placeholder="0-40" type="text" />
+							name="nitrate" id="textinput20" placeholder="0-40" type="number" />
 					</div>
 					<div class="ui-block-b">
 						<label for="textinput21"> Phosphate Count </label> <input
-							name="phosphate" id="textinput21" placeholder="0-4" type="text" />
+							name="phosphate" id="textinput21" placeholder="0-4" type="number" />
 					</div>
 				</div>
-				<label for="toggleswitch2"> Coliform </label> <select
-					name="coliform" id="coliform" data-theme="b" data-role="slider"
-					data-mini="true">
-					<option value="Absent">Absent</option>
-					<option value="Present">Present</option>
-				</select>
+				<div id="div_coliform">
+					<label for="toggleswitch2"> Coliform </label> &nbsp; <select
+						name="coliform" id="coliform" data-theme="b" data-role="slider"
+						data-mini="true">
+						<option value="Absent">Absent</option>
+						<option value="Present">Present</option>
+					</select>
+				</div>
 				<button id="save" type="button" data-icon="check"
 					data-iconpos="right" data-theme="b">Submit</button>
 			</form>

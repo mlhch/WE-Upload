@@ -126,6 +126,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	function renderObservationList(rows, fields) {
 		var location_id_index = fields['location_id'][3];
 		var station_name_index = fields['station_name'][3];
+		var datetime_index = fields['datetime'][3];
 		
 		var list = $('#list-observations');
 		list.find('li[role!="heading"]').remove();
@@ -135,8 +136,9 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			list.append([ '<li data-theme="c">',
 					'<a href="#details" data-transition="slide"',
 					' data="', row[0], '">',
-					row[location_id_index], ' - ', row[station_name_index],
-					'</a></li>' ].join(''));
+					row[location_id_index], ' - ', row[station_name_index], '</a>',
+					'<span class="date">', row[datetime_index], '</span>',
+					'</li>' ].join(''));
 		}
 		
 		list.listview("refresh");
