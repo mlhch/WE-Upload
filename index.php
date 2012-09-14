@@ -99,23 +99,6 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
-		if (false !== strpos ( strtolower ( $_SERVER ['HTTP_USER_AGENT'] ), 'mobile' )) {
-			if (empty ( $_COOKIE [CURAH2O_COOKIE_NAME] )) {
-				setcookie ( CURAH2O_COOKIE_NAME, 1, time () + 3600 * 24 );
-				?>
-<script>
-var msg = 'Looks like you are on a mobile device. Would you like to be directed to the mobile specific version of this page?';
-if (confirm(msg)) {
-	location = '../m/water-quality/';
-} else {
-	location = '../water-quality/';
-}
-</script>
-<?php
-				// header ( "Location: ./../m/water-quality/" );
-				exit ( 0 );
-			}
-		}
 		add_shortcode ( 'water-quality', 'cura_water_quality_main' );
 		add_action ( 'wp_enqueue_scripts', 'cura_main_js_and_css' );
 		

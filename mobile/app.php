@@ -56,7 +56,8 @@
 }
 
 #div_coliform {
-	text-align: center; margin: 0.5em 0 1.5em 0
+	text-align: center;
+	margin: 0.5em 0 1.5em 0
 }
 
 div.ui-slider-switch {
@@ -93,6 +94,10 @@ div.ui-slider-switch {
 				data-inset="false">
 				<li data-role="list-divider" role="heading">Watersheds</li>
 			</ul>
+		</div>
+		<div data-role="footer" class="ui-bar">
+			<a href="../../water-quality/" rel="external" data-role="button"
+				data-inline="false">Desktop Site</a>
 		</div>
 	</div>
 	<!-- Observation List -->

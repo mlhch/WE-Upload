@@ -17,6 +17,10 @@
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Export as CSV</span>
 	</button>
+	<button id="mobile-site" type="button" style="font-size: 12px"
+		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+		<span class="ui-button-text">Mobile Site</span>
+	</button>
 </div>
 
 <ol id="fields-selector" style="float: right;"></ol>

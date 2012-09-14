@@ -100,6 +100,7 @@ function WaterQuality(config) {
 	this.clickColumnConfig();
 	this.initEventTypeahead();
 	this.initEventExport();
+	this.initEventMobileSite();
 	
 	var me = this;
 	me.loadLocations(null, function() {
@@ -786,6 +787,15 @@ WaterQuality.prototype = {
 			$('#export_as_csv').click(function() {
 				var watershed_name = $(me.filterLocations).val();
 				location.href = "./observations.json?export&" + $.param({watershed: watershed_name});
+			});
+		})
+	},
+	initEventMobileSite: function() {
+		var me = this;
+		
+		jQuery(function($) {
+			$('#mobile-site').click(function() {
+				location.href = "../m/water-quality/";
 			});
 		})
 	}
