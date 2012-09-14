@@ -57,6 +57,7 @@ define ( 'CURAH2O_PLUGIN_DIR', plugin_dir_path ( __FILE__ ) );
 define ( 'CURAH2O_TABLE', 'data-entry' );
 define ( 'CURAH2O_TABLE_LOCATION', 'data-entry-location' );
 define ( 'CURAH2O_TABLE_LAYERS', 'data-entry-layers' );
+define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
 // //////////////////////////////////////////////////////////
 // //////// hooks
@@ -99,11 +100,8 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
 		if (false !== strpos ( strtolower ( $_SERVER ['HTTP_USER_AGENT'] ), 'mobile' )) {
-			if (! isset ( $_SESSION )) {
-				session_start ();
-			}
-			if (empty ( $_SESSION [CURAH2O_PLUGIN_URL] )) {
-				$_SESSION [CURAH2O_PLUGIN_URL] = true;
+			if (empty ( $_COOKIE [CURAH2O_COOKIE_NAME] )) {
+				setcookie ( CURAH2O_COOKIE_NAME, 1, time () + 3600 * 24 );
 				?>
 <script>
 var msg = 'Looks like you are on a mobile device. Would you like to be directed to the mobile specific version of this page?';
