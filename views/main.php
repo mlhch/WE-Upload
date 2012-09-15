@@ -119,6 +119,18 @@ function cura_form_field($row, $single = false) {
 		</table>
 	</form>
 </div>
+<div class="tooltip_description" title="Mobile site available!"
+	style="display: none">
+	<p>Looks like you are on a mobile device. Would you like to be directed
+		to the mobile specific version of this page?</p>
+	<p style="margin-bottom: 5px; text-align: right">
+		<label><input type="checkbox" id="remember-choice" /> Remember my choice</label>
+	</p>
+	<p style="margin-bottom: 0px; text-align: center">
+		<button id="gotoMobile">Yes</button>
+		<button id="notgoMobile">No</button>
+	</p>
+</div>
 <script type="text/javascript">
 new WaterQuality({
 	btnAddNew: document.getElementById('new-data-entry'),

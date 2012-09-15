@@ -104,13 +104,19 @@ function WaterQuality(config) {
 	
 	var me = this;
 	me.loadLocations(null, function() {
-		me.loadData();
+		me.loadData(function() {
+			if (!jQuery.cookie('mobile-redirect')) {
+				jQuery("#mobile-site").tooltip("show");
+			} else {
+				jQuery("#remember-choice").attr('checked', 'checked');
+			}
+		});
 	});
 }
 
 WaterQuality.prototype = {
 	table: null,
-	loadData: function() {
+	loadData: function(callback) {
 		var me = this;
 		
 		jQuery(function ($) {
@@ -133,6 +139,8 @@ WaterQuality.prototype = {
 					me.showOriginalTable();
 					me.enableTableSorter();
 				}
+				
+				$.isFunction(callback) && callback();
 			});
 		});
 	},
@@ -795,8 +803,28 @@ WaterQuality.prototype = {
 		
 		jQuery(function($) {
 			$('#mobile-site').click(function() {
+				if ($('.tooltip_description').is(":visible")) {
+					$("#mobile-site").tooltip("hide");
+				} else {
+					$("#mobile-site").tooltip("show");
+				}
+			});
+			$("#gotoMobile").click(function() {
+				if ($('#remember-choice').is(':checked')) {
+					$.cookie('mobile-redirect', 'YES');
+				} else {
+					$.removeCookie('mobile-redirect');
+				}
 				location.href = "../m/water-quality/";
 			});
-		})
+			$("#notgoMobile").click(function() {
+				if ($('#remember-choice').is(':checked')) {
+					$.cookie('mobile-redirect', 'NO');
+				} else {
+					$.removeCookie('mobile-redirect');
+				}
+				$("#mobile-site").tooltip("hide");
+			});
+		});
 	}
 }

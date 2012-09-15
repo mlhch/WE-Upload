@@ -99,6 +99,14 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
+		if (isset ( $_SERVER ['HTTP_REFERER'] ) && preg_match ( '~/m/water-quality/~', $_SERVER ['HTTP_REFERER'] )) {
+			$_COOKIE ['mobile-redirect'] = '"NO"';
+			setcookie ( 'mobile-redirect', '"NO"' );
+		}
+		if (isset ( $_COOKIE ['mobile-redirect'] ) && $_COOKIE ['mobile-redirect'] == '"YES"') {
+			header ( "Location: ../m/water-quality/" );
+			exit ( 0 );
+		}
 		add_shortcode ( 'water-quality', 'cura_water_quality_main' );
 		add_action ( 'wp_enqueue_scripts', 'cura_main_js_and_css' );
 		
@@ -152,6 +160,15 @@ function cura_main_js_and_css() {
 	 * 'debug/jquery-1.7.2.js'; wp_register_script('jquery', $src);
 	 * wp_enqueue_script('jquery');
 	 */
+	$src = CURAH2O_PLUGIN_URL . 'lib/tooltip/jquery.tooltip.js';
+	wp_register_script ( 'tooltip', $src, array (
+			'jquery' 
+	) );
+	wp_enqueue_script ( 'tooltip' );
+	
+	$src = CURAH2O_PLUGIN_URL . 'lib/tooltip/jquery.tooltip.css';
+	wp_register_style ( 'tooltip', $src );
+	wp_enqueue_style ( 'tooltip' );
 	
 	// main js source
 	$src = CURAH2O_PLUGIN_URL . 'water-quality.js';
