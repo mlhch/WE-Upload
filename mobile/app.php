@@ -95,7 +95,7 @@ div.ui-slider-switch {
 				<li data-role="list-divider" role="heading">Watersheds</li>
 			</ul>
 		</div>
-		<div data-role="footer" class="ui-bar">
+		<div data-role="footer" class="ui-bar" data-position="fixed">
 			<a href="../../water-quality/" rel="external" data-role="button"
 				data-inline="false">Desktop Site</a>
 		</div>
