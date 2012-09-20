@@ -42,6 +42,7 @@
 }
 
 #list-observations li .date {
+	float: right;
 	display: block;
 	color: silver;
 	font-size: 10px;
@@ -271,8 +272,8 @@ for (var i in cura_validation_options.rules) {
 						<option value="Present">Present</option>
 					</select>
 				</div>
-				<input id="save" type="submit" data-icon="check"
-					data-iconpos="right" data-theme="b" value="Submit" />
+				<button id="save" type="submit" data-icon="check"
+					data-iconpos="right" data-theme="b">Submit</button>
 			</form>
 		</div>
 	</div>

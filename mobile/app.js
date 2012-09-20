@@ -205,7 +205,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		
 		$(this).find('#save').click(function() {
 			if (!form.validate().form()) {
-				return;
+				return false;
 			}
 			var params = {}, page = $('#newob');
 			
@@ -228,7 +228,17 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				if (status == 'success') {
 					var result = JSON.parse(data);
 					if (result.error) {
-						alert(result.error);
+						if (typeof result.error == 'string') {
+							alert(result.error);
+						}
+						if (typeof result.error == 'object') {
+							var error = [];
+							for (var i in result.error) {
+								var v = form.find('[name="' + i + '"]').val();
+								error.push(i + ' (' + v + ') : ' + result.error[i]);
+							}
+							alert('Server validation errors:\n\n' + error.join('\n\n'))
+						}
 						return;
 					}
 					if (result.affectedRows) {
@@ -251,6 +261,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 						}
 						
 						currentObservation = result.data;
+						setCache('currentObservation', currentObservation);
 						
 						history.back();
 					} else {
@@ -260,6 +271,8 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					alert('Sorry, the server encountered an error');
 				}
 			});
+			
+			return false;
 		});
 		
 		$.validator.addMethod("secchi_b", function(value, element, param) {
