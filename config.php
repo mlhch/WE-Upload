@@ -101,7 +101,7 @@ $cura_fields = array (
 		array (
 				"field" => "cond",
 				"demo" => "0-1500",
-				"description" => "Specific Conductivity (uS/cm)",
+				"description" => "Cond. (uS/cm)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
@@ -147,7 +147,7 @@ $cura_fields = array (
 								"min" => 4,
 								"max" => 8 
 						),
-						"message" => "A value between 0 and 30" 
+						"message" => "A value between 4 and 8" 
 				) 
 		),
 		array (

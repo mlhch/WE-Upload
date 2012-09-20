@@ -186,6 +186,8 @@ function cura_action_save() {
 	$values = array ();
 	if (empty ( $params ['id'] )) {
 		$result = cura_add_entry ( $params );
+		
+		cura_update_layers ();
 	} else {
 		cura_check_capability ( 'cura-edit' );
 		
@@ -232,6 +234,8 @@ function cura_action_delete() {
 	$row = cura_get_entry ( $id );
 	$affectedRows = cura_delete_entry ( $id );
 	cura_update_location ( $row ['watershed_name'] );
+
+	cura_update_layers ();
 	
 	echo json_encode ( array (
 			'affectedRows' => $affectedRows,

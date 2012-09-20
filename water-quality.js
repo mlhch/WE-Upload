@@ -239,7 +239,7 @@ WaterQuality.prototype = {
 			var html = [];
 			html.push('<tr id="entry-' + row[0] + '" class="' + (odd++ % 2 ? 'odd' : 'even') + '">');
 			for (var i = 0, field; field = visibleFields[i++];) {
-				html.push('<td>' + (row[field[3]] || '') + '</td>');
+				html.push('<td>' + (row[field[3]] !== null ? row[field[3]] : '') + '</td>');
 			}
 			html.push('<td style="padding: 0px; text-align: center">');
 			html.push(
@@ -472,7 +472,7 @@ WaterQuality.prototype = {
 							}
 							
 							if (input.type == 'text') {
-								input.value = row[i] || '';
+								input.value = row[i] !== null ? row[i] : '';
 								input.readOnly = !me.canEdit;
 							} else if (input.type == 'radio') {
 								input.checked = row[i] == input.value;
