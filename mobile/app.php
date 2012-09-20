@@ -119,7 +119,7 @@ for (var i in cura_validation_options.rules) {
 				<li data-role="list-divider" role="heading">Watersheds</li>
 			</ul>
 		</div>
-		<div data-role="footer" class="ui-bar" data-position="fixed">
+		<div data-role="footer" data-position="fixed">
 			<a href="../../water-quality/" rel="external" data-role="button"
 				data-inline="false">Desktop Site</a>
 		</div>

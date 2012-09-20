@@ -105,10 +105,15 @@ function WaterQuality(config) {
 	var me = this;
 	me.loadLocations(null, function() {
 		me.loadData(function() {
+			if (!/mobile/i.test(navigator.userAgent)) {
+				jQuery('.tooltip_description span').hide();
+			}
 			if (!jQuery.cookie('mobile-redirect')) {
-				jQuery( ".tooltip_description" ).dialog({
-					modal: true
-				});
+				if (/mobile/i.test(navigator.userAgent)) {
+					jQuery( ".tooltip_description" ).dialog({
+						modal: true
+					});
+				}
 			} else {
 				jQuery("#remember-choice").attr('checked', 'checked');
 			}
