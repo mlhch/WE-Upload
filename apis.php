@@ -5,17 +5,17 @@
 function cura_services() {
 	$service = cura_get_services ();
 	
-	$servicelist = array ( //
-			array ( //
-					"id" => 1, //
-					"title" => get_option ( 'cura_title' ), //
-					"keywords" => get_option ( 'cura_keywords' ), //
-					"providername" => get_option ( 'cura_providername' ), //
-					"website" => get_option ( 'cura_website' ), //
-					"description" => get_option ( 'cura_description' ), //
-					"authorname" => get_option ( 'cura_title' ), //
-					"title" => get_option ( 'cura_authorname' ), //
-					"type" => get_option ( 'cura_type' ), //
+	$servicelist = array (
+			array (
+					"id" => 1,
+					"title" => get_option ( 'cura_title' ),
+					"keywords" => get_option ( 'cura_keywords' ),
+					"providername" => get_option ( 'cura_providername' ),
+					"website" => get_option ( 'cura_website' ),
+					"description" => get_option ( 'cura_description' ),
+					"authorname" => get_option ( 'cura_title' ),
+					"title" => get_option ( 'cura_authorname' ),
+					"type" => get_option ( 'cura_type' ),
 					"contact" => get_option ( 'cura_contact' ),
 					'time' => array (
 							'begintime' => $service->begintime,
@@ -169,6 +169,20 @@ function cura_action_save() {
 		$params ['datetime'] = date ( 'Y-m-d H:i:s', strtotime ( $params ['datetime'] ) );
 	}
 	
+	include 'lib/Validator.class.php';
+	$asOption = cura_validation_options ();
+	$oValidator = new Validator ( $asOption );
+	$oValidator->addMethod ( "pattern", "cura_validation_pattern" );
+	$oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
+	$oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
+	$errors = $oValidator->validate ( $_POST );
+	if (! empty ( $errors )) {
+		echo json_encode ( array (
+				'error' => $errors 
+		) );
+		exit ();
+	}
+	
 	$values = array ();
 	if (empty ( $params ['id'] )) {
 		$result = cura_add_entry ( $params );
@@ -199,10 +213,10 @@ function cura_action_save() {
 	
 	cura_update_location ( $result ['data'] ['watershed_name'] );
 	
-	echo json_encode ( array ( //
-			'affectedRows' => $result ['affectedRows'], //
-			'id' => $id, //
-			'insertId' => $result ['insertId'], //
+	echo json_encode ( array (
+			'affectedRows' => $result ['affectedRows'],
+			'id' => $id,
+			'insertId' => $result ['insertId'],
 			data => array_values ( $result ['data'] ) 
 	) );
 	exit ();
@@ -219,8 +233,8 @@ function cura_action_delete() {
 	$affectedRows = cura_delete_entry ( $id );
 	cura_update_location ( $row ['watershed_name'] );
 	
-	echo json_encode ( array ( //
-			'affectedRows' => $affectedRows, //
+	echo json_encode ( array (
+			'affectedRows' => $affectedRows,
 			'id' => $id 
 	) );
 	exit ();

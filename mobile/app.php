@@ -64,6 +64,14 @@ div.ui-slider-switch {
 	width: 150px !important;
 	vertical-align: middle;
 }
+
+form input.error {
+	border: 1px solid red
+}
+
+form label.error {
+	color: red;
+}
 </style>
 <script src="<?php echo $jq_src?>"></script>
 <script
@@ -76,6 +84,21 @@ div.ui-slider-switch {
 	src="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.mode.datebox.min.js"></script>
 <script type='text/javascript'
 	src="<?php echo $base_url?>/../lib/bootstrap/typeahead.js"></script>
+<script type='text/javascript'
+	src="<?php echo $base_url?>/../lib/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type='text/javascript'
+	src="<?php echo $base_url?>/../lib/jquery-validation-1.9.0/additional-methods.min.js"></script>
+<script type='text/javascript'>
+var cura_validation_options = <?php echo json_encode( cura_validation_options() )?>;
+for (var i in cura_validation_options.rules) {
+	var rules = cura_validation_options.rules[i];
+	for (var j in rules) {
+		if (j == 'pattern') {
+			rules[j] = new RegExp(rules[j].substr(1, rules[j].length - 2));
+		}
+	}
+}
+</script>
 <script src="<?php echo $base_url?>/app.js"></script>
 </head>
 
@@ -184,7 +207,7 @@ div.ui-slider-switch {
 				</div>
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
-						<label for="textinput12"> Cond. (µS/cm) </label> <input
+						<label for="textinput12"><?php echo $fields['cond'][2]?></label> <input
 							name="cond" id="textinput12" placeholder="0-1500" type="number" />
 					</div>
 					<div class="ui-block-b">
@@ -248,8 +271,8 @@ div.ui-slider-switch {
 						<option value="Present">Present</option>
 					</select>
 				</div>
-				<button id="save" type="button" data-icon="check"
-					data-iconpos="right" data-theme="b">Submit</button>
+				<input id="save" type="submit" data-icon="check"
+					data-iconpos="right" data-theme="b" value="Submit" />
 			</form>
 		</div>
 	</div>

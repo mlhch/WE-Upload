@@ -56,7 +56,7 @@ function cura_form_field($row, $single = false) {
 	} elseif ($row [0] == 'coliform') {
 		?>
 <td class="label"><?php echo $row[2]?></td>
-<td><label><input type="radio" name="<?php echo $row[0]?>"
+<td colspan="3"><label><input type="radio" name="<?php echo $row[0]?>"
 		value="Present" /> Present</label> &nbsp; <label><input type="radio"
 		name="<?php echo $row[0]?>" value="Absent" /> Absent</label></td>
 <?php
@@ -124,7 +124,8 @@ function cura_form_field($row, $single = false) {
 	<p>Looks like you are on a mobile device. Would you like to be directed
 		to the mobile specific version of this page?</p>
 	<p style="margin-bottom: 5px; text-align: right">
-		<label><input type="checkbox" id="remember-choice" /> Remember my choice</label>
+		<label><input type="checkbox" id="remember-choice" /> Remember my
+			choice</label>
 	</p>
 	<p style="margin-bottom: 0px; text-align: center">
 		<button id="gotoMobile">Yes</button>

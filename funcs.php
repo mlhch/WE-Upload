@@ -1,129 +1,47 @@
 <?php
 function cura_fields() {
-	static $fields = null;
+	global $cura_fields;
 	
+	static $fields = null;
 	if ($fields) {
 		return $fields;
 	}
 	
-	$table = array ( //
-			array (
-					"field" => "watershed_name", //
-					"demo" => "",
-					"description" => "Watershed Name",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "station_name", //
-					"demo" => "",
-					"description" => "Station Name",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "location_id", //
-					"demo" => "Letters and numbers without space",
-					"description" => "Location ID",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "datetime", //
-					"demo" => date ( "m/d/Y H:i A" ),
-					"description" => "Date and Time",
-					"visible" => 1 
-			), //
-			array (
-					"field" => "latitude",
-					"demo" => "",
-					"description" => "Latitude" 
-			), //
-			array (
-					"field" => "longitude",
-					"demo" => "",
-					"description" => "Longitude" 
-			), //
-			array (
-					"field" => "do_mgl",
-					"demo" => "0-15",
-					"description" => "DO (mg/L)" 
-			), //
-			array (
-					"field" => "do_%",
-					"demo" => "0-110",
-					"description" => "DO (%) " 
-			), //
-			array (
-					"field" => "cond",
-					"demo" => "0-1500",
-					"description" => "Cond. (µS/cm)" 
-			), //
-			array (
-					"field" => "salinity",
-					"demo" => "0-1",
-					"description" => "Salinity (ppt)" 
-			), //
-			array (
-					"field" => "temp",
-					"demo" => "0-30",
-					"description" => "Temp. (⁰C)" 
-			), //
-			array (
-					"field" => "ph",
-					"demo" => "4-8",
-					"description" => "pH" 
-			), //
-			array (
-					"field" => "secchi_a",
-					"demo" => "0-20",
-					"description" => "Secchi Disc Reading A" 
-			), //
-			array (
-					"field" => "secchi_b",
-					"demo" => "between A+/-2",
-					"description" => "Secchi Disc Reading B" 
-			), //
-			array (
-					"field" => "secchi_d",
-					"demo" => "average A and B",
-					"description" => "Secchi Disc Depth" 
-			), //
-			array (
-					"field" => "lab_sample",
-					"demo" => "",
-					"description" => "Lab Sample" 
-			), //
-			array (
-					"field" => "lab_id",
-					"demo" => "",
-					"description" => "Lab Id" 
-			), //
-			array (
-					"field" => "nitrate",
-					"demo" => "0-40",
-					"description" => "Nitrate Count" 
-			), //
-			array (
-					"field" => "phosphate",
-					"demo" => "0-4",
-					"description" => "Phosphate Count" 
-			), //
-			array (
-					"field" => "coliform",
-					"demo" => "",
-					"description" => "Coliform" 
-			) 
-	); //
-	
 	$fields = array ();
-	foreach ( $table as $i => $row ) {
-		$fields [$row ['field']] = array ( //
-				$row ['field'], //
-				$row ['demo'], //
-				$row ['description'], //
+	foreach ( $cura_fields as $i => $row ) {
+		$fields [$row ['field']] = array (
+				$row ['field'],
+				$row ['demo'],
+				$row ['description'],
 				$i + 1, // a default serial for the UI form
-				isset ( $row ['visible'] ) ? 1 : 0 
+				isset ( $row ['visible'] ) ? 1 : 0,
+				isset ( $row ['pattern'] ) ? $row ['pattern'] : '' 
 		);
 	}
 	return $fields;
+}
+function cura_validation_options() {
+	global $cura_fields;
+	
+	$validation_options = array ();
+	foreach ( $cura_fields as $i => $row ) {
+		if (! empty ( $row ['validation'] )) {
+			$validation_options ['rules'] [$row ['field']] = $row ['validation'] ['rules'];
+			if (! empty ( $row ['validation'] ['message'] )) {
+				$validation_options ['messages'] [$row ['field']] = $row ['validation'] ['message'];
+			}
+		}
+	}
+	return $validation_options;
+}
+function cura_validation_pattern($value, $pattern) {
+	return 0 !== preg_match ( $pattern, $value );
+}
+function cura_validation_secchi_b($value, $ruleParam, $values) {
+	return abs ( $values ['secchi_a'] - $values ['secchi_b'] ) <= 2;
+}
+function cura_validation_secchi_d($value, $ruleParam, $values) {
+	return ($values ['secchi_a'] + $values ['secchi_b']) == ($value + $value);
 }
 /*
  * Service, Layer, Data Call
@@ -219,7 +137,7 @@ function cura_update_layers() {
 	static $ignored_fields = null;
 	
 	if (! isset ( $ignored_fields )) {
-		$ignored_fields = array_flip ( array ( //
+		$ignored_fields = array_flip ( array (
 				'id',
 				'location_id',
 				'station_name',

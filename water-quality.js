@@ -106,7 +106,9 @@ function WaterQuality(config) {
 	me.loadLocations(null, function() {
 		me.loadData(function() {
 			if (!jQuery.cookie('mobile-redirect')) {
-				jQuery("#mobile-site").tooltip("show");
+				jQuery( ".tooltip_description" ).dialog({
+					modal: true
+				});
 			} else {
 				jQuery("#remember-choice").attr('checked', 'checked');
 			}
@@ -125,7 +127,7 @@ WaterQuality.prototype = {
 			$.get("./observations.json", {
 				watershed: watershed_id,
 			}, function (jsonData) {
-				var result = eval('(' + jsonData + ')');
+				var result = JSON.parse( jsonData );
 				
 				me.setFields( result.fields );
 				me.data = result.observations;
@@ -153,7 +155,7 @@ WaterQuality.prototype = {
 			}
 			 
 			$.get('./locations.json', null, function(jsonData) {
-				var data = eval('(' + jsonData + ')').locations;
+				var data = JSON.parse( jsonData ).locations;
 				
 				$(me.filterLocations).empty();
 				for (var i = 0, row; row = data[i++];) {
@@ -309,15 +311,16 @@ WaterQuality.prototype = {
 					size: pagesize || $('.pagesize', me.pager).val(),// .pagesize is loaded after the table render
 					positionFixed: false,
 				}).bind('applyWidgets', function() {
+					var config = this.config, pager = config.container;
+					
 					if (config.totalPages <= 1) {
 						$(me.pager).hide();
 						return;
 					} else {
 						$(me.pager).show();
 					}
-					$.cookie('pagesize', this.config.size);
-					var c = this.config, pager = c.container;
-					if (c.page < 1) {
+					$.cookie('pagesize', config.size);
+					if (config.page < 1) {
 						var img = $(config.cssFirst,pager);
 						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
 						img.attr('src', src);
@@ -534,7 +537,7 @@ WaterQuality.prototype = {
 					.datetimepicker({
 						ampm: true,
 						dateFormat: 'mm/dd/yy',
-						timeFormat: 'h:mm TT'
+						timeFormat: 'hh:mm TT'
 					})
 					.datetimepicker('setDate', new Date());
 			}
@@ -571,7 +574,16 @@ WaterQuality.prototype = {
 				
 				$.post('save.action', $(me.form).serialize(), function(data, status) {
 					if (status == 'success') {
-						var result = eval('(' + data + ')');
+						var result = JSON.parse( data );
+						if (result.error) {
+							var error = [];
+							for (var i in result.error) {
+								var v = $(me.form).find('[name="' + i + '"]').val();
+								error.push(i + ' (' + v + ') : ' + result.error[i]);
+							}
+							alert('Server validation errors:\n\n' + error.join('\n\n'))
+							return;
+						}
 						if (result.affectedRows) {
 							$(me.dialog).dialog( 'close' );
 							
@@ -605,7 +617,7 @@ WaterQuality.prototype = {
 			
 			$.post( 'delete.action', {id: id}, function (data, status) {
 				if (status == 'success') {
-					var result = eval('(' + data + ')');
+					var result = JSON.parse( data );
 					if (result.affectedRows) {
 						$( me.dialog ).dialog( 'close' );
 						alert('Entry ' + result.id + ' deleted');
@@ -634,110 +646,30 @@ WaterQuality.prototype = {
 			}
 			
 			$.validator.addMethod("secchi_b", function(value, element, param) {
-				return param;
-			}, "a value that should not exceed +/- 2 meters from reading A");
-			
-			$(me.form).validate({
-				rules: {
-					location_id: {
-						required: true,
-						pattern: /^[a-z][a-z0-9 ]*$/i,
-					},
-					station_name: {
-						required: true,
-					},
-					watershed_name: {
-						required: true,
-					},
-					datetime: {
-						pattern: /^\d{2}\/\d{2}\/\d{4} \d{1,2}:\d{2} [AP]M$/,
-					},
-					latitude: {
-						pattern: /^(-?(\d|[1-8]\d)(\.\d+)?)$/
-					},
-					longitude: {
-						pattern: /^(-?(\d|[1-9]\d|1[1-7]\d)(\.\d+)?)$/
-					},
-					do_mgl: {
-						pattern: /^((\d|1[0-4])(\.\d+)?|15)$/
-					},
-					"do_%": {
-						pattern: /^((\d|[1-9]\d|10\d)(\.\d+)?|110)$/
-					},
-					cond: {
-						pattern: /^((\d|[1-9]\d{1,2}|1[0-4]\d{2})(\.\d+)?|1500)$/
-					},
-					salinity: {
-						pattern: /^0\.\d+$/
-					},
-					temp: {
-						pattern: /^((\d|[12][0-9])(\.\d+)?|30)$/
-					},
-					ph: {
-						pattern: /^([4-7](\.\d+)?|8)$/
-					},
-					secchi_a: {
-						pattern: /^(([0-9]|1[0-9])(\.\d+)?|20)$/,
-						secchi_b: function(el) {
-							var b = parseFloat($('input[name=secchi_b]', me.form).val());
-							var a = parseFloat(el.value);
-							if (b && a) {
-								$('input[name=secchi_d]').val(a / 2 + b / 2);
-							}
-							return true;
-						}
-					},
-					secchi_b: {
-						secchi_b: function(el) {
-							var a = parseFloat($('input[name=secchi_a]', me.form).val());
-							var b = parseFloat(el.value);
-							
-							if (a && b) {
-								$('input[name=secchi_d]').val(a / 2 + b / 2);
-							}
-							
-							return (!a && el.value == '') || (Math.abs(a - b) <= 2);
-						}
-					},
-					secchi_d: {
-						secchi_b: function(el) {
-							var a = parseFloat($('input[name=secchi_a]', me.form).val());
-							var b = parseFloat($('input[name=secchi_b]', me.form).val());
-							var d = parseFloat($('input[name=secchi_d]', me.form).val());
-							
-							return (!a && !b) || a + b == d + d;
-						}
-					},
-					lab_sample: {
-						pattern: /^[YN]$/
-					},
-					nitrate: {
-						pattern: /^(([0-9]|[1-3][0-9])(\.\d+)?|40)$/
-					},
-					phosphate: {
-						pattern: /^([0-3](\.\d+)?|4)$/
-					},
-					coliform: {
-						pattern: /^(Present|Absent)$/
-					}
-				},
-				messages: {
-					latitude: 'Latitude decimal degrees',
-					longitude: 'Longitude decimal degrees',
-					do_mgl: "Typical observed values range from 0-15 mg/l. Values below 7 are not optimal but should be accepted. D.O. is  obviously dependent on temperature (expect lower values with increased temperatures). ",
-					"do_%": "A value between 0 and 110 calculated based on amount of oxygen in the water at the given temperature",
-					cond: "A value between 0 and 1500",
-					salinity: "A value under 1 in fresh water",
-					temp: "A value between 0 and 30",
-					ph: "A value between 4 and 8",
-					secchi_a: "A value between 0 and 20 meters",
-					secchi_d: "A value which equals the average of reding a and b",
-					lab_id: "Y or N",
-					nitrate: "A value between 0 and 40",
-					phosphate: "A value between 0 and 4",
-					coliform: "Present or Absent",
+				var value_a = $('input[name=secchi_a]').val();
+				var value_b = value;
+				var a = parseFloat(value_a);
+				var b = parseFloat(value_b);
+				
+				if (a && b) {
+					$('input[name=secchi_d]').val(a / 2 + b / 2);
 				}
-			});
+				
+				return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 2);
+			}, cura_validation_options.messages.secchi_b);
+			
+			$.validator.addMethod("secchi_d", function(value, element, param) {
+				var value_a = $('input[name=secchi_a]').val();
+				var value_b = $('input[name=secchi_b]').val();
+				var value_d = $('input[name=secchi_d]').val();
+				var a = parseFloat(value_a);
+				var b = parseFloat(value_b);
+				var d = parseFloat(value_d);
+				
+				return ('' === value_a && '' === value_b) || a + b == d + d;
+			}, cura_validation_options.messages.secchi_d);
+			
+			$(me.form).validate(cura_validation_options);
 		});
 	},
 	clickColumnConfig: function() {
@@ -767,7 +699,7 @@ WaterQuality.prototype = {
 						return that.items;
 					}
 					$.get("./typeaheads.json", null, function(jsonData) {
-						var data = eval('(' + jsonData + ')').typeaheads;
+						var data = JSON.parse( jsonData ).typeaheads;
 						var items = [];
 						for (var i = 0, item; item = data[i++];) {
 							items.push(item[2] + ' (' + item[0] + ', ' + item[1] + ')');
@@ -803,10 +735,16 @@ WaterQuality.prototype = {
 		
 		jQuery(function($) {
 			$('#mobile-site').click(function() {
-				if ($('.tooltip_description').is(":visible")) {
-					$("#mobile-site").tooltip("hide");
+				if (!me.tipDialog) {
+					me.tipDialog = $( ".tooltip_description" ).dialog({
+						modal: true
+					});
 				} else {
-					$("#mobile-site").tooltip("show");
+					if ($(".tooltip_description").dialog('isOpen')) {
+						$( ".tooltip_description" ).dialog('close');
+					} else {
+						$( ".tooltip_description" ).dialog('open');
+					}
 				}
 			});
 			$("#gotoMobile").click(function() {
@@ -823,7 +761,7 @@ WaterQuality.prototype = {
 				} else {
 					$.removeCookie('mobile-redirect');
 				}
-				$("#mobile-site").tooltip("hide");
+				$( ".tooltip_description" ).dialog('close');
 			});
 		});
 	}

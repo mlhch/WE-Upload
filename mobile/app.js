@@ -204,6 +204,9 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		});
 		
 		$(this).find('#save').click(function() {
+			if (!form.validate().form()) {
+				return;
+			}
 			var params = {}, page = $('#newob');
 			
 			params['id'] = page.find('input[name="id"]').val();
@@ -224,6 +227,10 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			$.post(base_url + '/save.action', params, function(data, status) {
 				if (status == 'success') {
 					var result = JSON.parse(data);
+					if (result.error) {
+						alert(result.error);
+						return;
+					}
 					if (result.affectedRows) {
 						if (result.insertId) {
 							alert('Entry ' + result.insertId + ' added');
@@ -254,6 +261,32 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				}
 			});
 		});
+		
+		$.validator.addMethod("secchi_b", function(value, element, param) {
+			var value_a = $('input[name=secchi_a]').val();
+			var value_b = value;
+			var a = parseFloat(value_a);
+			var b = parseFloat(value_b);
+			
+			if (a && b) {
+				$('input[name=secchi_d]').val(a / 2 + b / 2);
+			}
+			
+			return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 2);
+		}, cura_validation_options.messages.secchi_b);
+		
+		$.validator.addMethod("secchi_d", function(value, element, param) {
+			var value_a = $('input[name=secchi_a]').val();
+			var value_b = $('input[name=secchi_b]').val();
+			var value_d = $('input[name=secchi_d]').val();
+			var a = parseFloat(value_a);
+			var b = parseFloat(value_b);
+			var d = parseFloat(value_d);
+			
+			return ('' === value_a && '' === value_b) || a + b == d + d;
+		}, cura_validation_options.messages.secchi_d);
+		
+		$('#newob form').validate(cura_validation_options);
 	});
 	$('#newob').live('pagebeforeshow', function(e, ui) {
 		if (location.hash == '#newob') {

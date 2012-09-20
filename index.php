@@ -59,6 +59,8 @@ define ( 'CURAH2O_TABLE_LOCATION', 'data-entry-location' );
 define ( 'CURAH2O_TABLE_LAYERS', 'data-entry-layers' );
 define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
+include 'config.php';
+
 // //////////////////////////////////////////////////////////
 // //////// hooks
 // //////////////////////////////////////////////////////////
@@ -100,8 +102,8 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
 		if (isset ( $_SERVER ['HTTP_REFERER'] ) && preg_match ( '~/m/water-quality/~', $_SERVER ['HTTP_REFERER'] )) {
-			$_COOKIE ['mobile-redirect'] = '"NO"';
-			setcookie ( 'mobile-redirect', '"NO"' );
+			$_COOKIE ['mobile-redirect'] = '""';
+			setcookie ( 'mobile-redirect', '""' );
 		}
 		if (isset ( $_COOKIE ['mobile-redirect'] ) && $_COOKIE ['mobile-redirect'] == '"YES"') {
 			header ( "Location: ../m/water-quality/" );
@@ -160,15 +162,6 @@ function cura_main_js_and_css() {
 	 * 'debug/jquery-1.7.2.js'; wp_register_script('jquery', $src);
 	 * wp_enqueue_script('jquery');
 	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/tooltip/jquery.tooltip.js';
-	wp_register_script ( 'tooltip', $src, array (
-			'jquery' 
-	) );
-	wp_enqueue_script ( 'tooltip' );
-	
-	$src = CURAH2O_PLUGIN_URL . 'lib/tooltip/jquery.tooltip.css';
-	wp_register_style ( 'tooltip', $src );
-	wp_enqueue_style ( 'tooltip' );
 	
 	// main js source
 	$src = CURAH2O_PLUGIN_URL . 'water-quality.js';
@@ -378,6 +371,15 @@ function cura_main_js_and_css() {
 	padding: 0.5em 1em 0.5em 0;
 }
 
+#form-data-entry td {
+	width: 24%;
+	vertical-align: top;
+}
+
+#form-data-entry td.label {
+	width: 26%;
+}
+
 #form-data-entry input.error {
 	border: 1px solid red
 }
@@ -386,6 +388,25 @@ function cura_main_js_and_css() {
 	color: red;
 }
 </style>
+<?php
+	}
+	/*
+	 * JQuery validation optoins
+	 */
+	add_action ( 'wp_head', 'cura_inline_js', 999 );
+	function cura_inline_js() {
+		?>
+<script type="text/javascript">
+var cura_validation_options = <?php echo json_encode( cura_validation_options() )?>;
+for (var i in cura_validation_options.rules) {
+	var rules = cura_validation_options.rules[i];
+	for (var j in rules) {
+		if (j == 'pattern') {
+			rules[j] = new RegExp(rules[j].substr(1, rules[j].length - 2));
+		}
+	}
+}
+</script>
 <?php
 	}
 }
