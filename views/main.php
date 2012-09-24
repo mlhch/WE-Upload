@@ -125,7 +125,7 @@ function cura_form_field($row, $single = false) {
 		<span>Looks like you are on a mobile device. </span>Would you like to
 		be directed to the mobile specific version of this page?
 	</p>
-	<p style="margin-bottom: 5px; text-align: right">
+	<p style="margin-bottom: 5px; text-align: left">
 		<label><input type="checkbox" id="remember-choice" /> Remember my
 			choice</label>
 	</p>
