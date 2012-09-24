@@ -99,6 +99,7 @@ for (var i in cura_validation_options.rules) {
 		}
 	}
 }
+var observationFields = <?php echo json_encode( cura_fields() )?>;
 </script>
 <script src="<?php echo $base_url?>/app.js"></script>
 </head>

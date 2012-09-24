@@ -9,7 +9,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	var currentWatershed = null;
 	var currentObservation = null;
 	var locationList = null;
-	var observationFields = null;
+	//var observationFields = observationFields || null;
 	var observationItems = {};
 	
 	function getCache(key, defaultValue) {
@@ -249,14 +249,14 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 						}
 						
 						clearCache('locationList');
-						for (var i = 0, row; row = locationList[i++];) {
-							var id = 'observationItems_' + row.id;
-							if (getCache(id)) {
-								clearCache(id);
-								observationItems[row.id] = null;
-							}
-						}
 						if (locationList) {
+							for (var i = 0, row; row = locationList[i++];) {
+								var id = 'observationItems_' + row.id;
+								if (getCache(id)) {
+									clearCache(id);
+									observationItems[row.id] = null;
+								}
+							}
 							locationList = null;
 						}
 						
