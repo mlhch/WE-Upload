@@ -188,55 +188,24 @@ var observationFields = <?php echo json_encode( cura_fields() )?>;
 					</div>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput7"> Latitude </label> <input name="latitude"
-							id="textinput7" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput8"> Longitude </label> <input
-							name="longitude" id="textinput8" type="number" />
-					</div>
+					<?php echo cura_form_field('latitude')?>
+					<?php echo cura_form_field('longitude', 'right')?>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput9"> DO (mg/L) </label> <input name="do_mgl"
-							id="textinput9" placeholder="0-15" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput11"> DO (%) </label> <input name="do_%"
-							id="textinput11" placeholder="0-110" type="number" />
-					</div>
+					<?php echo cura_form_field('do_mgl')?>
+					<?php echo cura_form_field('do_%', 'right')?>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput12"><?php echo $fields['cond'][2]?></label> <input
-							name="cond" id="textinput12" placeholder="0-1500" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput13"> Salinity (ppt) </label> <input
-							name="salinity" id="textinput13" placeholder="0-1" type="number" />
-					</div>
+					<?php echo cura_form_field('cond')?>
+					<?php echo cura_form_field('salinity', 'right')?>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput14"> Temp. (⁰C) </label> <input name="temp"
-							id="textinput14" placeholder="0-30" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput15"> pH </label> <input name="ph"
-							id="textinput15" placeholder="4-8" type="number" />
-					</div>
+					<?php echo cura_form_field('temp')?>
+					<?php echo cura_form_field('ph', 'right')?>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput16"> Secchi Disc Reading A </label> <input
-							name="secchi_a" id="textinput16" placeholder="0-20" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput17"> Secchi Disc Reading B </label> <input
-							name="secchi_b" id="textinput17" placeholder="between A+/-2"
-							value="" type="number" />
-					</div>
+					<?php echo cura_form_field('secchi_a')?>
+					<?php echo cura_form_field('secchi_b', 'right')?>
 				</div>
 				<label for="textinput18"> Secchi Disc Depth </label> <input
 					name="secchi_d" id="textinput18" placeholder="average A and B"
@@ -256,14 +225,8 @@ var observationFields = <?php echo json_encode( cura_fields() )?>;
 					</div>
 				</div>
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label for="textinput20"> Nitrate Count </label> <input
-							name="nitrate" id="textinput20" placeholder="0-40" type="number" />
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput21"> Phosphate Count </label> <input
-							name="phosphate" id="textinput21" placeholder="0-4" type="number" />
-					</div>
+					<?php echo cura_form_field('nitrate')?>
+					<?php echo cura_form_field('phosphate', 'right')?>
 				</div>
 				<div id="div_coliform">
 					<label for="toggleswitch2"> Coliform </label> &nbsp; <select

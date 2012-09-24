@@ -48,28 +48,28 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "latitude",
-				"demo" => "",
+				"demo" => "40 ~ 65",
 				"description" => "Latitude",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
-								"min" => - 90,
-								"max" => 90 
+								"min" => 40,
+								"max" => 65 
 						),
-						"message" => "Latitude decimal degrees, -90 ~ 90" 
+						"message" => "Latitude decimal degrees, 40 ~ 65" 
 				) 
 		),
 		array (
 				"field" => "longitude",
-				"demo" => "",
+				"demo" => "-130 ~ -53",
 				"description" => "Longitude",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
-								"min" => - 180,
-								"max" => 180 
+								"min" => - 130,
+								"max" => - 53
 						),
-						"message" => "Longitude decimal degrees, -180 ~ 180" 
+						"message" => "Longitude decimal degrees, -130 ~ -53" 
 				) 
 		),
 		array (
