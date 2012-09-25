@@ -742,6 +742,7 @@ WaterQuality.prototype = {
 			$('#mobile-site').click(function() {
 				if (!me.tipDialog) {
 					me.tipDialog = $( ".tooltip_description" ).dialog({
+						width: 400,
 						modal: true
 					});
 				} else {

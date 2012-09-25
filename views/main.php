@@ -123,15 +123,15 @@ function cura_form_field($row, $single = false) {
 	style="display: none">
 	<p>
 		<span>Looks like you are on a mobile device. </span>Would you like to
-		be directed to the mobile specific version of this page?
+		be redirected to the site optimized for mobile devices?
 	</p>
-	<p style="margin-bottom: 5px; text-align: left">
+	<p style="margin: 10px; text-align: left">
 		<label><input type="checkbox" id="remember-choice" /> Remember my
-			choice</label>
+			choice on this device</label>
 	</p>
 	<p style="margin-bottom: 0px; text-align: center">
-		<button id="gotoMobile">Yes</button>
-		<button id="notgoMobile">No</button>
+		<button id="gotoMobile" style="padding: 3px 20px; margin: 10px 20px">Yes</button>
+		<button id="notgoMobile" style="padding: 3px 20px; margin: 10px 20px">No</button>
 	</p>
 </div>
 <script type="text/javascript">
