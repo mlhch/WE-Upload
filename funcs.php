@@ -437,21 +437,31 @@ function cura_update_location($watershed_name) {
 		$wpdb->query ( $sql );
 	}
 }
-function cura_get_typeaheads() {
+function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	global $wpdb;
 	
 	$sql = "
 		SELECT	location_id
-				, station_name
-				, watershed_name
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	1
+		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+			AND	station_name = '" . addslashes($station_name) . "'
 		GROUP BY
-				watershed_name, location_id, station_name
+				location_id
 	";
 	return $wpdb->get_results ( $sql, ARRAY_A );
 }
+function cura_get_typeaheads_of_station($watershed_name) {
+	global $wpdb;
 
+	$sql = "
+		SELECT	station_name
+		FROM	`" . CURAH2O_TABLE . "`
+		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+		GROUP BY
+				station_name
+	";
+	return $wpdb->get_results ( $sql, ARRAY_A );
+}
 
 
 

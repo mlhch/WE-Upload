@@ -94,14 +94,16 @@ function cura_json_locations() {
  * Ajax - typeaheads.json
  */
 function cura_json_typeaheads() {
-	$rows = cura_get_typeaheads ();
-	
-	$result = array ();
-	foreach ( $rows as $row ) {
-		$result [] = array_values ( $row );
+	if (isset ( $_REQUEST ['watershed'] ) && isset ( $_REQUEST ['station'] )) {
+		$rows = cura_get_typeaheads_of_locationid ( $_REQUEST ['watershed'], $_REQUEST ['station'] );
+	} elseif (isset ( $_REQUEST ['watershed'] )) {
+		$rows = cura_get_typeaheads_of_station ( $_REQUEST ['watershed'] );
+	} else {
+		$rows = array ();
 	}
+	
 	echo json_encode ( array (
-			'typeaheads' => $result 
+			'typeaheads' => $rows 
 	) );
 	exit ( 0 );
 }
@@ -234,7 +236,7 @@ function cura_action_delete() {
 	$row = cura_get_entry ( $id );
 	$affectedRows = cura_delete_entry ( $id );
 	cura_update_location ( $row ['watershed_name'] );
-
+	
 	cura_update_layers ();
 	
 	echo json_encode ( array (

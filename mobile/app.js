@@ -179,27 +179,73 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	 * New Observation Form
 	 */
 	$('#newob').live('pageinit', function(e, ui) {
-		var form = $(this).find('form');
+		var me = this, form = $(this).find('form');
 		
 		$(this).find("input[name=watershed_name]").typeahead({
 			source: function (query, callback) {
-				$.getJSON(base_url + "/typeaheads.json", function(data) {
-					var data = data.typeaheads;
+				if (locationList) {
 					var items = [];
-					for (var i = 0, item; item = data[i++];) {
-						items.push(item[2] + ' (' + item[0] + ', ' + item[1] + ')');
+					for (var i = 0, row; row = locationList[i++];) {
+						items.push(row['watershed_name']);
+					}
+					
+					callback(items);
+					return;
+				}
+				$.getJSON(base_url + "/locations.json", function(json) {
+					locationList = json.locations;
+					
+					var items = [];
+					for (var i = 0, row; row = locationList[i++];) {
+						items.push(row['watershed_name']);
 					}
 					
 					callback(items);
 				});
-			},
-			updater: function(value) {
-				var m = value.match(/^(.*) \((.*), (.*)\)$/);
+			}
+		});
+		$( "input[name=station_name]", form ).typeahead({
+			source: function (query, callback) {
+				var watershed = $( "input[name=watershed_name]", form ).val();
+				if (watershed.length == 0) {
+					return ;
+				}
 				
-				form.find("input[name=location_id]").val(m[2]);
-				form.find("input[name=station_name]").val(m[3]);
+				me.typeaheadStationItems = me.typeaheadStationItems || {}
+				if (me.typeaheadStationItems[watershed]) {
+					return me.typeaheadStationItems[watershed];
+				}
+				$.getJSON(base_url + "/typeaheads.json?watershed=" + watershed, function(json) {
+					var rows = json.typeaheads, items = [];
+					for (var i = 0, row; row = rows[i++];) {
+						items.push(row.station_name);
+					}
+					me.typeaheadStationItems[watershed] = items;
+					callback(items);
+				});
+			}
+		});
+		$( "input[name=location_id]", me.form ).typeahead({
+			source: function (query, callback) {
+				var watershed = $( "input[name=watershed_name]", form ).val();
+				var station = $( "input[name=station_name]", form ).val();
+				if (watershed.length == 0 || station.length == 0) {
+					return ;
+				}
 				
-				return m[1];
+				me.typeaheadLocationItems = me.typeaheadLocationItems || {};
+				if (me.typeaheadLocationItems[watershed + '-' + station]) {
+					return me.typeaheadLocationItems[watershed + '-' + station];
+				}
+				$.getJSON(base_url + "/typeaheads.json?watershed="
+						+ watershed + '&station=' + station, function(json) {
+					var rows = json.typeaheads, items = [];
+					for (var i = 0, row; row = rows[i++];) {
+						items.push(row.location_id);
+					}
+					me.typeaheadLocationItems[watershed + '-' + station] = items;
+					callback(items);
+				});
 			}
 		});
 		

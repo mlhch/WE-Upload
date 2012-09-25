@@ -151,6 +151,7 @@ WaterQuality.prototype = {
 			});
 		});
 	},
+	locationList: null,
 	loadLocations: function(watershed, callback) {
 		var me = this;
 		
@@ -159,8 +160,9 @@ WaterQuality.prototype = {
 				watershed = $.cookie('watershed');
 			}
 			 
-			$.get('./locations.json', null, function(jsonData) {
-				var data = JSON.parse( jsonData ).locations;
+			$.getJSON('./locations.json', function(json) {
+				var data = json.locations;
+				me.locationList = data;
 				
 				$(me.filterLocations).empty();
 				for (var i = 0, row; row = data[i++];) {
@@ -699,28 +701,73 @@ WaterQuality.prototype = {
 			}
 			$( "input[name=watershed_name]", me.form ).typeahead({
 				source: function (query, callback) {
-					var that = this;
-					if (that.items && !me.refresh) {
-						return that.items;
+					if (me.typeaheadWatershedItems) {
+						return me.typeaheadWatershedItems;
 					}
-					$.get("./typeaheads.json", null, function(jsonData) {
-						var data = JSON.parse( jsonData ).typeaheads;
+					if (me.locationList) {
 						var items = [];
-						for (var i = 0, item; item = data[i++];) {
-							items.push(item[2] + ' (' + item[0] + ', ' + item[1] + ')');
+						for (var i = 0, row; row = me.locationList[i++];) {
+							items.push(row.watershed_name);
 						}
-						that.items = items;
+						me.typeaheadWatershedItems = items;
+						callback(items);
+						return ;
+					}
+					$.getJSON('./locations.json', function(json) {
+						me.locationList = json.locations;
+						
+						var items = [];
+						for (var i = 0, row; row = me.locationList[i++];) {
+							items.push(row.watershed_name);
+						}
+						me.typeaheadWatershedItems = items;
+						callback(items);
+						return ;
+					});
+				}
+			});
+			$( "input[name=station_name]", me.form ).typeahead({
+				source: function (query, callback) {
+					var watershed = $( "input[name=watershed_name]", me.form ).val();
+					if (watershed.length == 0) {
+						return ;
+					}
+					
+					me.typeaheadStationItems = me.typeaheadStationItems || {}
+					if (me.typeaheadStationItems[watershed]) {
+						return me.typeaheadStationItems[watershed];
+					}
+					$.getJSON("./typeaheads.json?watershed=" + watershed, function(json) {
+						var rows = json.typeaheads, items = [];
+						for (var i = 0, row; row = rows[i++];) {
+							items.push(row.station_name);
+						}
+						me.typeaheadStationItems[watershed] = items;
 						callback(items);
 					});
-				},
-				updater: function(value) {
-					var m = value.match(/^(.*) \((.*), (.*)\)$/);
+				}
+			});
+			$( "input[name=location_id]", me.form ).typeahead({
+				source: function (query, callback) {
+					var watershed = $( "input[name=watershed_name]", me.form ).val();
+					var station = $( "input[name=station_name]", me.form ).val();
+					if (watershed.length == 0 || station.length == 0) {
+						return ;
+					}
 					
-					$(me.form).find("input[name=location_id]").val(m[2]);
-					$(me.form).find("input[name=station_name]").val(m[3]);
-					this.items = null;
-					
-					return m[1];
+					me.typeaheadLocationItems = me.typeaheadLocationItems || {};
+					if (me.typeaheadLocationItems[watershed + '-' + station]) {
+						return me.typeaheadLocationItems[watershed + '-' + station];
+					}
+					$.getJSON("./typeaheads.json?watershed="
+							+ watershed + '&station=' + station, function(json) {
+						var rows = json.typeaheads, items = [];
+						for (var i = 0, row; row = rows[i++];) {
+							items.push(row.location_id);
+						}
+						me.typeaheadLocationItems[watershed + '-' + station] = items;
+						callback(items);
+					});
 				}
 			});
 		});
