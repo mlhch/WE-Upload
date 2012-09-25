@@ -443,20 +443,23 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	$sql = "
 		SELECT	location_id
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
-			AND	station_name = '" . addslashes($station_name) . "'
+		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
+			. ($station_name == '' ? '' : "
+			AND	station_name = '" . addslashes($station_name) . "'") . "
 		GROUP BY
 				location_id
 	";
 	return $wpdb->get_results ( $sql, ARRAY_A );
 }
-function cura_get_typeaheads_of_station($watershed_name) {
+function cura_get_typeaheads_of_station($watershed_name, $location_id) {
 	global $wpdb;
 
 	$sql = "
 		SELECT	station_name
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
+			. ($location_id == '' ? '' : "
+			AND	location_id = '" . addslashes($location_id) . "'") . "
 		GROUP BY
 				station_name
 	";

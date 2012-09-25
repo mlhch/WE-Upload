@@ -699,7 +699,8 @@ WaterQuality.prototype = {
 			if (!$().typeahead) {
 				return ;
 			}
-			$( "input[name=watershed_name]", me.form ).typeahead({
+			var form = $(me.form);
+			form.find( "input[name=watershed_name]" ).typeahead({
 				source: function (query, callback) {
 					if (me.typeaheadWatershedItems) {
 						return me.typeaheadWatershedItems;
@@ -726,9 +727,9 @@ WaterQuality.prototype = {
 					});
 				}
 			});
-			$( "input[name=station_name]", me.form ).typeahead({
+			form.find( "input[name=station_name]" ).typeahead({
 				source: function (query, callback) {
-					var watershed = $( "input[name=watershed_name]", me.form ).val();
+					var watershed = $( "input[name=watershed_name]", form ).val();
 					if (watershed.length == 0) {
 						return ;
 					}
@@ -737,7 +738,7 @@ WaterQuality.prototype = {
 					if (me.typeaheadStationItems[watershed]) {
 						return me.typeaheadStationItems[watershed];
 					}
-					$.getJSON("./typeaheads.json?watershed=" + watershed, function(json) {
+					$.getJSON("./typeaheads_station_name.json?watershed=" + watershed, function(json) {
 						var rows = json.typeaheads, items = [];
 						for (var i = 0, row; row = rows[i++];) {
 							items.push(row.station_name);
@@ -745,29 +746,65 @@ WaterQuality.prototype = {
 						me.typeaheadStationItems[watershed] = items;
 						callback(items);
 					});
+				},
+				updater: function(value) {
+					var watershed = form.find( "input[name=watershed_name]" ).val();
+					var station = value;
+					if (watershed.length == 0 || station.length == 0) {
+						return value;
+					}
+					
+					$.getJSON("./typeaheads_location_id.json?watershed="
+							+ watershed + '&station=' + station, function(json) {
+						var rows = json.typeaheads;
+						if (rows.length == 1) {
+							form.find( "input[name=location_id]" ).val(rows[0].location_id);
+						} else {
+							form.find( "input[name=location_id]" ).val('');
+						}
+					});
+					
+					return value;
 				}
 			});
-			$( "input[name=location_id]", me.form ).typeahead({
+			form.find( "input[name=location_id]" ).typeahead({
 				source: function (query, callback) {
-					var watershed = $( "input[name=watershed_name]", me.form ).val();
-					var station = $( "input[name=station_name]", me.form ).val();
-					if (watershed.length == 0 || station.length == 0) {
+					var watershed = form.find( "input[name=watershed_name]" ).val();
+					if (watershed.length == 0) {
 						return ;
 					}
 					
 					me.typeaheadLocationItems = me.typeaheadLocationItems || {};
-					if (me.typeaheadLocationItems[watershed + '-' + station]) {
-						return me.typeaheadLocationItems[watershed + '-' + station];
+					if (me.typeaheadLocationItems[watershed]) {
+						return me.typeaheadLocationItems[watershed];
 					}
-					$.getJSON("./typeaheads.json?watershed="
-							+ watershed + '&station=' + station, function(json) {
+					$.getJSON("./typeaheads_location_id.json?watershed=" + watershed, function(json) {
 						var rows = json.typeaheads, items = [];
 						for (var i = 0, row; row = rows[i++];) {
 							items.push(row.location_id);
 						}
-						me.typeaheadLocationItems[watershed + '-' + station] = items;
+						me.typeaheadLocationItems[watershed] = items;
 						callback(items);
 					});
+				},
+				updater: function(value) {
+					var watershed = form.find( "input[name=watershed_name]" ).val();
+					var location_id = value;
+					if (watershed.length == 0 || location_id.length == 0) {
+						return value;
+					}
+					
+					$.getJSON("./typeaheads_station_name.json?watershed="
+							+ watershed + '&location_id=' + location_id, function(json) {
+						var rows = json.typeaheads;
+						if (rows.length == 1) {
+							form.find( "input[name=station_name]" ).val(rows[0].station_name);
+						} else {
+							form.find( "input[name=station_name]" ).val('');
+						}
+					});
+					
+					return value;
 				}
 			});
 		});

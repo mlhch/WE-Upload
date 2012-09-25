@@ -93,14 +93,20 @@ function cura_json_locations() {
 /*
  * Ajax - typeaheads.json
  */
-function cura_json_typeaheads() {
-	if (isset ( $_REQUEST ['watershed'] ) && isset ( $_REQUEST ['station'] )) {
-		$rows = cura_get_typeaheads_of_locationid ( $_REQUEST ['watershed'], $_REQUEST ['station'] );
-	} elseif (isset ( $_REQUEST ['watershed'] )) {
-		$rows = cura_get_typeaheads_of_station ( $_REQUEST ['watershed'] );
-	} else {
-		$rows = array ();
-	}
+function cura_json_typeaheads_station_name() {
+	$watershed = isset ( $_REQUEST ['watershed'] ) ? $_REQUEST ['watershed'] : '';
+	$location_id = isset ( $_REQUEST ['location_id'] ) ? $_REQUEST ['location_id'] : '';
+	$rows = cura_get_typeaheads_of_station ( $watershed, $location_id );
+	
+	echo json_encode ( array (
+			'typeaheads' => $rows 
+	) );
+	exit ( 0 );
+}
+function cura_json_typeaheads_location_id() {
+	$watershed = isset ( $_REQUEST ['watershed'] ) ? $_REQUEST ['watershed'] : '';
+	$station = isset ( $_REQUEST ['station'] ) ? $_REQUEST ['station'] : '';
+	$rows = cura_get_typeaheads_of_locationid ( $watershed, $station );
 	
 	echo json_encode ( array (
 			'typeaheads' => $rows 
