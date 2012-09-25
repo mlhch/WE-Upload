@@ -101,7 +101,7 @@ $cura_fields = array (
 		array (
 				"field" => "cond",
 				"demo" => "0-1500",
-				"description" => "Cond. (uS/cm)",
+				"description" => "S. Cond. (µS/cm)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,

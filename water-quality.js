@@ -105,11 +105,11 @@ function WaterQuality(config) {
 	var me = this;
 	me.loadLocations(null, function() {
 		me.loadData(function() {
-			if (!/mobile/i.test(navigator.userAgent)) {
+			if (!/mobile|tablet|android/i.test(navigator.userAgent)) {
 				jQuery('.tooltip_description span').hide();
 			}
 			if (!jQuery.cookie('mobile-redirect')) {
-				if (/mobile/i.test(navigator.userAgent)) {
+				if (/mobile|tablet|android/i.test(navigator.userAgent)) {
 					jQuery( ".tooltip_description" ).dialog({
 						modal: true
 					});
