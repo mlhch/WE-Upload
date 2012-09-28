@@ -49,6 +49,11 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		locationList = getCache('locationList', null);
 	});
 	function loadHomePage() {
+		$.mobile.showPageLoadingMsg();
+		var callback = function() {
+			$.mobile.hidePageLoadingMsg();
+		}
+		
 		currentWatershed = null;
 		currentObservation = null;
 		
@@ -59,14 +64,14 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			$.getJSON(base_url + '/locations.json', function(data) {
 				locationList = data.locations;
 				setCache('locationList', locationList);
-				renderLocationList();
+				renderLocationList(callback);
 			});
 		} else {
-			renderLocationList();
+			renderLocationList(callback);
 		}
 	}
 	$('#home').live('pageshow', loadHomePage);
-	function renderLocationList() {
+	function renderLocationList(callback) {
 		var list = $('#list-locations');
 		list.find('li[role!="heading"]').remove();
 		
@@ -80,6 +85,8 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		}
 		
 		list.listview("refresh");
+		
+		$.isFunction(callback) && callback();
 	}
 	
 	/*
@@ -107,11 +114,16 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		currentObservation = null;
 	});
 	$('#observations').live('pageshow', function(e, ui) {
+		$.mobile.showPageLoadingMsg();
+		var callback = function() {
+			$.mobile.hidePageLoadingMsg();
+		}
+		
 		$(this).find('h3').html(currentWatershed.watershed_name);
 		
 		var id = currentWatershed.id;
 		if (observationItems[id] && observationFields) {
-			renderObservationList(observationItems[id], observationFields);
+			renderObservationList(observationItems[id], observationFields, callback);
 		} else {
 			var url = base_url + '/observations.json?watershed=' + id;
 			$.getJSON(url, function(data) {
@@ -119,11 +131,11 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				observationItems[id] = data.observations;
 				setCache('observationFields', observationFields);
 				setCache('observationItems_' + id, observationItems[id]);
-				renderObservationList(observationItems[id], observationFields);
+				renderObservationList(observationItems[id], observationFields, callback);
 			});
 		}
 	})
-	function renderObservationList(rows, fields) {
+	function renderObservationList(rows, fields, callback) {
 		var location_id_index = fields['location_id'][3];
 		var station_name_index = fields['station_name'][3];
 		var datetime_index = fields['datetime'][3];
@@ -142,6 +154,8 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		}
 		
 		list.listview("refresh");
+		
+		$.isFunction(callback) && callback();
 	}
 	
 	/*

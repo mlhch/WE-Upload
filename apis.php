@@ -82,7 +82,7 @@ function cura_json_locations() {
 	if (isset ( $_REQUEST ['refresh'] )) {
 		cura_update_locations ();
 	}
-	
+	sleep(5);
 	$locations = cura_get_locations ();
 	
 	echo json_encode ( array (
