@@ -111,6 +111,7 @@ function WaterQuality(config) {
 			if (!jQuery.cookie('mobile-redirect')) {
 				if (/mobile|tablet|android/i.test(navigator.userAgent)) {
 					jQuery( ".tooltip_description" ).dialog({
+						width: 400,
 						modal: true
 					});
 				}
