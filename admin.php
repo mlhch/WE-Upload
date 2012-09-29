@@ -38,3 +38,12 @@ function cura_page_settings() {
 	
 	include 'views/settings.php';
 }
+
+function cura_install_tables() {
+	global $wpdb;
+
+	include CURAH2O_PLUGIN_DIR . '/tables.php';
+	foreach ($sqls as $sql) {
+		$wpdb->query($sql);
+	}
+}

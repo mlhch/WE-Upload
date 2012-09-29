@@ -4,59 +4,23 @@
  * @version 1.0
  */
 /*
- * Plugin Name: Water Quality Observation Plugin URI:
- * http://curah2o.com/wp-content/plugins/water-quality-observation Description:
- * This is a data-entry point, data access point and SOS endpoint. It will be
- * used by CuraH2O field staff to create, view and export water quality
- * observations. It will expose an SOS endpoint in order to to export data from
- * remote SOS servers like WEHub. Author: Ma Lian Version: 1.0 Author URI:
- * http://mlhch.com
+Plugin Name: Water Quality Observation
+Plugin URI: http://curah2o.com/wp-content/plugins/water-quality-observation
+Description: This is a data-entry point, data access point and SOS endpoint. It will be used by CuraH2O field staff to create, view and export water quality observations. It will expose an SOS endpoint in order to to export data from remote SOS servers like WEHub.
+Author: Ma Lian
+Version: 1.0
+Author URI: malhch@gmail.com
  */
-if (! function_exists ( 'pre' )) {
-	function pre($var, $exit = false) {
-		$s [] = "<xmp>" . gettype ( $var ) . "\n";
-		$s [] = print_r ( $var, 1 );
-		$s [] = "\n";
-		if ($exit && $exit != 2) {
-			$trace = debug_backtrace ();
-			foreach ( $trace as $t ) {
-				$file = @$t ['file'];
-				$line = @$t ['line'];
-				if (in_array ( $t ['function'], array (
-						'require',
-						'require_once',
-						'do_action',
-						'call_user_func_array' 
-				) )) {
-					$args = $t ['args'];
-					$args [0] = preg_replace ( '/.*?wordpress/', '', $args [0] );
-					$s [] = sprintf ( "#%5d $t[function]($args[0]) $file\n", $line );
-				} else {
-					$s [] = sprintf ( "#%5d $t[function]() $file\n", $line );
-				}
-			}
-			$s [] = "</xmp>";
-			echo join ( '', $s );
-			die ( '<hr color="red" />' );
-		}
-		$s [] = "</xmp>";
-		
-		if ($exit == 2) {
-			$GLOBALS ['pre'] = join ( '', $s );
-		} else {
-			echo join ( '', $s );
-		}
-	}
-}
+
 // //////////////////////////////////////////////////////////
 // //////// constants and variables
 // //////////////////////////////////////////////////////////
 define ( 'CURAH2O_VERSION', '1.0' );
 define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );
 define ( 'CURAH2O_PLUGIN_DIR', plugin_dir_path ( __FILE__ ) );
-define ( 'CURAH2O_TABLE', 'data-entry' );
-define ( 'CURAH2O_TABLE_LOCATION', 'data-entry-location' );
-define ( 'CURAH2O_TABLE_LAYERS', 'data-entry-layers' );
+define ( 'CURAH2O_TABLE',			'water_quality' );
+define ( 'CURAH2O_TABLE_LOCATION',	'water_quality_location' );
+define ( 'CURAH2O_TABLE_LAYERS',	'water_quality_layers' );
 define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
 include 'config.php';
@@ -152,9 +116,11 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 if (is_admin ()) {
 	include CURAH2O_PLUGIN_DIR . 'admin.php';
 	// 'Settings' link of plugin
-	add_filter ( "plugin_action_links_'water-quality-observation/index.php'", 'cura_plugin_action_links' );
+	add_filter ( "plugin_action_links_water-quality-observation/index.php", 'cura_plugin_action_links' );
 	// 'Settings' menu of admin page
 	add_action ( 'admin_menu', 'cura_menu' );
+	// When activated, install the tables
+	add_action ( 'activate_water-quality-observation/index.php', 'cura_install_tables' );
 }
 function cura_main_js_and_css() {
 	/*
