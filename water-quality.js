@@ -529,7 +529,7 @@ WaterQuality.prototype = {
 			
 			$( me.dialog ).dialog({
 				title: title || '',
-				width: 600,
+				width: 650,
 				height: 450,
 				zIndex: 99999,
 				buttons: buttons,

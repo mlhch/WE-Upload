@@ -338,12 +338,11 @@ function cura_main_js_and_css() {
 }
 
 #form-data-entry td {
-	width: 24%;
-	vertical-align: top;
+	width: 23%;
 }
 
 #form-data-entry td.label {
-	width: 26%;
+	width: 27%;
 }
 
 #form-data-entry input.error {

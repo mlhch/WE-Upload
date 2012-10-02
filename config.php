@@ -153,7 +153,7 @@ $cura_fields = array (
 		array (
 				"field" => "secchi_a",
 				"placeHolder" => "0 ~ 20",
-				"description" => "Secchi Disc Reading A",
+				"description" => "Secchi Disc Reading A (m)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
@@ -166,7 +166,7 @@ $cura_fields = array (
 		array (
 				"field" => "secchi_b",
 				"placeHolder" => "between A +/- 4",
-				"description" => "Secchi Disc Reading B",
+				"description" => "Secchi Disc Reading B (m)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
@@ -178,7 +178,7 @@ $cura_fields = array (
 		array (
 				"field" => "secchi_d",
 				"placeHolder" => "average A and B",
-				"description" => "Secchi Disc Depth",
+				"description" => "Secchi Disc Depth (m)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
