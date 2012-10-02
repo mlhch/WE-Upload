@@ -602,11 +602,12 @@ WaterQuality.prototype = {
 								alert('Entry ' + result.id + ' updated');
 							}
 							
+							me.clearTypeaheads();
+							
 							var watershed = result.data[me.fields.watershed_name[3]];
 							me.loadLocations(watershed, function() {
 								me.loadData();
 							});
-							me.initEventTypeahead(1);
 						} else {
 							alert('No changes updated');
 						}
@@ -634,9 +635,9 @@ WaterQuality.prototype = {
 						delete me.data[id];
 						$( "#entry-" + id).remove();
 						$( me.table ).trigger( "update" );
-						
+
+						me.clearTypeaheads();
 						me.loadLocations();
-						me.initEventTypeahead(1);
 					} else {
 						alert('Data Entry ' + id + ' does not exist');
 					}
@@ -692,10 +693,6 @@ WaterQuality.prototype = {
 	},
 	initEventTypeahead: function(refresh) {
 		var me = this;
-		if (refresh) {
-			me.refresh = refresh;
-			return;
-		}
 		
 		jQuery(document).ready(function ($) {
 			if (!$().typeahead) {
@@ -825,6 +822,16 @@ WaterQuality.prototype = {
 				}
 			});
 		});
+	},
+	clearTypeaheads: function() {
+		var me = this;
+		me.typeaheadWatershedItems = null;
+
+		me.typeaheadStationItems = null;
+		me.typeaheadStationRows = null;
+		
+		me.typeaheadLocationItems = null;
+		me.typeaheadLocationRows = null;
 	},
 	initEventExport: function() {
 		var me = this;
