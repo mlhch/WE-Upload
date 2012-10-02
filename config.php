@@ -139,15 +139,15 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "ph",
-				"placeHolder" => "4-8",
+				"placeHolder" => "3 ~ 10",
 				"description" => "pH",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
-								"min" => 4,
-								"max" => 8 
+								"min" => 3,
+								"max" => 10
 						),
-						"message" => "A value between 4 and 8" 
+						"message" => "A value between 3 and 10" 
 				) 
 		),
 		array (
