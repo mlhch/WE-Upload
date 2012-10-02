@@ -165,14 +165,14 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "secchi_b",
-				"placeHolder" => "between A+/-2",
+				"placeHolder" => "between A +/- 4",
 				"description" => "Secchi Disc Reading B",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
 								"secchi_b" => true 
 						),
-						"message" => "A value that should not exceed +/- 2 meters from reading A" 
+						"message" => "A value that should not exceed +/- 4 meters from reading A" 
 				) 
 		),
 		array (

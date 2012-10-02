@@ -383,7 +383,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				$('input[name=secchi_d]').val(a / 2 + b / 2);
 			}
 			
-			return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 2);
+			return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 4);
 		}, cura_validation_options.messages.secchi_b);
 		
 		$.validator.addMethod("secchi_d", function(value, element, param) {
