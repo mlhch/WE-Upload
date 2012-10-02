@@ -126,7 +126,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "temp",
-				"placeHolder" => "0-30",
+				"placeHolder" => "0 ~ 30",
 				"description" => "Temp. (⁰C)",
 				"validation" => array (
 						"rules" => array (
@@ -152,7 +152,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "secchi_a",
-				"placeHolder" => "0-20",
+				"placeHolder" => "0 ~ 20",
 				"description" => "Secchi Disc Reading A",
 				"validation" => array (
 						"rules" => array (
@@ -211,7 +211,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "nitrate",
-				"placeHolder" => "0-40",
+				"placeHolder" => "0 ~ 40",
 				"description" => "Nitrate Count",
 				"validation" => array (
 						"rules" => array (
@@ -224,7 +224,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "phosphate",
-				"placeHolder" => "0-4",
+				"placeHolder" => "0 ~ 4",
 				"description" => "Phosphate Count",
 				"validation" => array (
 						"rules" => array (
