@@ -316,10 +316,12 @@ function cura_get_observations($params = array()) {
 	$filters = ( array ) $params ['filters'];
 	$sql_filter = array ();
 	foreach ( $filters as $filter ) {
-		$sql_filter [] = sprintf ( "%s = '%s'", 		//
-		preg_match ( '/([^.]+)\.([^.]+)?/', $filter ['field'], $m ) ? 		//
-		"$m[1].`$m[2]`" : "`$filter[field]`", 		//
-		addslashes ( $filter ['value'] ) );
+		if ($filter ['value']) {
+			$sql_filter [] = sprintf ( "%s = '%s'", 			//
+			preg_match ( '/([^.]+)\.([^.]+)?/', $filter ['field'], $m ) ? 			//
+			"$m[1].`$m[2]`" : "`$filter[field]`", 			//
+			addslashes ( $filter ['value'] ) );
+		}
 	}
 	
 	// The fields order is important

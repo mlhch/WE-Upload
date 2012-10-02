@@ -166,6 +166,7 @@ WaterQuality.prototype = {
 				me.locationList = data;
 				
 				$(me.filterLocations).empty();
+				$(me.filterLocations).append('<option value="">View All</option>');
 				for (var i = 0, row; row = data[i++];) {
 					$(me.filterLocations).append('<option value="'
 						+ row.id + '"'
@@ -321,7 +322,7 @@ WaterQuality.prototype = {
 				}).bind('applyWidgets', function() {
 					var config = this.config, pager = config.container;
 					
-					if (config.totalPages <= 1) {
+					if (config.totalPages <= 1 && $(me.filterLocations).val()) {
 						$(me.pager).hide();
 						return;
 					} else {
@@ -345,7 +346,7 @@ WaterQuality.prototype = {
 						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
 						img.attr('src', src);
 					}
-					if (c.page >= c.totalPages - 1) {
+					if (config.page >= config.totalPages - 1) {
 						var img = $(config.cssLast,pager);
 						var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
 						img.attr('src', src);
