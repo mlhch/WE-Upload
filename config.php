@@ -113,15 +113,15 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "salinity",
-				"placeHolder" => "0-1",
+				"placeHolder" => "0 ~ 55",
 				"description" => "Salinity (ppt)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
 								"min" => 0,
-								"max" => 1 
+								"max" => 55 
 						),
-						"message" => "A value between 0 and 1" 
+						"message" => "A value between 0 and 55" 
 				) 
 		),
 		array (
