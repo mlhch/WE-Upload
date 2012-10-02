@@ -63,7 +63,7 @@ function cura_form_field($row, $single = false) {
 	} else {
 		?>
 <td class="label"><?php echo $row[2]?></td>
-<td <?php echo $single ? 'colspan="3"' : ''?>><input class="field"
+<td style="vertical-align: top" <?php echo $single ? 'colspan="3"' : ''?>><input class="field"
 	type="text" name="<?php echo $row[0]?>"
 	placeHolder="<?php echo $row[1]?>" style="width: 100%" /></td>
 <?php

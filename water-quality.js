@@ -735,7 +735,8 @@ WaterQuality.prototype = {
 						return ;
 					}
 					
-					me.typeaheadStationItems = me.typeaheadStationItems || {}
+					me.typeaheadStationItems = me.typeaheadStationItems || {};
+					me.typeaheadStationRows = me.typeaheadStationRows || {};
 					if (me.typeaheadStationItems[watershed]) {
 						return me.typeaheadStationItems[watershed];
 					}
@@ -745,6 +746,7 @@ WaterQuality.prototype = {
 							items.push(row.station_name);
 						}
 						me.typeaheadStationItems[watershed] = items;
+						me.typeaheadStationRows[watershed] = rows;
 						callback(items);
 					});
 				},
@@ -760,6 +762,8 @@ WaterQuality.prototype = {
 						var rows = json.typeaheads;
 						if (rows.length == 1) {
 							form.find( "input[name=location_id]" ).val(rows[0].location_id);
+							form.find( "input[name=latitude]" ).val(rows[0].latitude).attr('readOnly', true);
+							form.find( "input[name=longitude]" ).val(rows[0].longitude).attr('readOnly', true);
 						} else {
 							form.find( "input[name=location_id]" ).val('');
 						}
@@ -776,6 +780,7 @@ WaterQuality.prototype = {
 					}
 					
 					me.typeaheadLocationItems = me.typeaheadLocationItems || {};
+					me.typeaheadLocationRows = me.typeaheadLocationRows || {};
 					if (me.typeaheadLocationItems[watershed]) {
 						return me.typeaheadLocationItems[watershed];
 					}
@@ -785,6 +790,7 @@ WaterQuality.prototype = {
 							items.push(row.location_id);
 						}
 						me.typeaheadLocationItems[watershed] = items;
+						me.typeaheadLocationRows[watershed] = rows;
 						callback(items);
 					});
 				},
@@ -793,6 +799,15 @@ WaterQuality.prototype = {
 					var location_id = value;
 					if (watershed.length == 0 || location_id.length == 0) {
 						return value;
+					}
+					
+					if (me.typeaheadLocationRows[watershed]) {
+						for (var i = 0, row; row = me.typeaheadLocationRows[watershed][i++];) {
+							if (row.location_id == value) {
+								form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', true);
+								form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', true);
+							}
+						}
 					}
 					
 					$.getJSON("./typeaheads_station_name.json?watershed="

@@ -343,6 +343,7 @@ function cura_main_js_and_css() {
 
 #form-data-entry td.label {
 	width: 27%;
+	vertical-align: top;
 }
 
 #form-data-entry input.error {

@@ -442,6 +442,8 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	
 	$sql = "
 		SELECT	location_id
+				, latitude
+				, longitude
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
 			. ($station_name == '' ? '' : "
@@ -456,6 +458,8 @@ function cura_get_typeaheads_of_station($watershed_name, $location_id) {
 
 	$sql = "
 		SELECT	station_name
+				, latitude
+				, longitude
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
 			. ($location_id == '' ? '' : "
