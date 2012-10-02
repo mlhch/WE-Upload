@@ -3,7 +3,7 @@ global $cura_fields;
 $cura_fields = array (
 		array (
 				"field" => "watershed_name",
-				"demo" => "",
+				"placeHolder" => "",
 				"description" => "Watershed Name",
 				"visible" => 1,
 				"validation" => array (
@@ -14,7 +14,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "station_name",
-				"demo" => "",
+				"placeHolder" => "",
 				"description" => "Station Name",
 				"visible" => 1,
 				"validation" => array (
@@ -25,7 +25,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "location_id",
-				"demo" => "Letters and numbers",
+				"placeHolder" => "Letters and numbers",
 				"description" => "Location ID",
 				"visible" => 1,
 				"validation" => array (
@@ -36,7 +36,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "datetime",
-				"demo" => date ( "m/d/Y H:i A" ),
+				"placeHolder" => date ( "m/d/Y H:i A" ),
 				"description" => "Date and Time",
 				"visible" => 1,
 				"validation" => array (
@@ -48,7 +48,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "latitude",
-				"demo" => "40 ~ 65",
+				"placeHolder" => "40 ~ 65",
 				"description" => "Latitude",
 				"validation" => array (
 						"rules" => array (
@@ -61,7 +61,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "longitude",
-				"demo" => "-130 ~ -53",
+				"placeHolder" => "-130 ~ -53",
 				"description" => "Longitude",
 				"validation" => array (
 						"rules" => array (
@@ -74,7 +74,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "do_mgl",
-				"demo" => "0-15",
+				"placeHolder" => "0-15",
 				"description" => "DO (mg/L)",
 				"validation" => array (
 						"rules" => array (
@@ -87,7 +87,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "do_%",
-				"demo" => "0-110",
+				"placeHolder" => "0-110",
 				"description" => "DO (%) ",
 				"validation" => array (
 						"rules" => array (
@@ -100,20 +100,20 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "cond",
-				"demo" => "0-1500",
+				"placeHolder" => "0 ~ 55000",
 				"description" => "S. Cond. (µS/cm)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
 								"min" => 0,
-								"max" => 1500 
+								"max" => 55000 
 						),
-						"message" => "A value between 0 and 1500" 
+						"message" => "A value between 0 and 55000" 
 				) 
 		),
 		array (
 				"field" => "salinity",
-				"demo" => "0-1",
+				"placeHolder" => "0-1",
 				"description" => "Salinity (ppt)",
 				"validation" => array (
 						"rules" => array (
@@ -126,7 +126,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "temp",
-				"demo" => "0-30",
+				"placeHolder" => "0-30",
 				"description" => "Temp. (⁰C)",
 				"validation" => array (
 						"rules" => array (
@@ -139,7 +139,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "ph",
-				"demo" => "4-8",
+				"placeHolder" => "4-8",
 				"description" => "pH",
 				"validation" => array (
 						"rules" => array (
@@ -152,7 +152,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "secchi_a",
-				"demo" => "0-20",
+				"placeHolder" => "0-20",
 				"description" => "Secchi Disc Reading A",
 				"validation" => array (
 						"rules" => array (
@@ -165,7 +165,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "secchi_b",
-				"demo" => "between A+/-2",
+				"placeHolder" => "between A+/-2",
 				"description" => "Secchi Disc Reading B",
 				"validation" => array (
 						"rules" => array (
@@ -177,7 +177,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "secchi_d",
-				"demo" => "average A and B",
+				"placeHolder" => "average A and B",
 				"description" => "Secchi Disc Depth",
 				"validation" => array (
 						"rules" => array (
@@ -189,7 +189,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "lab_sample",
-				"demo" => "",
+				"placeHolder" => "",
 				"description" => "Lab Sample",
 				"validation" => array (
 						"rules" => array (
@@ -200,7 +200,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "lab_id",
-				"demo" => "",
+				"placeHolder" => "",
 				"description" => "Lab Id",
 				"validation" => array (
 						"rules" => array (
@@ -211,7 +211,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "nitrate",
-				"demo" => "0-40",
+				"placeHolder" => "0-40",
 				"description" => "Nitrate Count",
 				"validation" => array (
 						"rules" => array (
@@ -224,7 +224,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "phosphate",
-				"demo" => "0-4",
+				"placeHolder" => "0-4",
 				"description" => "Phosphate Count",
 				"validation" => array (
 						"rules" => array (
@@ -237,7 +237,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "coliform",
-				"demo" => "",
+				"placeHolder" => "",
 				"description" => "Coliform",
 				"validation" => array (
 						"rules" => array (

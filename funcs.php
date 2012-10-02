@@ -11,7 +11,7 @@ function cura_fields() {
 	foreach ( $cura_fields as $i => $row ) {
 		$fields [$row ['field']] = array (
 				$row ['field'],
-				$row ['demo'],
+				$row ['placeHolder'],
 				$row ['description'],
 				$i + 1, // a default serial for the UI form
 				isset ( $row ['visible'] ) ? 1 : 0,
