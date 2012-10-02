@@ -74,7 +74,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "do_mgl",
-				"placeHolder" => "0-15",
+				"placeHolder" => "0 ~ 15",
 				"description" => "DO (mg/L)",
 				"validation" => array (
 						"rules" => array (
@@ -87,15 +87,15 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "do_%",
-				"placeHolder" => "0-110",
+				"placeHolder" => "1 ~ 120",
 				"description" => "DO (%) ",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
-								"min" => 0,
-								"max" => 110 
+								"min" => 1,
+								"max" => 120 
 						),
-						"message" => "A value between 0 and 110 calculated based on amount of oxygen in the water at the given temperature" 
+						"message" => "A value between 0 and 120 calculated based on amount of oxygen in the water at the given temperature" 
 				) 
 		),
 		array (
