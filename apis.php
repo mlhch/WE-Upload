@@ -142,11 +142,17 @@ function cura_json_observations() {
 	);
 	
 	if (isset ( $_REQUEST ['export'] )) {
-		header ( "Content-type:text/csv;charset=utf-8" );
-		header ( "content-Disposition:filename=WaterQualityObservations-" . urlencode ( $watershed_name ) . ".csv" );
+		$location = cura_get_location ( $id );
+		$name = $location ? urlencode ( $location->watershed_name ) : 'All';
+		header ( "Content-Type:text/csv;charset=utf-8" );
+		header ( 'Content-Description: File Transfer' );
+		header ( "content-Disposition: attachment; filename=WaterQuality-$name.csv" );
+		header ( 'Content-Transfer-Encoding: binary' );
 		$fp = fopen ( 'php://output', 'w' );
 		
-		$headers = array ();
+		$headers = array (
+				"id" 
+		);
 		foreach ( $fields as $row ) {
 			$headers [] = $row [2];
 		}

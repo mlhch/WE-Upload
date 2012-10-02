@@ -354,6 +354,24 @@ function cura_get_observations($params = array()) {
 	
 	return $objs;
 }
+function cura_get_location($id) {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	id, watershed_name, count
+		FROM	`" . CURAH2O_TABLE_LOCATION . "`
+		WHERE	id = " . intval ( $id ) . "
+		ORDER BY
+				watershed_name
+	";
+	$row = $wpdb->get_row ( $sql );
+	
+	if ($row) {
+		$row->id = intval ( $row->id );
+		$row->count = intval ( $row->count );
+	}
+	return $row;
+}
 function cura_get_locations() {
 	global $wpdb;
 	
@@ -447,9 +465,8 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 				, latitude
 				, longitude
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
-			. ($station_name == '' ? '' : "
-			AND	station_name = '" . addslashes($station_name) . "'") . "
+		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($station_name == '' ? '' : "
+			AND	station_name = '" . addslashes ( $station_name ) . "'") . "
 		GROUP BY
 				location_id
 	";
@@ -457,15 +474,14 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 }
 function cura_get_typeaheads_of_station($watershed_name, $location_id) {
 	global $wpdb;
-
+	
 	$sql = "
 		SELECT	station_name
 				, latitude
 				, longitude
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'"
-			. ($location_id == '' ? '' : "
-			AND	location_id = '" . addslashes($location_id) . "'") . "
+		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($location_id == '' ? '' : "
+			AND	location_id = '" . addslashes ( $location_id ) . "'") . "
 		GROUP BY
 				station_name
 	";
