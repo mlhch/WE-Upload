@@ -1,5 +1,5 @@
 <div style="float: left;">
-	Select Watershed: <select id="filter-locations"
+	<select id="filter-locations"
 		class="ui-button ui-widget ui-state-default ui-corner-all"
 		style="font-size: 12px; height: 30px; width: 300px"></select>
 </div>
@@ -63,7 +63,8 @@ function cura_form_field($row, $single = false) {
 	} else {
 		?>
 <td class="label"><?php echo $row[2]?></td>
-<td style="vertical-align: top" <?php echo $single ? 'colspan="3"' : ''?>><input class="field"
+<td style="vertical-align: top"
+	<?php echo $single ? 'colspan="3"' : ''?>><input class="field"
 	type="text" name="<?php echo $row[0]?>"
 	placeHolder="<?php echo $row[1]?>" style="width: 100%" /></td>
 <?php

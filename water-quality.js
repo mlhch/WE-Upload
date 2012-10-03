@@ -101,24 +101,22 @@ function WaterQuality(config) {
 	this.initEventTypeahead();
 	this.initEventExport();
 	this.initEventMobileSite();
-	
+
 	var me = this;
 	me.loadLocations(null, function() {
-		me.loadData(function() {
-			if (!/mobile|tablet|android/i.test(navigator.userAgent)) {
-				jQuery('.tooltip_description span').hide();
+		if (!/mobile|tablet|android/i.test(navigator.userAgent)) {
+			jQuery('.tooltip_description span').hide();
+		}
+		if (!jQuery.cookie('mobile-redirect')) {
+			if (/mobile|tablet|android/i.test(navigator.userAgent)) {
+				jQuery(".tooltip_description").dialog({
+					width : 400,
+					modal : true
+				});
 			}
-			if (!jQuery.cookie('mobile-redirect')) {
-				if (/mobile|tablet|android/i.test(navigator.userAgent)) {
-					jQuery( ".tooltip_description" ).dialog({
-						width: 400,
-						modal: true
-					});
-				}
-			} else {
-				jQuery("#remember-choice").attr('checked', 'checked');
-			}
-		});
+		} else {
+			jQuery("#remember-choice").attr('checked', 'checked');
+		}
 	});
 }
 
@@ -155,41 +153,36 @@ WaterQuality.prototype = {
 	locationList: null,
 	loadLocations: function(watershed, callback) {
 		var me = this;
-		
-		jQuery( function ($) {
-			if (!watershed && $.cookie) {
-				watershed = $.cookie('watershed');
-			}
-			 
+
+		jQuery(function($) {
 			$.getJSON('./locations.json', function(json) {
 				var data = json.locations;
 				me.locationList = data;
-				
+
 				$(me.filterLocations).empty();
-				$(me.filterLocations).append('<option value="">View All</option>');
-				for (var i = 0, row; row = data[i++];) {
-					$(me.filterLocations).append('<option value="'
-						+ row.id + '"'
-						+ (row.id == watershed || row.watershed_name == watershed
-								? ' selected="selected"' : '')
-						+ '>'
-						+ row.watershed_name + ' / ' + row.count + '</option>');
+				$(me.filterLocations).append(
+						'<option> - Select Watershed - </option>');
+				$(me.filterLocations).append(
+						'<option value="">View All</option>');
+				for ( var i = 0, row; row = data[i++];) {
+					$(me.filterLocations).append(
+							'<option value="' + row.id + '">'
+									+ row.watershed_name + ' / ' + row.count
+									+ '</option>');
 				}
-				
 				$.isFunction(callback) && callback();
 			});
 		});
 	},
 	clickFilterLocation: function() {
 		var me = this;
-		
-		jQuery(function ($) {
+
+		jQuery(function($) {
 			$(me.filterLocations).change(function() {
-				var watershed = $(me.filterLocations).val();
-				$.cookie('watershed', watershed);
-				me.loadData();
+				if (this.selectedIndex != 0) {
+					me.loadData();
+				}
 			});
-			
 		});
 	},
 	setFields: function( serverFields ) {
