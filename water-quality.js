@@ -458,9 +458,15 @@ WaterQuality.prototype = {
 			})
 			
 			$(me.table).click(function(e) {
-				var el = e.srcElement || e.target;
-				if (el.parentNode.tagName == 'BUTTON') {
-					var tr = el.parentNode.parentNode.parentNode;
+				var el = e.srcElement || e.target, tr;
+				// for IE10, el is the BUTTON
+				if (el.tagName == 'BUTTON') {
+					tr = el.parentNode.parentNode;
+				// for chrome etc., el is the SPAN
+				} else if (el.parentNode.tagName == 'BUTTON') {
+					tr = el.parentNode.parentNode.parentNode;
+				}
+				if (tr) {
 					$('td', tr).css('background-color', 'lightblue');
 					var id = tr.id.substr(6);
 					var row = me.data[id];
