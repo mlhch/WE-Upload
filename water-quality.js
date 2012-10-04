@@ -252,6 +252,16 @@ WaterQuality.prototype = {
 			html.push('</tr>');
 			this.tbody.insertAdjacentHTML('beforeEnd', html.join(''));
 		}
+		
+		if (odd == 1) {
+			var html = [];
+			html.push('<tr>');
+			for (var i = 0, field; field = visibleFields[i++];) {
+				html.push('<td>&nbsp;</td>');
+			}
+			html.push('<td>&nbsp;</tr>');
+			this.tbody.insertAdjacentHTML('beforeEnd', html.join(''));
+		}
 	},
 	clearTable: function () {
 		while (this.thead.rows.length) {
