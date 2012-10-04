@@ -353,6 +353,16 @@ function cura_main_js_and_css() {
 #form-data-entry label.error {
 	color: red;
 }
+
+#message {
+	display: none;
+	position: absolute;
+	z-index: 100000;
+	width: auto;
+	border: 1px solid green;
+	background-color: lightgreen;
+	padding: 1em;
+}
 </style>
 <?php
 	}

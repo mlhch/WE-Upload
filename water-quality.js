@@ -120,6 +120,9 @@ function WaterQuality(config) {
 	});
 	
 	me.renderFieldsSettings();
+	
+	me.showObservationTable();
+	me.enableTableSorter();
 }
 
 WaterQuality.prototype = {
@@ -140,8 +143,7 @@ WaterQuality.prototype = {
 					me.clearTable();
 					alert('No data entries available');
 				} else {
-					me.showOriginalTable();
-					me.enableTableSorter();
+					me.showObservationTable();
 				}
 				
 				$.isFunction(callback) && callback();
@@ -164,7 +166,8 @@ WaterQuality.prototype = {
 						'<option value="">View All</option>');
 				for ( var i = 0, row; row = data[i++];) {
 					$(me.filterLocations).append(
-							'<option value="' + row.id + '">'
+							'<option value="' + row.id + '"'
+									+ (row.watershed_name == watershed ? ' selected="selected"' : '') + '>'
 									+ row.watershed_name + ' / ' + row.count
 									+ '</option>');
 				}
@@ -219,9 +222,7 @@ WaterQuality.prototype = {
 		}
 		ul.innerHTML = html.join('');
 	},
-	showOriginalTable: function() {
-		if (!this.data) return;
-		
+	showObservationTable: function() {
 		this.clearTable();
 		visibleFields = this.getVisibleFields();
 		
@@ -294,8 +295,6 @@ WaterQuality.prototype = {
 			}
 			
 			if ($.tablesorter) {
-				if (!me.data) return;
-				
 				$( me.table ).tablesorter({
 					headers: headers,
 					sortList: sortList || [],
@@ -308,8 +307,6 @@ WaterQuality.prototype = {
 			}
 		});
 		jQuery(document).ready(function ($) {
-			if (!me.data) return;
-			
 			var pagesize = $.cookie('pagesize');
 			pagesize && $('.pagesize', me.pager).val(pagesize);
 			
@@ -397,8 +394,7 @@ WaterQuality.prototype = {
 						$.cookie('fields', fields);
 					}
 					
-					me.showOriginalTable();
-					me.enableTableSorter();
+					me.showObservationTable();
 				}
 			});
 		});
@@ -417,7 +413,7 @@ WaterQuality.prototype = {
 							thList.push([th.id, sortList[i][1]]);
 						}
 						
-						me.showOriginalTable();
+						me.showObservationTable();
 						
 						sortList = [];
 						for (var i = 0; i < thList.length; i++) {
@@ -425,8 +421,6 @@ WaterQuality.prototype = {
 							sortList.push([document.getElementById(th[0]).cellIndex, th[1]]);
 						}
 						$.cookie('sortList', sortList);
-						
-						me.enableTableSorter();
 						
 						var fields = [];
 						$( 'input', me.selector ).each(function(i, ckb) {
@@ -595,16 +589,17 @@ WaterQuality.prototype = {
 								var v = $(me.form).find('[name="' + i + '"]').val();
 								error.push(i + ' (' + v + ') : ' + result.error[i]);
 							}
-							alert('Server validation errors:\n\n' + error.join('\n\n'))
+							me.displayMessage('Server validation errors:\n\n' + error.join('\n\n'))
 							return;
 						}
+						
 						if (result.affectedRows) {
 							$(me.dialog).dialog( 'close' );
 							
 							if (result.insertId) {
-								alert('Entry ' + result.insertId + ' added');
+								me.displayMessage('Entry ' + result.insertId + ' added');
 							} else {
-								alert('Entry ' + result.id + ' updated');
+								me.displayMessage('Entry ' + result.id + ' updated');
 							}
 							
 							me.clearTypeaheads();
@@ -614,13 +609,27 @@ WaterQuality.prototype = {
 								me.loadData();
 							});
 						} else {
-							alert('No changes updated');
+							me.displayMessage('No changes updated')
+							$(me.dialog).dialog( 'close' );
 						}
 					} else {
-						alert('Sorry, the server encountered an error');
+						me.displayMessage('Sorry, the server encountered an error');
 					}
 				});
 			}
+		});
+	},
+	
+	displayMessage: function(messageText) {
+		jQuery(document).ready(function($) {
+			if ($('#message').length == 0) {
+				$('<div id="message"></div>').appendTo('body');
+			}
+
+			$('#message').html(messageText).show().position({
+				at : 'top center',
+				of : window
+			}).fadeOut(5000);
 		});
 	},
 	
@@ -635,19 +644,19 @@ WaterQuality.prototype = {
 					var result = JSON.parse( data );
 					if (result.affectedRows) {
 						$( me.dialog ).dialog( 'close' );
-						alert('Entry ' + result.id + ' deleted');
+						me.displayMessage('Entry ' + result.id + ' deleted');
 						
 						delete me.data[id];
 						$( "#entry-" + id).remove();
 						$( me.table ).trigger( "update" );
-
+						
 						me.clearTypeaheads();
 						me.loadLocations();
 					} else {
-						alert('Data Entry ' + id + ' does not exist');
+						me.displayMessage('Data Entry ' + id + ' does not exist');
 					}
 				} else {
-					alert('Sorry, the server encountered an error');
+					me.displayMessage('Sorry, the server encountered an error');
 				}
 			});
 		});
