@@ -118,6 +118,8 @@ function WaterQuality(config) {
 			jQuery("#remember-choice").attr('checked', 'checked');
 		}
 	});
+	
+	me.renderFieldsSettings();
 }
 
 WaterQuality.prototype = {
@@ -132,11 +134,7 @@ WaterQuality.prototype = {
 				watershed: watershed_id,
 			}, function (jsonData) {
 				var result = JSON.parse( jsonData );
-				
-				me.setFields( result.fields );
 				me.data = result.observations;
-				
-				me.renderFieldsSettings();
 				
 				if ( me.data instanceof Array && !me.data.length ) {
 					me.clearTable();
@@ -208,6 +206,8 @@ WaterQuality.prototype = {
 		this.fields = fields;
 	},
 	renderFieldsSettings: function() {
+		this.setFields( this.fields );
+		
 		var html = [], ul = this.selector, fields = this.fields;
 		for (var i in fields) {
 			var field = fields[i];
@@ -220,6 +220,8 @@ WaterQuality.prototype = {
 		ul.innerHTML = html.join('');
 	},
 	showOriginalTable: function() {
+		if (!this.data) return;
+		
 		this.clearTable();
 		visibleFields = this.getVisibleFields();
 		
@@ -292,6 +294,8 @@ WaterQuality.prototype = {
 			}
 			
 			if ($.tablesorter) {
+				if (!me.data) return;
+				
 				$( me.table ).tablesorter({
 					headers: headers,
 					sortList: sortList || [],
@@ -304,6 +308,8 @@ WaterQuality.prototype = {
 			}
 		});
 		jQuery(document).ready(function ($) {
+			if (!me.data) return;
+			
 			var pagesize = $.cookie('pagesize');
 			pagesize && $('.pagesize', me.pager).val(pagesize);
 			

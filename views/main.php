@@ -137,6 +137,7 @@ function cura_form_field($row, $single = false) {
 </div>
 <script type="text/javascript">
 new WaterQuality({
+	fields: <?php echo $fields ? json_encode($fields) : '{}'?>,
 	btnAddNew: document.getElementById('new-data-entry'),
 	selector: document.getElementById('fields-selector'),
 	form: document.getElementById('form-data-entry'),
