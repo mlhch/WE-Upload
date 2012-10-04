@@ -72,6 +72,8 @@ function cura_form_field($row, $single = false) {
 }
 ?>
 <div id="dialog-data-entry" style="display: none; margin: 10px 0 -3px">
+	<a id="catch-dialog-focus" href="#"
+		style="position: absolute; left: -10000px">.</a>
 	<form id="form-data-entry" method="post">
 		<input class="field" type="hidden" name="id" />
 		<table style="width: 100%;">
