@@ -656,12 +656,13 @@ WaterQuality.prototype = {
 						$( me.dialog ).dialog( 'close' );
 						me.displayMessage('Entry ' + result.id + ' deleted');
 						
+						var watershed = me.data[id][me.fields.watershed_name[3]]
 						delete me.data[id];
 						$( "#entry-" + id).remove();
 						$( me.table ).trigger( "update" );
 						
 						me.clearTypeaheads();
-						me.loadLocations();
+						me.loadLocations(watershed);
 					} else {
 						me.displayMessage('Data Entry ' + id + ' does not exist');
 					}
