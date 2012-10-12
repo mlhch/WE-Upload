@@ -794,11 +794,14 @@ WaterQuality.prototype = {
 							+ watershed + '&station=' + station, function(json) {
 						var rows = json.typeaheads;
 						if (rows.length == 1) {
-							form.find( "input[name=location_id]" ).val(rows[0].location_id);
-							form.find( "input[name=latitude]" ).val(rows[0].latitude).attr('readOnly', true);
-							form.find( "input[name=longitude]" ).val(rows[0].longitude).attr('readOnly', true);
+							var row = rows[0];
+							form.find( "input[name=location_id]" ).val(row.location_id);
+							form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', row.latitude !== null);
+							form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', row.longitude !== null);
 						} else {
 							form.find( "input[name=location_id]" ).val('');
+							form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', false);
+							form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', false);
 						}
 					});
 					
@@ -835,10 +838,12 @@ WaterQuality.prototype = {
 					}
 					
 					if (me.typeaheadLocationRows[watershed]) {
+						form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
+						form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
 						for (var i = 0, row; row = me.typeaheadLocationRows[watershed][i++];) {
 							if (row.location_id == value) {
-								form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', true);
-								form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', true);
+								form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', row.latitude !== null);
+								form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', row.longitude !== null);
 							}
 						}
 					}
