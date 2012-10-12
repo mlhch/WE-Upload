@@ -500,6 +500,7 @@ WaterQuality.prototype = {
 						$(label).html('').removeClass('error');
 					})
 					me.showDialog('Edit Observation');
+					$.validator && $(me.form).validate().resetForm();
 				}
 			});
 		});
@@ -581,6 +582,7 @@ WaterQuality.prototype = {
 				})
 				$('input[name=datetime]', me.form).datepicker().datepicker('setDate', new Date);
 				me.showDialog('Add Observation');
+				$.validator && $(me.form).validate().resetForm();
 			});
 		});
 	},

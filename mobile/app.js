@@ -427,6 +427,9 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			}
 		}
 	});
+	$('#newob').live('pagebeforehide', function(e, ui) {
+		$.validator && $(this).find('form').validate().resetForm();
+	});
 	
 	$(document).bind( "pagebeforechange", function( e, data ) {
 		if ( typeof data.toPage === "string" ) {
