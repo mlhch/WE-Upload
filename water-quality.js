@@ -751,6 +751,14 @@ WaterQuality.prototype = {
 						callback(items);
 						return ;
 					});
+				},
+				updater: function(value) {
+					form.find( "input[name=station_name]" ).val('');
+					form.find( "input[name=location_id]" ).val('');
+					form.find( "input[name=latitude]" ).val('');
+					form.find( "input[name=longitude]" ).val('');
+					
+					return value;
 				}
 			});
 			form.find( "input[name=station_name]" ).typeahead({
