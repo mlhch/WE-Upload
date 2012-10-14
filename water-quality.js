@@ -144,6 +144,10 @@ WaterQuality.prototype = {
 					alert('No data entries available');
 				} else {
 					me.showObservationTable();
+					$(me.table).trigger('update');
+					setTimeout(function() {
+						$(me.table).trigger("sorton", [$.cookie('sortList') || []])
+					}, 1);
 				}
 				
 				$.isFunction(callback) && callback();
