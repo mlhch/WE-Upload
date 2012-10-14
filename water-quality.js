@@ -493,14 +493,13 @@ WaterQuality.prototype = {
 							}
 						}
 					})
-					$('input.error', me.form).each(function(index, label) {
-						$(label).removeClass('error');
-					})
-					$('label.error', me.form).each(function(index, label) {
-						$(label).html('').removeClass('error');
-					})
+					
 					me.showDialog('Edit Observation');
-					$.validator && $(me.form).validate().resetForm();
+					
+					var validator = $(me.form).validate();
+					validator.prepareForm();
+					validator.hideErrors();
+					validator.elements().removeClass( validator.settings.errorClass );
 				}
 			});
 		});
@@ -753,11 +752,15 @@ WaterQuality.prototype = {
 					});
 				},
 				updater: function(value) {
-					form.find( "input[name=station_name]" ).val('');
-					form.find( "input[name=location_id]" ).val('');
-					form.find( "input[name=latitude]" ).val('');
-					form.find( "input[name=longitude]" ).val('');
-					
+					var els = [];
+					els.push(form.find( "input[name=station_name]" ));
+					els.push(form.find( "input[name=location_id]" ));
+					els.push(form.find( "input[name=latitude]" ));
+					els.push(form.find( "input[name=longitude]" ));
+					for (var i = 0, el; el = els[i++];) {
+						el.val('').attr('readOnly', false).removeClass( 'error' );
+						validator.errorsFor(el[0]).hide();
+					}
 					return value;
 				}
 			});
@@ -790,20 +793,27 @@ WaterQuality.prototype = {
 						return value;
 					}
 					
-					$.getJSON("./typeaheads_location_id.json?watershed="
-							+ watershed + '&station=' + station, function(json) {
-						var rows = json.typeaheads;
-						if (rows.length == 1) {
-							var row = rows[0];
-							form.find( "input[name=location_id]" ).val(row.location_id);
-							form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', row.latitude !== null);
-							form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', row.longitude !== null);
-						} else {
-							form.find( "input[name=location_id]" ).val('');
-							form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', false);
-							form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', false);
+					form.find( "input[name=location_id]" ).val('');
+					form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
+					form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
+					
+					if (me.typeaheadStationRows[watershed]) {
+						var el, validator = form.validate();
+						for (var i = 0, row; row = me.typeaheadStationRows[watershed][i++];) {
+							if (row.station_name == station) {
+								el = form.find( "input[name=location_id]" ).val(row.location_id);
+								
+								el = form.find( "input[name=latitude]" ).val(row.latitude);
+								el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+								
+								el = form.find( "input[name=longitude]" ).val(row.longitude);
+								el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+								
+								validator.showErrors();
+								break;
+							}
 						}
-					});
+					}
 					
 					return value;
 				}
@@ -837,26 +847,27 @@ WaterQuality.prototype = {
 						return value;
 					}
 					
+					form.find( "input[name=station_name]" ).val('');
+					form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
+					form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
+					
 					if (me.typeaheadLocationRows[watershed]) {
-						form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
-						form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
+						var el, validator = form.validate();
 						for (var i = 0, row; row = me.typeaheadLocationRows[watershed][i++];) {
-							if (row.location_id == value) {
-								form.find( "input[name=latitude]" ).val(row.latitude).attr('readOnly', row.latitude !== null);
-								form.find( "input[name=longitude]" ).val(row.longitude).attr('readOnly', row.longitude !== null);
+							if (row.location_id == location_id) {
+								el = form.find( "input[name=station_name]" ).val(row.station_name);
+								
+								el = form.find( "input[name=latitude]" ).val(row.latitude);
+								el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+								
+								el = form.find( "input[name=longitude]" ).val(row.longitude);
+								el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+								
+								validator.showErrors();
+								break;
 							}
 						}
 					}
-					
-					$.getJSON("./typeaheads_station_name.json?watershed="
-							+ watershed + '&location_id=' + location_id, function(json) {
-						var rows = json.typeaheads;
-						if (rows.length == 1) {
-							form.find( "input[name=station_name]" ).val(rows[0].station_name);
-						} else {
-							form.find( "input[name=station_name]" ).val('');
-						}
-					});
 					
 					return value;
 				}
