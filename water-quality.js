@@ -781,7 +781,7 @@ WaterQuality.prototype = {
 					els.push(form.find( "input[name=longitude]" ));
 					for (var i = 0, el; el = els[i++];) {
 						el.val('').attr('readOnly', false).removeClass( 'error' );
-						validator.errorsFor(el[0]).hide();
+						form.validate().errorsFor(el[0]).hide();
 					}
 					return value;
 				}
