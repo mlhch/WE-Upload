@@ -300,7 +300,7 @@ WaterQuality.prototype = {
 			if (sortList instanceof Array) {
 				var len = $( 'input:checked', me.selector ).length;
 				for (var i = 0; i < sortList.length; i++) {
-					if (sortList[i][0] >= len) {
+					if (!(sortList[i] instanceof Array) || sortList[i][0] >= len) {
 						sortList.splice(i);
 					}
 				}
@@ -392,23 +392,37 @@ WaterQuality.prototype = {
 					
 					var index = 0, fields = [];
 					$( 'input', me.selector ).each(function(i, c) {
-						if (!ckb.checked && c === ckb) {
-							index++;
+						if (c === ckb) {
+							if (!ckb.checked) {
+								var sortList = $.cookie('sortList');
+								for (var i = 0, len = sortList.length; i < len; i++) {
+									if (sortList[i][0] == index) {
+										sortList.splice(i);
+										$.cookie('sortList', sortList);
+									}
+								}
+							}
 						}
 						if (c.checked) {
+							index++;
 							fields.push(c.value);
 						}
 					});
-					if (!ckb.checked) {
-						var sortList = $.cookie('sortList');
-						delete sortList[index];
-						$.cookie('sortList', sortList);
-					}
 					if (fields.length) {
 						$.cookie('fields', fields);
 					}
 					
 					me.showObservationTable();
+					
+					var headers = {};
+					// the Action column
+					headers[me.getVisibleFields().length] = { sorter: false };
+					me.table.config.headers = headers;
+					$(me.table).trigger('update');
+					
+					setTimeout(function() {
+						$(me.table).trigger('sorton', [$.cookie('sortList')]);
+					}, 1);
 				}
 			});
 		});
@@ -428,6 +442,7 @@ WaterQuality.prototype = {
 						}
 						
 						me.showObservationTable();
+						$(me.table).trigger('update');
 						
 						sortList = [];
 						for (var i = 0; i < thList.length; i++) {
@@ -435,6 +450,9 @@ WaterQuality.prototype = {
 							sortList.push([document.getElementById(th[0]).cellIndex, th[1]]);
 						}
 						$.cookie('sortList', sortList);
+						setTimeout(function() {
+							$(me.table).trigger('sorton', [sortList]);
+						}, 1);
 						
 						var fields = [];
 						$( 'input', me.selector ).each(function(i, ckb) {

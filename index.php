@@ -140,7 +140,7 @@ function cura_main_js_and_css() {
 	/*
 	 * jquery.tablesorter.js support
 	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/jquery.tablesorter.min.js';
+	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/jquery.tablesorter.js';
 	wp_register_script ( 'tablesorter', $src, array (
 			'jquery' 
 	) );
