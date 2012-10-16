@@ -52,6 +52,7 @@ $cura_fields = array (
 				"description" => "Latitude",
 				"validation" => array (
 						"rules" => array (
+								"required" => true,
 								"number" => true,
 								"min" => 40,
 								"max" => 65 
@@ -65,9 +66,10 @@ $cura_fields = array (
 				"description" => "Longitude",
 				"validation" => array (
 						"rules" => array (
+								"required" => true,
 								"number" => true,
 								"min" => - 130,
-								"max" => - 53
+								"max" => - 53 
 						),
 						"message" => "Longitude decimal degrees, -130 ~ -53" 
 				) 
@@ -145,7 +147,7 @@ $cura_fields = array (
 						"rules" => array (
 								"number" => true,
 								"min" => 3,
-								"max" => 10
+								"max" => 10 
 						),
 						"message" => "A value between 3 and 10" 
 				) 
