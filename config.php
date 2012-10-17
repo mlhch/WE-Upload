@@ -58,7 +58,13 @@ $cura_fields = array (
 								"min" => 40,
 								"max" => 65 
 						),
-						"message" => "Latitude decimal degrees, 40 ~ 65" 
+						"messages" => array (
+								"pattern" => "Precision of 5 decimal places is required",
+								"required" => "Latitude decimal degrees, 40 ~ 65",
+								"number" => "Latitude decimal degrees, 40 ~ 65",
+								"min" => "Latitude decimal degrees, 40 ~ 65",
+								"max" => "Latitude decimal degrees, 40 ~ 65" 
+						) 
 				) 
 		),
 		array (
@@ -73,7 +79,13 @@ $cura_fields = array (
 								"min" => - 130,
 								"max" => - 53 
 						),
-						"message" => "Longitude decimal degrees, -130 ~ -53" 
+						"messages" => array (
+								"pattern" => "Precision of 5 decimal places is required",
+								"required" => "Longitude decimal degrees, -130 ~ -53",
+								"number" => "Longitude decimal degrees, -130 ~ -53",
+								"min" => "Longitude decimal degrees, -130 ~ -53",
+								"max" => "Longitude decimal degrees, -130 ~ -53" 
+						) 
 				) 
 		),
 		array (

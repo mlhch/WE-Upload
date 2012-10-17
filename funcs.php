@@ -30,6 +30,9 @@ function cura_validation_options() {
 			if (! empty ( $row ['validation'] ['message'] )) {
 				$validation_options ['messages'] [$row ['field']] = $row ['validation'] ['message'];
 			}
+			if (! empty ( $row ['validation'] ['messages'] )) {
+				$validation_options ['messages'] [$row ['field']] = $row ['validation'] ['messages'];
+			}
 		}
 	}
 	return $validation_options;
