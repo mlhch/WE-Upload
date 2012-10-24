@@ -117,7 +117,7 @@ var observationFields = <?php echo json_encode( cura_fields() )?>;
 		<div data-role="content" style="padding: 15px">
 			<ul id="list-locations" data-role="listview" data-divider-theme="b"
 				data-inset="false">
-				<li data-role="list-divider" role="heading">Watersheds</li>
+				<li data-role="list-divider" role="heading">Community groups</li>
 			</ul>
 		</div>
 		<div data-role="footer" data-position="fixed">
@@ -163,7 +163,7 @@ var observationFields = <?php echo json_encode( cura_fields() )?>;
 		<div data-role="content" style="padding: 5px">
 			<form>
 				<input type="hidden" name="id" value="0" /> <label for="textinput1">
-					Watershed Name </label> <input name="watershed_name"
+					Community group Name </label> <input name="watershed_name"
 					id="textinput1" type="text" />
 				<fieldset class="ui-grid-a">
 					<div class="ui-block-a">

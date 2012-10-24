@@ -4,7 +4,7 @@ $cura_fields = array (
 		array (
 				"field" => "watershed_name",
 				"placeHolder" => "",
-				"description" => "Watershed Name",
+				"description" => "Community group Name",
 				"visible" => 1,
 				"validation" => array (
 						"rules" => array (

@@ -165,7 +165,7 @@ WaterQuality.prototype = {
 
 				$(me.filterLocations).empty();
 				$(me.filterLocations).append(
-						'<option> - Select Watershed - </option>');
+						'<option> - Select community group - </option>');
 				$(me.filterLocations).append(
 						'<option value="">View All</option>');
 				for ( var i = 0, row; row = data[i++];) {
