@@ -2,6 +2,7 @@
 global $wp_scripts;
 
 $base_url = CURAH2O_PLUGIN_URL . 'mobile';
+wp_register_script('jquery'); // in case that 'jquery' was not registered
 $jq_src = $wp_scripts->base_url . $wp_scripts->registered ['jquery']->src;
 /*
  *
