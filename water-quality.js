@@ -126,6 +126,14 @@ function WaterQuality(config) {
 }
 
 WaterQuality.prototype = {
+	query: function(query) {
+		var m = query.match(/([^\/]+)\.(json|action)\??(.*)/);
+		if (m) {
+			return '../wp-admin/admin-ajax.php?action=cura_'
+				+ m[1] + '.' + m[2] + (m[3] ? '&' + m[3] : '');
+		}
+		return query;
+	},
 	table: null,
 	loadData: function(callback) {
 		var me = this;
@@ -133,7 +141,7 @@ WaterQuality.prototype = {
 		jQuery(function ($) {
 			var watershed_id = $(me.filterLocations).val();
 			
-			$.get("./observations.json", {
+			$.get(me.query("./observations.json"), {
 				watershed: watershed_id,
 			}, function (jsonData) {
 				var result = JSON.parse( jsonData );
@@ -159,7 +167,7 @@ WaterQuality.prototype = {
 		var me = this;
 
 		jQuery(function($) {
-			$.getJSON('./locations.json', function(json) {
+			$.getJSON(me.query('./locations.json'), function(json) {
 				var data = json.locations;
 				me.locationList = data;
 
@@ -613,7 +621,7 @@ WaterQuality.prototype = {
 		jQuery(document).ready(function ($) {
 			if ($(me.form).validate().form()) {
 				
-				$.post('save.action', $(me.form).serialize(), function(data, status) {
+				$.post(me.query('save.action'), $(me.form).serialize(), function(data, status) {
 					if (status == 'success') {
 						var result = JSON.parse( data );
 						if (result.error) {
@@ -672,7 +680,7 @@ WaterQuality.prototype = {
 		jQuery(document).ready(function ($) {
 			var id = parseInt( $('input[name=id]').val() );
 			
-			$.post( 'delete.action', {id: id}, function (data, status) {
+			$.post( me.query('delete.action'), {id: id}, function (data, status) {
 				if (status == 'success') {
 					var result = JSON.parse( data );
 					if (result.affectedRows) {
@@ -761,7 +769,7 @@ WaterQuality.prototype = {
 						callback(items);
 						return ;
 					}
-					$.getJSON('./locations.json', function(json) {
+					$.getJSON(me.query('./locations.json'), function(json) {
 						me.locationList = json.locations;
 						
 						var items = [];
@@ -798,7 +806,7 @@ WaterQuality.prototype = {
 					if (me.typeaheadStationItems[watershed]) {
 						return me.typeaheadStationItems[watershed];
 					}
-					$.getJSON("./typeaheads_station_name.json?watershed=" + watershed, function(json) {
+					$.getJSON(me.query("./typeaheads_station_name.json?watershed=" + watershed), function(json) {
 						var rows = json.typeaheads, items = [];
 						for (var i = 0, row; row = rows[i++];) {
 							items.push(row.station_name);
@@ -852,7 +860,7 @@ WaterQuality.prototype = {
 					if (me.typeaheadLocationItems[watershed]) {
 						return me.typeaheadLocationItems[watershed];
 					}
-					$.getJSON("./typeaheads_location_id.json?watershed=" + watershed, function(json) {
+					$.getJSON(me.query("./typeaheads_location_id.json?watershed=" + watershed), function(json) {
 						var rows = json.typeaheads, items = [];
 						for (var i = 0, row; row = rows[i++];) {
 							items.push(row.location_id);
@@ -912,7 +920,7 @@ WaterQuality.prototype = {
 		jQuery(function($) {
 			$('#export_as_csv').click(function() {
 				var watershed_name = $(me.filterLocations).val();
-				location.href = "./observations.json?export&" + $.param({watershed: watershed_name});
+				location.href = me.query("./observations.json?export&" + $.param({watershed: watershed_name}));
 			});
 		})
 	},

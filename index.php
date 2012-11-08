@@ -38,11 +38,20 @@ function cura_water_quality_mobile() {
 /*
  * Front end entrance
  */
+$plugin_activated = false;
 if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
+	$plugin_activated = true;
 	$isMobile = $m [1] == '/m';
 	$request = $m [2];
 	$phpInput = file_get_contents ( 'php://input' );
-	
+} elseif (preg_match ( '~^/wp-admin/admin-ajax.php\?action=cura_(.*?)(&|$)~', $_SERVER ['REQUEST_URI'], $m )) {
+	$plugin_activated = true;
+	$request = $m [1];
+	$isMobile = $request == 'mobile';
+	$phpInput = file_get_contents ( 'php://input' );
+}
+
+if ($plugin_activated) {
 	include 'apis.php';
 	include 'funcs.php';
 	
@@ -60,8 +69,8 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 	
 	// Front end - mobile style
 	if ($isMobile) {
-		add_action ( 'wp_ajax_cura_mobile', 'cura_water_quality_mobile' );
-		add_action ( 'wp_ajax_nopriv_cura_mobile', 'cura_water_quality_mobile' );
+		// No .htaccess, so go directly
+		cura_water_quality_mobile ();
 		
 		// Frond end - screen style
 	} elseif (! $isMobile && '' === $request && empty ( $phpInput )) {
@@ -78,13 +87,13 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Service call
 	} elseif (! $isMobile && 'services' == $request) {
-		add_action ( 'wp_ajax_cura_services', 'cura_services' );
-		add_action ( 'wp_ajax_nopriv_cura_services', 'cura_services' );
+		// No .htaccess, so go directly
+		cura_services ();
 		
 		// Layer call
 	} elseif (! $isMobile && 'service/1' == $request) {
-		add_action ( 'wp_ajax_cura_service/1', 'cura_service_layers' );
-		add_action ( 'wp_ajax_nopriv_cura_service/1', 'cura_service_layers' );
+		// No .htaccess, so go directly
+		cura_service_layers ();
 		
 		// Data call
 	} elseif (! $isMobile && '' === $request && ! empty ( $phpInput )) {
@@ -106,6 +115,10 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		
 		// Ajax actions
 	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action|demo)/', $request, $m )) {
+		if ($m [2] == 'demo') {
+			// No .htaccess, so go directly
+			call_user_func ( "cura_$m[2]_$m[1]" );
+		}
 		add_action ( "wp_ajax_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 		add_action ( "wp_ajax_nopriv_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 	}

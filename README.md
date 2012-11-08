@@ -3,7 +3,7 @@ WE-Upload
 
 Extra steps to make the plugin work:
 <ol>
-<li><p>Add below lines to WordPress' .htaccess</p>
+<li style="text-decoration:line-through"><p>Add below lines to WordPress' .htaccess</p>
 <pre>
 RewriteCond %{REQUEST_URI} /m/water-quality/$
 RewriteRule ^m/water-quality/(.*)$ wp-admin/admin-ajax.php?action=cura_mobile&%{QUERY_STRING} [NC,L]
@@ -21,8 +21,8 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [L]</pre>
 </li>
 <li>Create a page with /water-quality/ URL and use [water-quality] as page content to trigger the plugin of Desktop version</li>
-<li>Create a page with /m/ URL as parent URL</li>
-<li>Create a page with /m/water-quality/ URL and use [water-quality] as page content to trigger the plugin of Mobile version</li>
+<li style="text-decoration:line-through">Create a page with /m/ URL as parent URL</li>
+<li style="text-decoration:line-through">Create a page with /m/water-quality/ URL and use [water-quality] as page content to trigger the plugin of Mobile version</li>
 <li><p>Plugin installation NOTES of ZIP format:</p>
   <ul>
     <li>Make a ZIP format package of the source files on Github</li>

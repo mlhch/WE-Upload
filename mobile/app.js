@@ -12,6 +12,15 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	//var observationFields = observationFields || null;
 	var observationItems = {};
 	
+	function getQuery(url) {
+		var m = url.match(/([^\/]+)\.(json|action)\??(.*)/);
+		if (m) {
+			return '../../wp-admin/admin-ajax.php?action=cura_'
+				+ m[1] + '.' + m[2] + (m[3] ? '&' + m[3] : '');
+		}
+		return url;
+	}
+	
 	function getCache(key, defaultValue) {
 		return localStorage[key] ? JSON.parse(localStorage[key]) : defaultValue;
 	}
@@ -61,7 +70,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		list.find('li[role!="heading"]').remove();
 	
 		if (!locationList) {
-			$.getJSON(base_url + '/locations.json', function(data) {
+			$.getJSON(getQuery('/locations.json'), function(data) {
 				locationList = data.locations;
 				setCache('locationList', locationList);
 				renderLocationList(callback);
@@ -125,7 +134,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		if (observationItems[id] && observationFields) {
 			renderObservationList(observationItems[id], observationFields, callback);
 		} else {
-			var url = base_url + '/observations.json?watershed=' + id;
+			var url = getQuery('/observations.json?watershed=' + id);
 			$.getJSON(url, function(data) {
 				observationFields = data.fields;
 				observationItems[id] = data.observations;
@@ -206,7 +215,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					callback(items);
 					return;
 				}
-				$.getJSON(base_url + "/locations.json", function(json) {
+				$.getJSON(getQuery("/locations.json"), function(json) {
 					locationList = json.locations;
 					
 					var items = [];
@@ -242,7 +251,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				if (me.typeaheadStationItems[watershed]) {
 					return me.typeaheadStationItems[watershed];
 				}
-				$.getJSON(base_url + "/typeaheads_station_name.json?watershed=" + watershed, function(json) {
+				$.getJSON(getQuery("/typeaheads_station_name.json?watershed=" + watershed), function(json) {
 					var rows = json.typeaheads, items = [];
 					for (var i = 0, row; row = rows[i++];) {
 						items.push(row.station_name);
@@ -296,7 +305,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				if (me.typeaheadLocationItems[watershed]) {
 					return me.typeaheadLocationItems[watershed];
 				}
-				$.getJSON(base_url + "/typeaheads_location_id.json?watershed=" + watershed, function(json) {
+				$.getJSON(getQuery("/typeaheads_location_id.json?watershed=" + watershed), function(json) {
 					var rows = json.typeaheads, items = [];
 					for (var i = 0, row; row = rows[i++];) {
 						items.push(row.location_id);
@@ -360,7 +369,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				}
 			}
 			
-			$.post(base_url + '/save.action', params, function(data, status) {
+			$.post(getQuery('/save.action'), params, function(data, status) {
 				if (status == 'success') {
 					var result = JSON.parse(data);
 					if (result.error) {
