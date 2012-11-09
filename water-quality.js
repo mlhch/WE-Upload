@@ -70,7 +70,7 @@ function WaterQuality(config) {
 	
 	var selectors = config.selectors || {};
 	for (var key in selectors) {
-		this[key] = jQuery( selectors[key] )[0];
+		this[key] = selectors[key];
 	}
 	delete config.selectors;
 	
@@ -82,20 +82,20 @@ function WaterQuality(config) {
 		alert('config.table not specified')
 		return
 	}
-	var theads = this.table.getElementsByTagName('thead');
+	var theads = jQuery(this.table).find('thead');
 	if (theads.length) {
 		this.thead = theads[0];
 	} else {
 		this.thead = document.createElement('thead');
-		this.table.insertBefore(this.thead, this.table.firstChild);
+		jQuery(this.table)[0].insertBefore(this.thead, this.table.firstChild);
 	}
 	
-	var tbodies = this.table.getElementsByTagName('tbody');
+	var tbodies = jQuery(this.table).find('tbody');
 	if (tbodies.length) {
 		this.tbody = tbodies[0];
 	} else {
 		this.tbody = document.createElement('tbody');
-		this.table.appendChild(this.tbody);
+		jQuery(this.table)[0].appendChild(this.tbody);
 	}
 
 	this.clickFilterLocation(); // use cookie set watershed first
@@ -230,7 +230,7 @@ WaterQuality.prototype = {
 	renderFieldsSettings: function() {
 		this.setFields( this.fields );
 		
-		var html = [], ul = this.selector, fields = this.fields;
+		var html = [], ul = jQuery(this.selector)[0], fields = this.fields;
 		for (var i in fields) {
 			var field = fields[i];
 			html.push(
@@ -245,17 +245,16 @@ WaterQuality.prototype = {
 		this.clearTable();
 		visibleFields = this.getVisibleFields();
 		
-		var tr = this.thead.insertRow(0);
+		var tr = jQuery(this.table).find('thead')[0].insertRow(0);
 		for (var i = 0, field; field = visibleFields[i++];) {
 			tr.insertAdjacentHTML('beforeEnd', '<th id="th-' + field[0] + '">' + field[2] + '</th>');
 		}
 		tr.insertAdjacentHTML('beforeEnd', '<th style="text-align:center; width:10px">Action</th>');
 		
-		var odd = 1;
+		var odd = 1, html = [];
 		for (var id in this.data) {
 			var row = this.data[id];
 			
-			var html = [];
 			html.push('<tr id="entry-' + row[0] + '" class="' + (odd++ % 2 ? 'odd' : 'even') + '">');
 			for (var i = 0, field; field = visibleFields[i++];) {
 				html.push('<td>' + (row[field[3]] !== null ? row[field[3]] : '') + '</td>');
@@ -269,29 +268,30 @@ WaterQuality.prototype = {
 				 '</button></td>'
 			].join(''));
 			html.push('</tr>');
-			this.tbody.insertAdjacentHTML('beforeEnd', html.join(''));
 		}
 		
 		if (odd == 1) {
-			var html = [];
 			html.push('<tr>');
 			for (var i = 0, field; field = visibleFields[i++];) {
 				html.push('<td>&nbsp;</td>');
 			}
 			html.push('<td>&nbsp;</tr>');
-			this.tbody.insertAdjacentHTML('beforeEnd', html.join(''));
 		}
+		jQuery(this.table).find('tbody')[0].insertAdjacentHTML('beforeEnd', html.join(''));
 	},
 	clearTable: function () {
-		while (this.thead.rows.length) {
-			this.thead.deleteRow(0);
+		var thead = jQuery(this.table).find('thead')[0];
+		while (thead.rows.length) {
+			thead.deleteRow(0);
 		}
-		while (this.tbody.rows.length) {
-			this.tbody.deleteRow(0);
+		
+		var tbody = jQuery(this.table).find('tbody')[0];
+		while (tbody.rows.length) {
+			tbody.deleteRow(0);
 		}
 	},
 	getVisibleFields: function() {
-		var ckbs = this.selector.getElementsByTagName('input');
+		var ckbs = jQuery(this.selector).find('input');
 		
 		var fields = [];
 		for (var i = 0, ckb; ckb = ckbs[i++];) {
@@ -313,7 +313,7 @@ WaterQuality.prototype = {
 		jQuery(function ($) {
 			var sortList = $.cookie('sortList') || [];
 			if (sortList instanceof Array) {
-				var len = $( 'input:checked', me.selector ).length;
+				var len = $( 'input:checked', $(me.selector) ).length;
 				for (var i = 0; i < sortList.length; i++) {
 					if (!(sortList[i] instanceof Array) || sortList[i][0] >= len) {
 						sortList.splice(i);
@@ -337,12 +337,12 @@ WaterQuality.prototype = {
 		});
 		jQuery(document).ready(function ($) {
 			var pagesize = $.cookie('pagesize');
-			pagesize && $('.pagesize', me.pager).val(pagesize);
+			pagesize && $('.pagesize', $(me.pager)).val(pagesize);
 			
 			if ($.tablesorterPager) {
 				$( me.table ).tablesorterPager({
 					container: $(me.pager),
-					size: pagesize || $('.pagesize', me.pager).val(),// .pagesize is loaded after the table render
+					size: pagesize || $('.pagesize', $(me.pager)).val(),// .pagesize is loaded after the table render
 					positionFixed: false,
 				}).bind('applyWidgets', function() {
 					var config = this.config, pager = config.container;
@@ -406,7 +406,7 @@ WaterQuality.prototype = {
 					me.fields[ckb.value][4] = ckb.checked;
 					
 					var index = 0, fields = [];
-					$( 'input', me.selector ).each(function(i, c) {
+					$( 'input', $(me.selector) ).each(function(i, c) {
 						if (c === ckb) {
 							if (!ckb.checked) {
 								var sortList = $.cookie('sortList');
@@ -432,7 +432,7 @@ WaterQuality.prototype = {
 					var headers = {};
 					// the Action column
 					headers[me.getVisibleFields().length] = { sorter: false };
-					me.table.config.headers = headers;
+					$(me.table)[0].config.headers = headers;
 					$(me.table).trigger('update');
 					
 					setTimeout(function() {
@@ -470,7 +470,7 @@ WaterQuality.prototype = {
 						}, 1);
 						
 						var fields = [];
-						$( 'input', me.selector ).each(function(i, ckb) {
+						$( 'input', $(me.selector) ).each(function(i, ckb) {
 							if (ckb.checked) {
 								fields.push(ckb.value);
 							}
@@ -510,7 +510,7 @@ WaterQuality.prototype = {
 					$('td', tr).css('background-color', 'lightblue');
 					var id = tr.id.substr(6);
 					var row = me.data[id];
-					$('input', me.form).each(function(index, input) {
+					$('input', $(me.form)).each(function(index, input) {
 						if (input.name == 'id') {
 							input.value = row[0];
 						} else if (me.fields[input.name]) {
@@ -588,7 +588,7 @@ WaterQuality.prototype = {
 		
 		jQuery(document).ready(function ($) {
 			if ($().datetimepicker) {
-				$('input[name=datetime]', me.form)
+				$('input[name=datetime]', $(me.form))
 					.datetimepicker({
 						ampm: true,
 						dateFormat: 'mm/dd/yy',
@@ -598,7 +598,7 @@ WaterQuality.prototype = {
 			}
 			
 			$( me.btnAddNew ).click(function () {
-				$( 'input', me.form ).each( function(index, input) {
+				$( 'input', $(me.form) ).each( function(index, input) {
 					if (input.name == 'id') {
 						input.value = 0;
 					} else if (me.fields[input.name]) {
@@ -616,7 +616,7 @@ WaterQuality.prototype = {
 						}
 					}
 				})
-				$('input[name=datetime]', me.form).datepicker().datepicker('setDate', new Date);
+				$('input[name=datetime]', $(me.form)).datepicker().datepicker('setDate', new Date);
 				me.showDialog('Add Observation');
 				$.validator && $(me.form).validate().resetForm();
 			});
