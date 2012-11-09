@@ -139,14 +139,16 @@ function cura_form_field($row, $single = false) {
 </div>
 <script type="text/javascript">
 new WaterQuality({
+	selectors: {
+		btnAddNew: '#new-data-entry',
+		selector: '#fields-selector',
+		form: '#form-data-entry',
+		dialog: '#dialog-data-entry',
+		filterLocations: '#filter-locations',
+		table: '#data-entry-list',
+		pager: '#data-entry-pager',
+	},
 	fields: <?php echo $fields ? json_encode($fields) : '{}'?>,
-	btnAddNew: document.getElementById('new-data-entry'),
-	selector: document.getElementById('fields-selector'),
-	form: document.getElementById('form-data-entry'),
-	dialog: document.getElementById('dialog-data-entry'),
-	filterLocations: document.getElementById('filter-locations'),
-	table: document.getElementById('data-entry-list'),
-	pager: document.getElementById('data-entry-pager'),
 	canEdit: <?php echo intval(current_user_can('cura-edit'))?>,
 	canDelete: <?php echo intval(current_user_can('cura-delete'))?>,
 	canAdd: 1,

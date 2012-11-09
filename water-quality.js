@@ -67,6 +67,13 @@
 
 function WaterQuality(config) {
 	config = typeof config == 'object' ? config : {}; 
+	
+	var selectors = config.selectors || {};
+	for (var key in selectors) {
+		this[key] = jQuery( selectors[key] )[0];
+	}
+	delete config.selectors;
+	
 	for (var key in config) {
 		this[key] = config[key];
 	}

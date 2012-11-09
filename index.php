@@ -5,7 +5,7 @@
  */
 /*
 Plugin Name: Water Quality Observation
-Plugin URI: http://curah2o.com/wp-content/plugins/water-quality-observation
+Plugin URI: http://curah2o.com/wp-content/plugins/water-quality
 Description: This is a data-entry point, data access point and SOS endpoint. It will be used by CuraH2O field staff to create, view and export water quality observations. It will expose an SOS endpoint in order to to export data from remote SOS servers like WEHub.
 Author: Ma Lian
 Version: 1.0
@@ -128,12 +128,13 @@ if ($plugin_activated) {
  */
 if (is_admin ()) {
 	include CURAH2O_PLUGIN_DIR . 'admin.php';
+	$folder = preg_replace('~.+?/~', '', substr(CURAH2O_PLUGIN_DIR, 0, -1));
 	// 'Settings' link of plugin
-	add_filter ( "plugin_action_links_water-quality-observation/index.php", 'cura_plugin_action_links' );
+	add_filter ( "plugin_action_links_$folder/index.php", 'cura_plugin_action_links' );
 	// 'Settings' menu of admin page
 	add_action ( 'admin_menu', 'cura_menu' );
 	// When activated, install the tables
-	add_action ( 'activate_water-quality-observation/index.php', 'cura_install_tables' );
+	add_action ( "activate_$folder/index.php", 'cura_install_tables' );
 }
 function cura_main_js_and_css() {
 	/*
