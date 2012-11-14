@@ -21,8 +21,12 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [L]</pre>
 </li>
 <li>Create a page with /water-quality/ URL and use [water-quality] as page content to trigger the plugin of Desktop version</li>
-<li style="text-decoration:line-through">Create a page with /m/ URL as parent URL</li>
-<li style="text-decoration:line-through">Create a page with /m/water-quality/ URL and use [water-quality] as page content to trigger the plugin of Mobile version</li>
+<li>In order to support password protected Mobile version, below 2 pages are needed again. But [water-quality] shortcode is no longer required.
+  <ol>
+    <li>Create a page with /m/ URL as parent URL</li>
+    <li>Create a page with /m/water-quality/ URL and use password to protect it.</li>
+  </ol>
+</li>
 <li><p>Plugin installation NOTES of ZIP format:</p>
   <ul>
     <li>Make a ZIP format package of the source files on Github</li>

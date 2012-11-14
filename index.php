@@ -40,10 +40,13 @@ function cura_water_quality_mobile() {
  */
 $plugin_activated = false;
 if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
-	$plugin_activated = true;
-	$isMobile = $m [1] == '/m';
-	$request = $m [2];
-	$phpInput = file_get_contents ( 'php://input' );
+	$page = get_page_by_path ( '/m/water-quality' );
+	if (! post_password_required ( $page )) {
+		$plugin_activated = true;
+		$isMobile = $m [1] == '/m';
+		$request = $m [2];
+		$phpInput = file_get_contents ( 'php://input' );
+	}
 } elseif (preg_match ( '~^/wp-admin/admin-ajax.php\?action=cura_(.*?)(&|$)~', $_SERVER ['REQUEST_URI'], $m )) {
 	$plugin_activated = true;
 	$request = $m [1];
