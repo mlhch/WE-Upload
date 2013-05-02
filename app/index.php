@@ -12,9 +12,12 @@
 	<!-- Add your site or application content here -->
 	<div class="container" ng-view></div>
 
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.js"?>"></script>
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.markercluster.js"?>"></script>
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.awesome-markers.js"?>"></script>
+
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-resource.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.js"?>"></script>
 
 	<!-- build:js scripts/scripts.js -->
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/services.js"?>"></script>

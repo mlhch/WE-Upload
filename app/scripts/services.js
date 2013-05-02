@@ -2,22 +2,22 @@
 
 angular.module('services', ['ngResource'])
 
-.factory('layerService', ['$resource',
+.factory('layerCall', ['$resource',
 function ($resource) {
 
-	return $resource('api/:layer.json', {}, {
+	return $resource('service/1', {}, {
 		query : {
-			method : 'POST',
-			params : {
-				layer : '@layer'
-			}
+			method : 'GET'
+		}
+	});
+}])
+
+.factory('dataCall', ['$resource',
+function ($resource) {
+
+	return $resource('.', {}, {
+		query : {
+			method : 'POST'
 		}
 	});
 }]);
-
-
-
-
-
-
-
