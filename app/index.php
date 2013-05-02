@@ -13,9 +13,11 @@
 	<div class="container" ng-view></div>
 
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular.js"?>"></script>
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-resource.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.js"?>"></script>
 
 	<!-- build:js scripts/scripts.js -->
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/services.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/directives.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/app.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/controllers/main.js"?>"></script>

@@ -1,6 +1,6 @@
 'use strict';
 
-var curaApp = angular.module('curaApp', ['directives'])
+var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource'])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {

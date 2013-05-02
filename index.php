@@ -91,11 +91,13 @@ if ($plugin_activated) {
 		// Service call
 	} elseif (! $isMobile && 'services' == $request) {
 		// No .htaccess, so go directly
+		header('Content-Type: application/json');
 		cura_services ();
 		
 		// Layer call
 	} elseif (! $isMobile && 'service/1' == $request) {
 		// No .htaccess, so go directly
+		header('Content-Type: application/json');
 		cura_service_layers ();
 		
 		// Data call
@@ -105,6 +107,7 @@ if ($plugin_activated) {
 		}
 		$obj = json_decode ( $phpInput );
 		$func_name = "cura_service_$obj->request";
+		header('Content-Type: application/json');
 		
 		if (function_exists ( $func_name )) {
 			$result = $func_name ( $obj );
@@ -117,6 +120,12 @@ if ($plugin_activated) {
 		exit ( 0 );
 		
 		// Ajax actions
+	} elseif (! $isMobile && preg_match ( '/^views\/.*\.html$/', $request, $m )) {
+		include CURAH2O_PLUGIN_DIR . 'app/' . $request;
+		exit ( 0 );
+	} elseif (! $isMobile && preg_match ( '/^api\/.*\.json$/', $request, $m )) {
+		include CURAH2O_PLUGIN_DIR . $request;
+		exit ( 0 );
 	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action|demo)/', $request, $m )) {
 		if ($m [2] == 'demo') {
 			// No .htaccess, so go directly
@@ -124,9 +133,6 @@ if ($plugin_activated) {
 		}
 		add_action ( "wp_ajax_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 		add_action ( "wp_ajax_nopriv_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
-	} elseif (! $isMobile && preg_match ( '/^views\/.*\.html/', $request, $m )) {
-		include CURAH2O_PLUGIN_DIR . 'app/' . $request;
-		exit ( 0 );
 	}
 }
 /*
@@ -404,7 +410,7 @@ for (var i in cura_validation_options.rules) {
 }
 </script>
 <?php
-
+	}
 	/**
 	 * CuraH2O Phase 2
 	 */
@@ -415,5 +421,4 @@ for (var i in cura_validation_options.rules) {
 	$src = CURAH2O_PLUGIN_URL . 'app/styles/leaflet.css';
 	wp_register_style ( 'cura-app-leaflet-style', $src );
 	wp_enqueue_style ( 'cura-app-leaflet-style' );
-	}
 }
