@@ -404,5 +404,16 @@ for (var i in cura_validation_options.rules) {
 }
 </script>
 <?php
+
+	/**
+	 * CuraH2O Phase 2
+	 */
+	$src = CURAH2O_PLUGIN_URL . 'app/styles/main.css';
+	wp_register_style ( 'cura-app-main-style', $src );
+	wp_enqueue_style ( 'cura-app-main-style' );
+	
+	$src = CURAH2O_PLUGIN_URL . 'app/styles/leaflet.css';
+	wp_register_style ( 'cura-app-leaflet-style', $src );
+	wp_enqueue_style ( 'cura-app-leaflet-style' );
 	}
 }

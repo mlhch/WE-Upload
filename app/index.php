@@ -1,4 +1,4 @@
-<div ng-app="curaApp">
+<div id="curaApp" ng-app="curaApp">
 
 	<!--[if lt IE 7]>
 	<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
@@ -13,8 +13,10 @@
 	<div class="container" ng-view></div>
 
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular.js"?>"></script>
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.js"?>"></script>
 
 	<!-- build:js scripts/scripts.js -->
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/directives.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/app.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/controllers/main.js"?>"></script>
 	<!-- endbuild -->
