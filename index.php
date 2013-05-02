@@ -124,6 +124,9 @@ if ($plugin_activated) {
 		}
 		add_action ( "wp_ajax_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
 		add_action ( "wp_ajax_nopriv_cura_$m[1].$m[2]", "cura_$m[2]_$m[1]" );
+	} elseif (! $isMobile && preg_match ( '/^views\/.*\.html/', $request, $m )) {
+		include CURAH2O_PLUGIN_DIR . 'app/' . $request;
+		exit ( 0 );
 	}
 }
 /*

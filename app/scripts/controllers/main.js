@@ -1,6 +1,6 @@
 'use strict';
 
-aaApp.controller('MainCtrl', function($scope) {
+curaApp.controller('MainCtrl', function($scope) {
   $scope.awesomeThings = [
     'HTML5 Boilerplate',
     'AngularJS',

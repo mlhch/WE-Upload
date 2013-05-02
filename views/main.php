@@ -26,6 +26,11 @@
 <ol id="fields-selector" style="float: right;"></ol>
 
 <div style="clear: both"></div>
+
+<!-- CuraH2O Phase2 start-->
+<?php include dirname(dirname(__FILE__)) . "/app/index.php"?>
+<!-- CuraH2O Phase2 end-->
+
 <table id="data-entry-list" class="tablesorter"
 	style="border-spacing: 1px;"></table>
 <?php $icon_url = CURAH2O_PLUGIN_URL . '/lib/tablesorter/addons/pager/icons'?>
