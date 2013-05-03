@@ -123,9 +123,6 @@ if ($plugin_activated) {
 	} elseif (! $isMobile && preg_match ( '/^views\/.*\.html$/', $request, $m )) {
 		include CURAH2O_PLUGIN_DIR . 'app/' . $request;
 		exit ( 0 );
-	} elseif (! $isMobile && preg_match ( '/^api\/.*\.json$/', $request, $m )) {
-		include CURAH2O_PLUGIN_DIR . $request;
-		exit ( 0 );
 	} elseif (! $isMobile && preg_match ( '/^(.*)\.(json|action|demo)/', $request, $m )) {
 		if ($m [2] == 'demo') {
 			// No .htaccess, so go directly

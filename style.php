@@ -19,4 +19,8 @@ function cura_phase2_js_and_css() {
 	$src = CURAH2O_PLUGIN_URL . 'app/styles/MarkerCluster.css';
 	wp_register_style('cura-app-leaflet-mc-style', $src);
 	wp_enqueue_style('cura-app-leaflet-mc-style');
+	
+	$src = CURAH2O_PLUGIN_URL . 'app/styles/font-awesome.min.css';
+	wp_register_style('cura-app-font-awesome-style', $src);
+	wp_enqueue_style('cura-app-font-awesome-style');
 }

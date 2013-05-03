@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('directives', [])
-.directive('map', ['layerCall', 'dataCall', function(layerCall, dataCall){
+angular.module('directives', []).directive('map', ['layerStyle',
+function (layerStyle) {
 
 	return {
 		restrict : 'E',
@@ -21,42 +21,41 @@ angular.module('directives', [])
 			console.log('adding basemap layer.');
 			$scope.map.addLayer(new L.TileLayer (iAttrs.basemap));
 
-			$scope.map.setView([50.515, -110.62], 10);
-
-			layerCall.query(null, function (json) {
-				if (!json.layerlist) {
-					return;
-				}
-				for (var i = 0, layer; layer = json.layerlist[i]; i++) {
-					var icon = new L.AwesomeMarkers.icon ({
-						icon : 'coffee',
-						color : 'red'
-					});
-					var markers = new L.MarkerClusterGroup ({
-						iconCreateFunction : function (cluster) {
-							return icon;
-						}
-					}).addTo($scope.map);
-
-					dataCall.query({
-						"request" : "getdata",
-						"serviceid" : 1,
-						"layerid" : layer.id,
-						"time" : layer.time,
-						"bbox" : layer.bbox
-					}, function (json) {
-						if (!json.data) {
-							return;
-						}
-						for (var i = 0, station; station = json.data[i]; i++) {
-							markers.addLayer(new L.Marker ([station.lat, station.lon], {
-								icon : icon
-							}));
-						}
-					});
-					layersControl.addOverlay(markers, layer.name);
+			$scope.$watch('serviceList', function (value) {
+				if ( value instanceof Array && value.length != 0) {
+					var bbox = value[0].bbox, //
+					bl = [bbox.bottomleft.latitude, bbox.bottomleft.longitude], //
+					ur = [bbox.upperright.latitude, bbox.upperright.longitude];
+					$scope.map.fitBounds([bl, ur]);
 				}
 			});
+
+			var mapLayers = {};
+			$scope.$watch('stationListByLayer', function (value) {
+				if (value != null) {
+					for (var key in value) {
+						if (mapLayers[key]) {
+							continue;
+						}
+						var layerInfo = $scope.layerInfoList[key];
+						var mapLayer = mapLayers[key] = new L.MarkerClusterGroup ({
+							iconCreateFunction : (function (layerInfo) {
+								return function (cluster) {
+									return layerStyle.icon(layerInfo, 'group');
+								}
+							})(layerInfo)
+						}).addTo($scope.map);
+						layersControl.addOverlay(mapLayer, layerInfo.name);
+
+						var stations = value[key];
+						for (var i = 0, station; station = stations[i]; i++) {
+							mapLayer.addLayer(new L.Marker ([station.lat, station.lon], {
+								icon : layerStyle.icon(layerInfo, 'single')
+							}));
+						}
+					}
+				}
+			}, true);
 		}
 	};
-	}])
+}])
