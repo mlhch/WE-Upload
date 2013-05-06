@@ -1,7 +1,28 @@
 'use strict';
 
-curaApp.controller('MainCtrl', ['$scope', 'serviceCall', 'layerCall', 'dataCall',
-function ($scope, serviceCall, layerCall, dataCall) {
+curaApp.controller('MainCtrl', ['$scope', 'CuraGeoJSON',
+
+function($scope, CuraGeoJSON) {
+	$scope.curaGeoJSON = CuraGeoJSON.query();
+
+	$scope.geoJsonLayerOpts = {
+		pointToLayer: function(featureData, latlng) {
+			var marker = new L.marker(latlng, {
+				icon: new L.divIcon({
+					iconSize: false, // use css
+					className: 'maki-icon water'
+				})
+			});
+			var p = featureData.properties;
+			marker.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
+				'<br />[ ' + latlng.lat + ', ' + latlng.lng + ' ]',
+				'<br />' + p.watershed_name].join(''));
+			return marker;
+		}
+	}
+	/*
+	 * ServiceCall, LayerCall, DataCall style
+	 *
 	$scope.serviceList = [];
 	$scope.layerInfoList = [];
 	$scope.stationListByLayer = null;
@@ -27,5 +48,5 @@ function ($scope, serviceCall, layerCall, dataCall) {
 				})(i));
 			}
 		});
-	});
+	});*/
 }]);

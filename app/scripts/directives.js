@@ -21,6 +21,15 @@ angular.module('directives', [])
 			console.log('adding basemap layer.');
 			$scope.map.addLayer(new L.TileLayer(iAttrs.basemap));
 
+			$scope.$watch('curaGeoJSON', function(value) {
+				if ($scope.curaGeoJSON.type == 'FeatureCollection') {
+					console.log('adding curaGeoJSON layer');
+					var layer = L.geoJson($scope.curaGeoJSON, $scope.geoJsonLayerOpts);
+					$scope.map.addLayer(layer).fitBounds(layer.getBounds());
+				}
+			}, true);
+
+			/*
 			$scope.$watch('serviceList', function(value) {
 				if (value instanceof Array && value.length != 0) {
 					var bbox = value[0].bbox, //
@@ -57,7 +66,7 @@ angular.module('directives', [])
 						}
 					}
 				}
-			}, true);
+			}, true);*/
 		}
 	};
 }])
