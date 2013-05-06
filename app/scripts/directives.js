@@ -49,9 +49,13 @@ function (layerStyle) {
 
 						var stations = value[key];
 						for (var i = 0, station; station = stations[i]; i++) {
-							mapLayer.addLayer(new L.Marker ([station.lat, station.lon], {
+							var marker = new L.Marker ([station.lat, station.lon], {
 								icon : layerStyle.icon(layerInfo, 'single')
-							}));
+							})
+							marker.bindPopup('<strong>' + station.name  + '(' + station.id + ')</strong>'
+								+ '<br />[ ' + station.lat + ', ' + station.lon + ' ]'
+								+ '<br />' + station.group);
+							mapLayer.addLayer(marker);
 						}
 					}
 				}

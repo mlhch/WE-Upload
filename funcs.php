@@ -116,6 +116,7 @@ function cura_get_data($field, $time, $bbox) {
 				, a.`longitude` `lon`
 				, a.`station_name`
 				, a.`location_id`
+				, a.`watershed_name`
 		FROM	`" . CURAH2O_TABLE . "` AS a
 		WHERE	`$field` IS NOT NULL
 			AND	`datetime` >= '$begintime'

@@ -282,10 +282,12 @@ function cura_service_getdata($request) {
 	
 	$readings = array ();
 	foreach ( $objs as $obj ) {
-		$name = "$obj->station_name($obj->location_id)[$obj->lat, $obj->lon]";
+		$name = "$obj->station_name($obj->location_id)[$obj->watershed_name]";
 		if (! isset ( $readings [$name] )) {
 			$readings [$name] = array (
-					'name' => $name,
+					'name' => $obj->station_name,
+					'id' => $obj->location_id,
+					'group' => $obj->watershed_name,
 					'lon' => $obj->lon,
 					'lat' => $obj->lat 
 			);
