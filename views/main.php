@@ -31,8 +31,6 @@
 <?php include dirname(dirname(__FILE__)) . "/app/index.php"?>
 <!-- CuraH2O Phase2 end-->
 
-<table id="data-entry-list" class="tablesorter"
-	style="border-spacing: 1px;"></table>
 <?php $icon_url = CURAH2O_PLUGIN_URL . '/lib/tablesorter/addons/pager/icons'?>
 <div id="data-entry-pager" class="tablesorterPager"
 	style="display: none">
@@ -143,7 +141,7 @@ function cura_form_field($row, $single = false) {
 	</p>
 </div>
 <script type="text/javascript">
-new WaterQuality({
+var wqOptions = {
 	selectors: {
 		btnAddNew: '#new-data-entry',
 		selector: '#fields-selector',
@@ -157,5 +155,5 @@ new WaterQuality({
 	canEdit: <?php echo intval(current_user_can('cura-edit'))?>,
 	canDelete: <?php echo intval(current_user_can('cura-delete'))?>,
 	canAdd: 1,
-});
+};
 </script>
