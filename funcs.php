@@ -136,6 +136,17 @@ function cura_get_data($field, $time, $bbox) {
 	
 	return $objs;
 }
+function cura_all_data() {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	*
+		FROM	`" . CURAH2O_TABLE . "` AS a
+		WHERE	`latitude` IS NOT NULL
+			AND	`longitude` IS NOT NULL
+	";
+	return $wpdb->get_results ( $sql );
+}
 function cura_update_layers() {
 	global $wpdb;
 	static $ignored_fields = null;
