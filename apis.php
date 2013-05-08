@@ -8,17 +8,23 @@ function cura_geojson() {
 	);
 	foreach ($objs as $key => $obj) {
 		$fc['features'][] = array(
-			'id' => $obj->id,
+			'id' => intval($obj->id),
 			'type' => 'Feature',
 			'properties' => $obj,
 			'geometry' => array(
 				'type' => 'Point',
-				'coordinates' => array($obj->longitude, $obj->latitude)
+				'coordinates' => array(floatval($obj->longitude), floatval($obj->latitude))
 			)
 		);
 		unset($obj->id);
 		unset($obj->latitude);
 		unset($obj->longitude);
+
+		foreach ($obj as $key => $value) {
+			if (is_numeric($value)) {
+				$obj->$key = floatval($value);
+			}
+		}
 	}
 	echo json_encode($fc);
 	exit ( 0 );
@@ -99,6 +105,19 @@ function cura_service_layers() {
 	echo json_encode ( $result );
 	exit ( 0 );
 }
+
+/*
+ * Ajax - locations.json
+ */
+function cura_json_fields() {
+	$fields = cura_fields ();
+	
+	echo json_encode ( array (
+			'fields' => $fields 
+	) );
+	exit ();
+}
+
 /*
  * Ajax - locations.json
  */
