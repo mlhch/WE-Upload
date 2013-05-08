@@ -9,7 +9,7 @@ function cura_fields() {
 	
 	$fields = array ();
 	foreach ( $cura_fields as $i => $row ) {
-		$fields [$row ['field']] = array (
+		$fields [] = array (
 				$row ['field'],
 				$row ['placeHolder'],
 				$row ['description'],
