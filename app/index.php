@@ -18,6 +18,7 @@
 
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular.js"?>"></script>
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-resource.js"?>"></script>
+	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-cookies.js"?>"></script>
 
 	<!-- build:js scripts/scripts.js -->
 	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/services.js"?>"></script>
