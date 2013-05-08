@@ -67,3 +67,37 @@ angular.module('services', ['ngResource'])
 		}
 	}
 }])
+
+	.factory('locations', ['$resource', function($resource) {
+
+	return $resource('/wp-admin/admin-ajax.php?action=cura_locations.json', {}, {
+		query: {
+			method: 'GET'
+		}
+	});
+}])
+
+	.factory('observations', ['$resource', function($resource) {
+
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		query: {
+			method: 'GET',
+			params: {
+				action: 'cura_observations.json',
+				watershed: '@watershed'
+			}
+		}
+	});
+}])
+
+	.factory('fields', ['$resource', function($resource) {
+
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		query: {
+			method: 'GET',
+			params: {
+				action: 'cura_fields.json'
+			}
+		}
+	});
+}])
