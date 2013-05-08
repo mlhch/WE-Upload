@@ -1,31 +1,21 @@
-<div style="float: left;">
-	<select id="filter-locations"
-		class="ui-button ui-widget ui-state-default ui-corner-all"
-		style="font-size: 12px; height: 30px; width: 300px"></select>
-</div>
-
-<div style="float: right; margin-bottom: 10px">
-	<button id="fields-config" type="button" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">More fields...</span>
-	</button>
-	<button id="new-data-entry" type="button" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">Add new entry</span>
-	</button>
-	<button id="export_as_csv" type="button" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">Export as CSV</span>
-	</button>
-	<button id="mobile-site" type="button" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">Mobile Site</span>
-	</button>
-</div>
-
-<ol id="fields-selector" style="float: right;"></ol>
-
-<div style="clear: both"></div>
+<?php $fields = cura_fields ()?>
+<script type="text/javascript">
+var wqOptions = {
+	selectors: {
+		btnAddNew: '#new-data-entry',
+		selector: '#fields-selector',
+		form: '#form-data-entry',
+		dialog: '#dialog-data-entry',
+		filterLocations: '#filter-locations',
+		table: '#data-entry-list',
+		pager: '#data-entry-pager',
+	},
+	fields: <?php echo $fields ? json_encode($fields) : '{}'?>,
+	canEdit: <?php echo intval(current_user_can('cura-edit'))?>,
+	canDelete: <?php echo intval(current_user_can('cura-delete'))?>,
+	canAdd: 1,
+};
+</script>
 
 <!-- CuraH2O Phase2 start-->
 <?php include dirname(dirname(__FILE__)) . "/app/index.php"?>
@@ -47,7 +37,6 @@
 </div>
 
 <?php
-$fields = cura_fields ();
 function cura_form_field($row, $single = false) {
 	if ($row [0] == 'lab_sample') {
 		?>
@@ -140,20 +129,3 @@ function cura_form_field($row, $single = false) {
 		<button id="notgoMobile" style="padding: 3px 20px; margin: 10px 20px">No</button>
 	</p>
 </div>
-<script type="text/javascript">
-var wqOptions = {
-	selectors: {
-		btnAddNew: '#new-data-entry',
-		selector: '#fields-selector',
-		form: '#form-data-entry',
-		dialog: '#dialog-data-entry',
-		filterLocations: '#filter-locations',
-		table: '#data-entry-list',
-		pager: '#data-entry-pager',
-	},
-	fields: <?php echo $fields ? json_encode($fields) : '{}'?>,
-	canEdit: <?php echo intval(current_user_can('cura-edit'))?>,
-	canDelete: <?php echo intval(current_user_can('cura-delete'))?>,
-	canAdd: 1,
-};
-</script>

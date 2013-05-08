@@ -97,9 +97,6 @@ function WaterQuality(config) {
 		this.tbody = document.createElement('tbody');
 		jQuery(this.table)[0].appendChild(this.tbody);
 	}
-
-	this.clickFilterLocation(); // use cookie set watershed first
-	this.initColumnSettings();
 	
 	this.clickDetails();
 	this.initEventAddNew();
@@ -108,28 +105,6 @@ function WaterQuality(config) {
 	this.initEventTypeahead();
 	this.initEventExport();
 	this.initEventMobileSite();
-
-	var me = this;
-	me.loadLocations(null, function() {
-		if (!/mobile|tablet|android/i.test(navigator.userAgent)) {
-			jQuery('.tooltip_description span').hide();
-		}
-		if (!jQuery.cookie('mobile-redirect')) {
-			if (/mobile|tablet|android/i.test(navigator.userAgent)) {
-				jQuery(".tooltip_description").dialog({
-					width : 400,
-					modal : true
-				});
-			}
-		} else {
-			jQuery("#remember-choice").attr('checked', 'checked');
-		}
-	});
-	
-	me.renderFieldsSettings();
-	
-	me.showObservationTable();
-	me.enableTableSorter();
 }
 
 WaterQuality.prototype = {
@@ -142,105 +117,9 @@ WaterQuality.prototype = {
 		return query;
 	},
 	table: null,
-	loadData: function(callback) {
-		var me = this;
-		
-		jQuery(function ($) {
-			var watershed_id = $(me.filterLocations).val();
-			
-			$.get(me.query("./observations.json"), {
-				watershed: watershed_id,
-			}, function (jsonData) {
-				var result = JSON.parse( jsonData );
-				me.data = result.observations;
-				
-				if ( me.data instanceof Array && !me.data.length ) {
-					me.clearTable();
-					alert('No data entries available');
-				} else {
-					me.showObservationTable();
-					$(me.table).trigger('update');
-					setTimeout(function() {
-						$(me.table).trigger("sorton", [$.cookie('sortList') || []])
-					}, 1);
-				}
-				
-				$.isFunction(callback) && callback();
-			});
-		});
-	},
+
 	locationList: null,
-	loadLocations: function(watershed, callback) {
-		var me = this;
-
-		jQuery(function($) {
-			$.getJSON(me.query('./locations.json'), function(json) {
-				var data = json.locations;
-				me.locationList = data;
-
-				$(me.filterLocations).empty();
-				$(me.filterLocations).append(
-						'<option> - Select community group - </option>');
-				$(me.filterLocations).append(
-						'<option value="">View All</option>');
-				for ( var i = 0, row; row = data[i++];) {
-					$(me.filterLocations).append(
-							'<option value="' + row.id + '"'
-									+ (row.watershed_name == watershed ? ' selected="selected"' : '') + '>'
-									+ row.watershed_name + ' / ' + row.count
-									+ '</option>');
-				}
-				$.isFunction(callback) && callback();
-			});
-		});
-	},
-	clickFilterLocation: function() {
-		var me = this;
-
-		jQuery(function($) {
-			$(me.filterLocations).change(function() {
-				if (this.selectedIndex != 0) {
-					me.loadData();
-				}
-			});
-		});
-	},
-	setFields: function( serverFields ) {
-		var fields = {};
-		
-		var cookieFields = jQuery.cookie('fields');
-		if (cookieFields instanceof Array && cookieFields.length) {
-			for (var i = 0, field; field = cookieFields[i++];) {
-				if (serverFields[field]) {
-					fields[field] = serverFields[field];
-					fields[field][4] = 1;
-					delete serverFields[field];
-				}
-			}
-			for (var i in serverFields) {
-				fields[i] = serverFields[i];
-				fields[i][4] = 0;
-			}
-		} else {
-			fields = serverFields;
-		}
-		
-		this.fields = fields;
-	},
-	renderFieldsSettings: function() {
-		this.setFields( this.fields );
-		
-		var html = [], ul = jQuery(this.selector)[0], fields = this.fields;
-		for (var i in fields) {
-			var field = fields[i];
-			html.push(
-				['<li>', field[2],
-				 '<input type="checkbox" id="ckb-', field[0], '" value="', field[0], '"',
-				 (field[4] ? ' checked="checked"' : ''), ' />',
-				 '</li>'].join(''));
-		}
-		ul.innerHTML = html.join('');
-	},
+	
 	showObservationTable: function() {
 		this.clearTable();
 		visibleFields = this.getVisibleFields();
@@ -291,42 +170,21 @@ WaterQuality.prototype = {
 		}
 	},
 	getVisibleFields: function() {
-		var ckbs = jQuery(this.selector).find('input');
-		
-		var fields = [];
-		for (var i = 0, ckb; ckb = ckbs[i++];) {
-			var field = this.fields && this.fields[ckb.value];
-			if (ckb.checked && field) { // 4 means Visible
-				fields.push(field);
-			}
-		}
-		
-		return fields;
+		return this.visibleFields || [];
 	},
 	enableTableSorter: function() {
 		var me = this;
 		
 		var headers = {};
-		// the Action column
-		headers[me.getVisibleFields().length] = { sorter: false };
+		// the Action column don't need sortable
+		var cols = me.getVisibleFields().length;
+		headers[cols] = { sorter: false };
 		
 		jQuery(function ($) {
-			var sortList = $.cookie('sortList') || [];
-			if (sortList instanceof Array) {
-				var len = $( 'input:checked', $(me.selector) ).length;
-				for (var i = 0; i < sortList.length; i++) {
-					if (!(sortList[i] instanceof Array) || sortList[i][0] >= len) {
-						sortList.splice(i);
-					}
-				}
-			} else {
-				sortList = [];
-			}
-			
 			if ($.tablesorter) {
 				$( me.table ).tablesorter({
 					headers: headers,
-					sortList: sortList || [],
+					sortList: me.sortList || [],
 					//widthFixed: true,
 					widgets: ['zebra'],
 				}).bind('sortEnd', function() {
@@ -389,97 +247,6 @@ WaterQuality.prototype = {
 						img.attr('src', src);
 					}
 				});
-			}
-		});
-	},
-	initColumnSettings: function() {
-		var me = this;
-		
-		jQuery( function($) {
-			$( me.selector )
-			.css( 'cursor', 'pointer' )
-			.click( function(e) {
-				var ckb = e.target || e.srcElement;
-				if (ckb.tagName != 'INPUT') {
-					return;
-				} else {
-					me.fields[ckb.value][4] = ckb.checked;
-					
-					var index = 0, fields = [];
-					$( 'input', $(me.selector) ).each(function(i, c) {
-						if (c === ckb) {
-							if (!ckb.checked) {
-								var sortList = $.cookie('sortList');
-								for (var i = 0, len = sortList.length; i < len; i++) {
-									if (sortList[i][0] == index) {
-										sortList.splice(i);
-										$.cookie('sortList', sortList);
-									}
-								}
-							}
-						}
-						if (c.checked) {
-							index++;
-							fields.push(c.value);
-						}
-					});
-					if (fields.length) {
-						$.cookie('fields', fields);
-					}
-					
-					me.showObservationTable();
-					
-					var headers = {};
-					// the Action column
-					headers[me.getVisibleFields().length] = { sorter: false };
-					$(me.table)[0].config.headers = headers;
-					$(me.table).trigger('update');
-					
-					setTimeout(function() {
-						$(me.table).trigger('sorton', [$.cookie('sortList')]);
-					}, 1);
-				}
-			});
-		});
-		
-		jQuery(document).ready(function ($) {
-			if ($( me.selector ).sortable) {
-				$( me.selector )
-				.css('cursor', 'pointer')
-				.sortable({
-					stop: function(e) {
-						var sortList = $.cookie('sortList');
-						var thList = [];
-						for (var i = 0; i < sortList.length; i++) {
-							var index = sortList[i][0];
-							var th = me.thead.rows[0].cells[index];
-							thList.push([th.id, sortList[i][1]]);
-						}
-						
-						me.showObservationTable();
-						$(me.table).trigger('update');
-						
-						sortList = [];
-						for (var i = 0; i < thList.length; i++) {
-							var th = thList[i];
-							sortList.push([document.getElementById(th[0]).cellIndex, th[1]]);
-						}
-						$.cookie('sortList', sortList);
-						setTimeout(function() {
-							$(me.table).trigger('sorton', [sortList]);
-						}, 1);
-						
-						var fields = [];
-						$( 'input', $(me.selector) ).each(function(i, ckb) {
-							if (ckb.checked) {
-								fields.push(ckb.value);
-							}
-						});
-						if (fields.length) {
-							jQuery.cookie('fields', fields);
-						}
-					}
-				})
 			}
 		});
 	},

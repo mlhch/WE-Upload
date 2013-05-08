@@ -71,14 +71,68 @@ angular.module('directives', [])
 	};
 }])
 
-	.directive('list', [function() {
+	.directive('list', ['$cookieStore', function($cookieStore) {
 	return {
 		restrict: 'E',
 		template: '<table id="data-entry-list" class="tablesorter" style="border-spacing: 1px;"></table>',
 		replace: true,
 		transclude: true,
 		link: function($scope, iElm, iAttrs, controller) {
-			new WaterQuality(wqOptions);
+			var wq = new WaterQuality(wqOptions);
+
+			$scope.$watch('observations', function(value) {
+				if (value instanceof Array && !value.length) {
+					wq.clearTable();
+					alert('No data entries available');
+				} else if (value) {
+					wq.data = value;
+					wq.showObservationTable();
+					jQuery(wq.table).trigger('update');
+					setTimeout(function() {
+						jQuery(wq.table).trigger("sorton", [jQuery.cookie('sortList') || []])
+					}, 1);
+				}
+			}, true);
+
+			$scope.$watch('fields', function(value) {
+				if (!value) {
+					return;
+				}
+
+				var visibleFields = [];
+				for (var key in value) {
+					value[key][4] && visibleFields.push(value[key]); // 4 means Visible
+				}
+
+				var sortList = $cookieStore.get('sortList') || [];
+				if (sortList instanceof Array) {
+					for (var i = 0; i < sortList.length; i++) {
+						if (!(sortList[i] instanceof Array) || sortList[i][0] >= visibleFields.length) {
+							sortList.splice(i);
+						}
+					}
+				} else {
+					sortList = [];
+				}
+
+				wq.fields = value;
+				wq.visibleFields = visibleFields;
+				wq.sortList = sortList;
+				wq.showObservationTable();
+				wq.enableTableSorter();
+
+				var headers = {};
+				headers[visibleFields.length] = {
+					sorter: false
+				};
+				jQuery(wq.table)[0].config.headers = headers;
+				jQuery(wq.table).trigger('update');
+				setTimeout(function() {
+					jQuery(wq.table).trigger('sorton', [sortList]);
+				}, 1);
+
+				$cookieStore.put('fields', value);
+			}, true);
 		}
 	}
 }])
