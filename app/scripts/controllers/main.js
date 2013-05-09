@@ -93,7 +93,7 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
 		var a = [this.feature.id];
 
 		for (var i = 0, field; field = $scope.visibleFields[i++];) {
-			var pos = field[3],
+			var pos = field[3];
 			var name = field[0];
 			if (name == 'latitude') {
 				a[pos] = this.feature.geometry.coordinates[1];
