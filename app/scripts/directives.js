@@ -14,18 +14,22 @@ angular.module('directives', [])
 				maxZoom: 14,
 				zoomControl: true
 			});
-			var layersControl = L.control.layers({}, {}, {
-				collapsed: true
-			}).addTo($scope.map);
+			//var layersControl = L.control.layers({}, {}, {
+			//	collapsed: true
+			//}).addTo($scope.map);
 
 			console.log('adding basemap layer.');
 			$scope.map.addLayer(new L.TileLayer(iAttrs.basemap));
 
-			$scope.$watch('curaGeoJSON', function(value) {
-				if ($scope.curaGeoJSON.type == 'FeatureCollection') {
-					console.log('adding curaGeoJSON layer');
-					var layer = L.geoJson($scope.curaGeoJSON, $scope.geoJsonLayerOpts);
-					$scope.map.addLayer(layer).fitBounds(layer.getBounds());
+			$scope.$watch('curaGeoFeatureCollection', function(value) {
+				if (value.type == 'FeatureCollection') {
+					if (value.features.length != 0) {
+						console.log('adding curaGeoFeatureCollection layer');
+						var layer = L.geoJson(value, $scope.geoJsonLayerOpts);
+						$scope.map.addLayer(layer).fitBounds(layer.getBounds());
+					} else {
+						$scope.map.setView([0, 0], 1);
+					}
 				}
 			}, true);
 

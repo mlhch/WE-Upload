@@ -66,7 +66,7 @@ function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
 	/**
 	 * GeoJSON layer
 	 */
-	$scope.curaGeoJSON = CuraGeoJSON.query();
+	$scope.curaGeoFeatureCollection = CuraGeoJSON.query();
 	$scope.geoJsonLayerOpts = {
 		pointToLayer: function(featureData, latlng) {
 			var marker = new L.marker(latlng, {

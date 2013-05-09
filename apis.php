@@ -423,6 +423,26 @@ jQuery(document).ready(function($) {
 	exit ( 0 );
 }
 
+function cura_demo_migrate() {
+	ini_set('display_errors', 'on');
+	error_reporting(E_ALL);
+	$url = 'http://curah2o.com/wp-admin/admin-ajax.php?action=cura_observations.json&watershed=';
+	$json = file_get_contents($url);
+	$data = json_decode($json);
+	$fields = $data->fields;
+	$observations = $data->observations;
 
+	global $wpdb;
+	$sql = "DELETE FROM `" . CURAH2O_TABLE . "` WHERE 1";
+	$affectedRows = $wpdb->query ( $sql );
+	echo "$affectedRows rows deleted<br />\n";
 
-
+	foreach ($observations as $row) {
+		$params = array();
+		foreach ($fields as $field) {
+			$params[$field[0]] = $row[$field[3]];
+		}
+		cura_add_entry($params);
+	}
+	exit;
+}
