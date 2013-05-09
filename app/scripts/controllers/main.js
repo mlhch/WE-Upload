@@ -2,7 +2,7 @@
 
 curaApp.controller('MainCtrl', ['$scope', 'CuraGeoJSON', 'fields', 'locations', 'observations', '$cookieStore',
 
-function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
+function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
 	//$scope.wpOptions = wpOptions;
 
 	/**
@@ -14,7 +14,7 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
 	if (fields instanceof Array && fields.length) {
 		$scope.fields = fields;
 	} else {
-		fields.query(function(json) {
+		Fields.query(function(json) {
 			$scope.fields = json.fields;
 			$cookieStore.put('fields', json.fields);
 		})
