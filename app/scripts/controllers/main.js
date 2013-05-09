@@ -10,10 +10,15 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
 	 */
 
 	// Load fields from cookie or server
-	($scope.fields = $cookieStore.get('fields')) || fields.query(function(json) {
-		$scope.fields = json.fields;
-		$cookieStore.put('fields', value);
-	});
+	var fields = $cookieStore.get('fields');
+	if (fields instanceof Array && fields.length) {
+		$scope.fields = fields;
+	} else {
+		fields.query(function(json) {
+			$scope.fields = json.fields;
+			$cookieStore.put('fields', json.fields);
+		})
+	};
 
 	$scope.$watch('fields', function(value) {
 		if (!value) {
@@ -88,7 +93,8 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
 		var a = [this.feature.id];
 
 		for (var i = 0, field; field = $scope.visibleFields[i++];) {
-			var pos = field[3], name = field[0];
+			var pos = field[3],
+			var name = field[0];
 			if (name == 'latitude') {
 				a[pos] = this.feature.geometry.coordinates[1];
 			} else if (name == 'longitude') {
