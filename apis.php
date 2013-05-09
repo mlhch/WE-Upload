@@ -444,5 +444,7 @@ function cura_demo_migrate() {
 		}
 		cura_add_entry($params);
 	}
+	cura_update_layers();
+	cura_update_locations();
 	exit;
 }
