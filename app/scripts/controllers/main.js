@@ -16,7 +16,6 @@ function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
 	} else {
 		Fields.query(function(json) {
 			$scope.fields = json.fields;
-			$cookieStore.put('fields', json.fields);
 		})
 	};
 
@@ -24,6 +23,7 @@ function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
 		if (!value) {
 			return;
 		}
+		$cookieStore.put('fields', value);
 
 		var visibleFields = [];
 		for (var key in value) {
