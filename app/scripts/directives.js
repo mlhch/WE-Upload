@@ -10,7 +10,7 @@ angular.module('directives', [])
 		transclude: true,
 		link: function($scope, iElm, iAttrs, controller) {
 			console.log('initializing map');
-			var map = Cura.map('map', {
+			var map = L.map('map', {
 				maxZoom: 14,
 				zoomControl: true
 			});
