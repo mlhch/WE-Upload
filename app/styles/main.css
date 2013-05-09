@@ -6,5 +6,11 @@
 }
 
 .icon-tint {
-	font-size: 20px;
+	font-size: 30px;
+	color: #D8DEE3;
+	-webkit-text-stroke: 1px black;
+}
+.icon-tint.highlighted {
+	font-size: 35px;
+	color: orange
 }
