@@ -38,36 +38,6 @@ angular.module('services', ['ngResource'])
 	});
 }])
 
-	.factory('layerStyle', [function() {
-	var icons = {
-		'do_mgl': 'coffee',
-		'do_%': 'bell-alt',
-		'cond': 'fire',
-		'salinity': 'beaker',
-		'temp': 'asterisk',
-		'ph': 'bullhorn',
-		'secchi_a': 'tint',
-		'secchi_b': 'umbrella',
-		'secchi_d': 'bolt',
-		'lab_id': 'food',
-		'nitrate': 'glass',
-		'phosphate': 'cloud',
-		'coliform': 'leaf',
-	}
-
-	return {
-		icon: function(layer, type) {
-			var icon = new L.AwesomeMarkers.icon({
-				icon: icons[layer.name] || 'question-sign',
-				color: type == 'single' ? 'red' : 'darkred',
-				iconColor: type == 'single' ? 'white' : 'black',
-			});
-
-			return icon;
-		}
-	}
-}])
-
 	.factory('locations', ['$resource', function($resource) {
 
 	return $resource('/wp-admin/admin-ajax.php?action=cura_locations.json', {}, {

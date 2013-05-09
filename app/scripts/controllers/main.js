@@ -1,8 +1,10 @@
 'use strict';
 
-curaApp.controller('MainCtrl', ['$scope', 'CuraGeoJSON', 'fields', 'locations', 'observations', '$cookieStore',
+curaApp.controller('MainCtrl', [
+	'$scope', '$cookieStore',
+	'CuraGeoJSON', 'fields', 'locations', 'observations',
 
-function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
+function($scope, $cookieStore, CuraGeoJSON, Fields, locations, observations) {
 	//$scope.wpOptions = wpOptions;
 
 	/**
@@ -66,48 +68,32 @@ function($scope, CuraGeoJSON, Fields, locations, observations, $cookieStore) {
 	/**
 	 * GeoJSON layer
 	 */
-	$scope.curaGeoFeatureCollection = CuraGeoJSON.query();
-	$scope.geoJsonLayerOpts = {
-		pointToLayer: function(featureData, latlng) {
-			var marker = new L.marker(latlng, {
-				icon: new L.divIcon({
-					iconSize: false, // use css
-					className: 'maki-icon water',
-					iconAnchor: [12, 4]
-				})
-			});
-			return marker;
-		},
-		onEachFeature: function(feature, layer) {
-			var p = feature.properties;
-			var c = feature.geometry.coordinates;
-			layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
-				'<br />[ ' + c[0] + ', ' + c[1] + ' ]',
-				'<br />' + p.watershed_name].join(''));
-			layer.on('click', $scope.showFeatureProperties);
-		},
-	}
+	CuraGeoJSON.query(function(json) {
+		$scope.geoJSONLayer = Cura.geoJson(json, {
+			onFeatureClick: function() {
+				var p = this.feature.properties;
+				var c = this.feature.geometry.coordinates;
+				var a = [this.feature.id];
 
-	$scope.showFeatureProperties = function() {
-		var p = this.feature.properties;
-		var a = [this.feature.id];
+				for (var i = 0, field; field = $scope.visibleFields[i++];) {
+					var pos = field[3];
+					var name = field[0];
+					if (name == 'latitude') {
+						a[pos] = c[1];
+					} else if (name == 'longitude') {
+						a[pos] = c[0];
+					} else {
+						a[pos] = p[name];
+					}
+				}
 
-		for (var i = 0, field; field = $scope.visibleFields[i++];) {
-			var pos = field[3];
-			var name = field[0];
-			if (name == 'latitude') {
-				a[pos] = this.feature.geometry.coordinates[1];
-			} else if (name == 'longitude') {
-				a[pos] = this.feature.geometry.coordinates[0];
-			} else {
-				a[pos] = p[name];
+				$scope.observations = {};
+				$scope.observations[this.feature.id] = a;
+				$scope.location.selected = "";
+				$scope.$apply();
 			}
-		}
-
-		$scope.observations = {};
-		$scope.observations[this.feature.id] = a;
-		$scope.$apply();
-	}
+		});
+	});
 
 	/**
 	 * watershed dropdown select
