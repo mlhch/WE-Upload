@@ -1,3 +1,7 @@
+<map basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-yelacea2/{z}/{x}/{y}.png"></map>
+
+<div style="clear: both; height: 15px"></div>
+
 <div style="float: left;">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
 			style="font-size: 12px; height: 30px; width: 300px" ng-model="location.selected" ng-options="row.id as row.watershed_name for row in locations" ng-change="filterByLocation(location.selected)">
@@ -27,9 +31,5 @@
 	<li ng-repeat="field in fields|orderBy:aa:reverse" ng-click="toggleFieldStatus(field)">{{field[2]}}
 		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
 </ol>
-
-<div style="clear: both"></div>
-
-<map basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-yelacea2/{z}/{x}/{y}.png"></map>
 
 <list></list>

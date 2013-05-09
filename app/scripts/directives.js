@@ -71,7 +71,7 @@ angular.module('directives', [])
 	};
 }])
 
-	.directive('list', ['$cookieStore', function($cookieStore) {
+	.directive('list', [function() {
 	return {
 		restrict: 'E',
 		template: '<table id="data-entry-list" class="tablesorter" style="border-spacing: 1px;"></table>',
@@ -99,39 +99,22 @@ angular.module('directives', [])
 					return;
 				}
 
-				var visibleFields = [];
-				for (var key in value) {
-					value[key][4] && visibleFields.push(value[key]); // 4 means Visible
-				}
-
-				var sortList = $cookieStore.get('sortList') || [];
-				if (sortList instanceof Array) {
-					for (var i = 0; i < sortList.length; i++) {
-						if (!(sortList[i] instanceof Array) || sortList[i][0] >= visibleFields.length) {
-							sortList.splice(i);
-						}
-					}
-				} else {
-					sortList = [];
-				}
-
 				wq.fields = value;
-				wq.visibleFields = visibleFields;
-				wq.sortList = sortList;
+				wq.visibleFields = $scope.visibleFields;
+				wq.sortList = $scope.sortList;
 				wq.showObservationTable();
 				wq.enableTableSorter();
 
 				var headers = {};
-				headers[visibleFields.length] = {
+				headers[$scope.visibleFields.length] = {
 					sorter: false
 				};
 				jQuery(wq.table)[0].config.headers = headers;
 				jQuery(wq.table).trigger('update');
 				setTimeout(function() {
-					jQuery(wq.table).trigger('sorton', [sortList]);
+					jQuery(wq.table).trigger('sorton', [$scope.sortList]);
 				}, 1);
 
-				$cookieStore.put('fields', value);
 			}, true);
 		}
 	}

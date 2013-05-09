@@ -1,8 +1,8 @@
 'use strict';
 
-curaApp.controller('MainCtrl', ['$scope', 'CuraGeoJSON', 'fields', 'locations', 'observations', '$cookieStore', '$cookies',
+curaApp.controller('MainCtrl', ['$scope', 'CuraGeoJSON', 'fields', 'locations', 'observations', '$cookieStore',
 
-function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore, $cookies) {
+function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore) {
 	//$scope.wpOptions = wpOptions;
 
 	/**
@@ -12,7 +12,32 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore, $co
 	// Load fields from cookie or server
 	($scope.fields = $cookieStore.get('fields')) || fields.query(function(json) {
 		$scope.fields = json.fields;
+		$cookieStore.put('fields', value);
 	});
+
+	$scope.$watch('fields', function(value) {
+		if (!value) {
+			return;
+		}
+
+		var visibleFields = [];
+		for (var key in value) {
+			value[key][4] && visibleFields.push(value[key]); // 4 means Visible
+		}
+		$scope.visibleFields = visibleFields;
+
+		var sortList = $cookieStore.get('sortList') || [];
+		if (sortList instanceof Array) {
+			for (var i = 0; i < sortList.length; i++) {
+				if (!(sortList[i] instanceof Array) || sortList[i][0] >= visibleFields.length) {
+					sortList.splice(i);
+				}
+			}
+		} else {
+			sortList = [];
+		}
+		$scope.sortList = sortList;
+	}, true);
 
 	// click <li> to toggle field status
 	$scope.toggleFieldStatus = function(field) {
@@ -42,7 +67,8 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore, $co
 			var marker = new L.marker(latlng, {
 				icon: new L.divIcon({
 					iconSize: false, // use css
-					className: 'maki-icon water'
+					className: 'maki-icon water',
+					iconAnchor: [12, 4]
 				})
 			});
 			return marker;
@@ -53,12 +79,28 @@ function($scope, CuraGeoJSON, fields, locations, observations, $cookieStore, $co
 			layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
 				'<br />[ ' + c[0] + ', ' + c[1] + ' ]',
 				'<br />' + p.watershed_name].join(''));
-			layer.on('click', $scope.showInfo);
+			layer.on('click', $scope.showFeatureProperties);
 		},
 	}
 
-	$scope.showInfo = function() {
+	$scope.showFeatureProperties = function() {
+		var p = this.feature.properties;
+		var a = [this.feature.id];
 
+		for (var i = 0, field; field = $scope.visibleFields[i++];) {
+			var pos = field[3], name = field[0];
+			if (name == 'latitude') {
+				a[pos] = this.feature.geometry.coordinates[1];
+			} else if (name == 'longitude') {
+				a[pos] = this.feature.geometry.coordinates[0];
+			} else {
+				a[pos] = p[name];
+			}
+		}
+
+		$scope.observations = {};
+		$scope.observations[this.feature.id] = a;
+		$scope.$apply();
 	}
 
 	/**
