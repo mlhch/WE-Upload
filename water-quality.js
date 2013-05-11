@@ -101,7 +101,6 @@ function WaterQuality(config) {
 	this.clickDetails();
 	this.initEventAddNew();
 	this.validateForm();
-	this.clickColumnConfig();
 	this.initEventTypeahead();
 	this.initEventExport();
 	this.initEventMobileSite();
@@ -512,15 +511,7 @@ WaterQuality.prototype = {
 			$(me.form).validate(cura_validation_options);
 		});
 	},
-	clickColumnConfig: function() {
-		var me = this;
-		
-		jQuery( function ($) {
-			$('#fields-config').click(function() {
-				$(me.selector).slideToggle();
-			});
-		});
-	},
+
 	initEventTypeahead: function(refresh) {
 		var me = this;
 		

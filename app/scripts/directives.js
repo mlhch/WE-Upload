@@ -39,20 +39,6 @@ angular.module('directives', [])
 		link: function($scope, iElm, iAttrs, controller) {
 			var wq = new WaterQuality(wqOptions);
 
-			$scope.$watch('observations', function(value) {
-				if (value instanceof Array && !value.length) {
-					wq.clearTable();
-					alert('No data entries available');
-				} else if (value) {
-					wq.data = value;
-					wq.showObservationTable();
-					jQuery(wq.table).trigger('update');
-					setTimeout(function() {
-						jQuery(wq.table).trigger("sorton", [jQuery.cookie('sortList') || []])
-					}, 1);
-				}
-			}, true);
-
 			$scope.$watch('fields', function(value) {
 				if (!value) {
 					return;
