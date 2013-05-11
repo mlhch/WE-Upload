@@ -5,8 +5,6 @@ curaApp.controller('MainCtrl', [
 	'CuraGeoJSON', 'fields', 'locations', 'observations',
 
 function($scope, $cookieStore, CuraGeoJSON, Fields, locations, observations) {
-	//$scope.wpOptions = wpOptions;
-
 	/**
 	 * Fields operations
 	 */
@@ -70,63 +68,22 @@ function($scope, $cookieStore, CuraGeoJSON, Fields, locations, observations) {
 	 */
 	CuraGeoJSON.query(function(json) {
 		$scope.geoJSONLayer = Cura.geoJson(json, {
-			onFeatureClick: function() {
-				var p = this.feature.properties;
-				var c = this.feature.geometry.coordinates;
-				var a = [this.feature.id];
-
-				for (var i = 0, field; field = $scope.visibleFields[i++];) {
-					var pos = field[3];
-					var name = field[0];
-					if (name == 'latitude') {
-						a[pos] = c[1];
-					} else if (name == 'longitude') {
-						a[pos] = c[0];
-					} else {
-						a[pos] = p[name];
-					}
-				}
-
-				$scope.observations = {};
-				$scope.observations[this.feature.id] = a;
-				$scope.location.selected = "";
-				$scope.$apply();
-			}
+			onFeatureClick: onFeatureClick
 		});
+
+		/**
+		 * watershed dropdown select
+		 */
+		$scope.locations = $scope.geoJSONLayer.locations();
+		$scope.selectedLocation = 0; // 0 => View All
 	});
 
-	/**
-	 * watershed dropdown select
-	 */
-	locations.query(function(json) {
-		$scope.locations = [{
-			id: "",
-			watershed_name: " - Select community group - "
-		}, {
-			id: 0,
-			watershed_name: "View All"
-		}].concat(json.locations);
-
-		var location = $cookieStore.get('location');
-		$scope.location = {
-			selected: isNaN(location) ? "" : location
-		};
-		$scope.filterByLocation($scope.location.selected);
-	});
-
-	$scope.filterByLocation = function(watershed_id) {
-		$cookieStore.put('location', watershed_id);
-
-		if (watershed_id === "") {
-			$scope.observations = {};
-			return;
+	$scope.$watch('selectedLocation', function(value) {
+		if (typeof value != 'undefined') {
+			console.log('community group ' + value + ' selected');
+			$scope.geoJSONLayer.filterByCommunityGroup(value);
 		}
-		observations.query({
-			watershed: watershed_id // 0 => all
-		}, function(json) {
-			$scope.observations = json.observations;
-		});
-	};
+	});
 
 	/* me.loadLocations(null, function() {
 		if (!/mobile | tablet | android / i.test(navigator.userAgent)) {
@@ -143,34 +100,28 @@ if (!jQuery.cookie('mobile-redirect')) {
 	jQuery("#remember-choice").attr('checked', 'checked');
 }
 });
+*/
 
-/*
-	 * ServiceCall, LayerCall, DataCall style
-	 *
-	$scope.serviceList = [];
-	$scope.layerInfoList = [];
-	$scope.stationListByLayer = null;
+	function onFeatureClick() {
+		var p = this.feature.properties;
+		var c = this.feature.geometry.coordinates;
+		var a = [this.feature.id];
 
-	serviceCall.query(function (json) {
-		$scope.serviceList = json.servicelist;
-
-		layerCall.query(function (json) {
-			$scope.layerInfoList = json.layerlist;
-
-			for (var i = 0, layerInfo; layerInfo = $scope.layerInfoList[i]; i++) {
-				dataCall.query({
-					request : "getdata",
-					serviceid : 1,
-					layerid : layerInfo.id,
-					time : layerInfo.time,
-					bbox : layerInfo.bbox,
-				}, (function (i) {
-					return function (json) {
-						$scope.stationListByLayer = $scope.stationListByLayer || {};
-						$scope.stationListByLayer[i] = json.data;
-					}
-				})(i));
+		for (var i = 0, field; field = $scope.visibleFields[i++];) {
+			var pos = field[3];
+			var name = field[0];
+			if (name == 'latitude') {
+				a[pos] = c[1];
+			} else if (name == 'longitude') {
+				a[pos] = c[0];
+			} else {
+				a[pos] = p[name];
 			}
-		});
-	});*/
+		}
+
+		$scope.observations = {};
+		$scope.observations[this.feature.id] = a;
+		$scope.location.selected = "";
+		$scope.$apply();
+	}
 }]);
