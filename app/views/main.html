@@ -1,14 +1,27 @@
 <map basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-yelacea2/{z}/{x}/{y}.png"></map>
-
 <div style="clear: both; height: 15px"></div>
-
-<div style="float: left;">
+<div style="float: left; margin-bottom: 10px">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
 			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.groupId" ng-options="row.id as row.watershed_name for row in locations">
 	</select>
 	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" />
+	<input id="startDate" class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Start Date"  style="text-align: left; width: 100px" />
+	<input id="endDate" class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="End Date"  style="text-align: left; width: 100px" />
+	<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="font-size: 12px; width: 80px" ng-click="resetFilterOptions()"><span class="ui-button-text">Reset</span></button>
 </div>
-
+<table id="data-entry-list" class="tablesorter" style="border-spacing: 1px;">
+	<thead>
+		<tr>
+			<th ng-repeat="field in visibleFields">{{field[2]}}</th>
+			<th style="text-align:center; width:10px">Action</th>
+		</tr>
+	</thead>
+	<tr ng-repeat="feature in geoJSONLayer.features" id="entry-{{feature.id}}">
+		<td ng-repeat="field in visibleFields">{{feature.properties[field[0]]}}</td>
+		<td style="padding: 0px; text-align: center">
+			<button type="button" style="font-size:12px; margin:3px 10px" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
+	</tr>
+</table>
 <div style="float: right; margin-bottom: 10px">
 	<button id="fields-config" type="button" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
@@ -27,22 +40,7 @@
 		<span class="ui-button-text">Mobile Site</span>
 	</button>
 </div>
-
 <ol id="fields-selector" style="float: right; cursor: pointer">
 	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">{{field[2]}}
 		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
 </ol>
-
-<table id="data-entry-list" class="tablesorter" style="border-spacing: 1px;">
-	<thead>
-		<tr>
-			<th ng-repeat="field in visibleFields">{{field[2]}}</th>
-			<th style="text-align:center; width:10px">Action</th>
-		</tr>
-	</thead>
-	<tr ng-repeat="feature in geoJSONLayer.features" id="entry-{{feature.id}}">
-		<td ng-repeat="field in visibleFields">{{feature.properties[field[0]]}}</td>
-		<td style="padding: 0px; text-align: center">
-			<button type="button" style="font-size:12px; margin:3px 10px" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
-	</tr>
-</table>

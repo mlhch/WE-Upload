@@ -111,6 +111,30 @@ function($scope, $cookieStore, CuraGeoJSON, Fields, locations, observations) {
 		}
 	}, true);
 
+	$scope.resetFilterOptions = function() {
+		$scope.filterOptions = {
+			groupId: 0,
+		};
+		jQuery("#startDate").datepicker('setDate');
+		jQuery("#endDate").datepicker('setDate');
+	}
+
+	jQuery("#startDate").datepicker({
+		defaultDate: '-1m',
+		dateFormat: 'yy-mm-dd',
+		onSelect: function() {
+			$scope.filterOptions.startDate = this.value;
+			$scope.$apply();
+		}
+	});
+	jQuery("#endDate").datepicker({
+		dateFormat: 'yy-mm-dd',
+		onSelect: function() {
+			$scope.filterOptions.endDate = this.value;
+			$scope.$apply();
+		}
+	});
+
 	/* me.loadLocations(null, function() {
 		if (!/mobile | tablet | android / i.test(navigator.userAgent)) {
 	jQuery('.tooltip_description span').hide();

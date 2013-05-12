@@ -38,7 +38,7 @@
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},
 			highlightIcon: function() {
-				if (lastLayer) {
+				if (lastLayer && lastLayer._icon) {
 					lastLayer.options.riseOnHover = true;
 					lastLayer._icon.className = lastLayer._icon.className.replace(' highlighted', '');
 					lastLayer._resetZIndex();
@@ -93,7 +93,12 @@
 				var filters = [this.filters.byFeatureId];
 				this.doFilterFeatures(filters, options);
 			} else {
-				var filters = [this.filters.searchText, this.filters.byCommunityGroup];
+				var filters = [
+				this.filters.searchText,
+				this.filters.byCommunityGroup,
+				this.filters.byStartDate,
+				this.filters.byEndDate //
+				];
 				this.doFilterFeatures(filters, options);
 				this.doFilterIcons(filters, options);
 			}
@@ -147,7 +152,13 @@
 					}, this);
 					return feature.properties.watershed_name == watershed_name;
 				}
-			}
+			},
+			byStartDate: function(feature, options) {
+				return !options.startDate || feature.properties.datetime >= options.startDate;
+			},
+			byEndDate: function(feature, options) {
+				return !options.endDate || feature.properties.datetime <= options.endDate;
+			},
 		},
 	});
 
