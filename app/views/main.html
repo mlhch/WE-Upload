@@ -4,8 +4,9 @@
 
 <div style="float: left;">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
-			style="font-size: 12px; height: 30px; width: 300px" ng-model="selectedLocation" ng-options="row.id as row.watershed_name for row in locations">
+			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.groupId" ng-options="row.id as row.watershed_name for row in locations">
 	</select>
+	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" />
 </div>
 
 <div style="float: right; margin-bottom: 10px">
@@ -39,8 +40,8 @@
 			<th style="text-align:center; width:10px">Action</th>
 		</tr>
 	</thead>
-	<tr ng-repeat="layer in geoJSONLayer._layers" id="entry-{{layer.feature.id}}">
-		<td ng-repeat="field in visibleFields">{{layer.feature.properties[field[0]]}}</td>
+	<tr ng-repeat="feature in geoJSONLayer.features" id="entry-{{feature.id}}">
+		<td ng-repeat="field in visibleFields">{{feature.properties[field[0]]}}</td>
 		<td style="padding: 0px; text-align: center">
 			<button type="button" style="font-size:12px; margin:3px 10px" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
 	</tr>

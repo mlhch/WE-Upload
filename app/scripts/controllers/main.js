@@ -68,22 +68,48 @@ function($scope, $cookieStore, CuraGeoJSON, Fields, locations, observations) {
 	 */
 	CuraGeoJSON.query(function(json) {
 		$scope.geoJSONLayer = Cura.geoJson(json, {
-			onFeatureClick: onFeatureClick
+			onFeatureClick: function() {
+				$scope.filterOptions.featureId = this.feature.id;
+				$scope.$apply();
+			}
 		});
 
 		/**
 		 * watershed dropdown select
 		 */
 		$scope.locations = $scope.geoJSONLayer.locations();
-		$scope.selectedLocation = 0; // 0 => View All
-	});
-
-	$scope.$watch('selectedLocation', function(value) {
-		if (typeof value != 'undefined') {
-			console.log('community group ' + value + ' selected');
-			$scope.geoJSONLayer.filterByCommunityGroup(value);
+		$scope.filterOptions = {
+			groupId: 0, // 0 => View All
 		}
 	});
+
+	$scope.$watch('filterOptions', function(value, old) {
+		if (typeof value != 'undefined') {
+			console.log('filter: ' + JSON.stringify(value) + ' <- ' + JSON.stringify(old));
+
+			if (value.searchText != '' && old && value.searchText != old.searchText) {
+				if (value.featureId != 0) {
+					value.featureId = 0;
+					return;
+				}
+			}
+			if (value.groupId !== '' && old && value.groupId !== old.groupId) {
+				if (value.featureId != 0) {
+					value.featureId = 0;
+					return;
+				}
+			}
+			if (value.featureId != 0 && old && value.featureId != old.featureId) {
+				if (value.groupId !== '' || value.searchText != '') {
+					value.groupId = '';
+					value.searchText = '';
+					return;
+				}
+			}
+
+			$scope.geoJSONLayer.doFilter(value);
+		}
+	}, true);
 
 	/* me.loadLocations(null, function() {
 		if (!/mobile | tablet | android / i.test(navigator.userAgent)) {
@@ -101,27 +127,4 @@ if (!jQuery.cookie('mobile-redirect')) {
 }
 });
 */
-
-	function onFeatureClick() {
-		var p = this.feature.properties;
-		var c = this.feature.geometry.coordinates;
-		var a = [this.feature.id];
-
-		for (var i = 0, field; field = $scope.visibleFields[i++];) {
-			var pos = field[3];
-			var name = field[0];
-			if (name == 'latitude') {
-				a[pos] = c[1];
-			} else if (name == 'longitude') {
-				a[pos] = c[0];
-			} else {
-				a[pos] = p[name];
-			}
-		}
-
-		$scope.observations = {};
-		$scope.observations[this.feature.id] = a;
-		$scope.location.selected = "";
-		$scope.$apply();
-	}
 }]);
