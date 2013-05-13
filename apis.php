@@ -443,7 +443,11 @@ function cura_demo_migrate() {
 	foreach ($observations as $row) {
 		$params = array();
 		foreach ($fields as $field) {
-			$params[$field[0]] = stripslashes($row[$field[3]]);
+			if ($field[0] == 'datetime') {
+				$params[$field[0]] = date('Y-m-d H:i:s', strtotime($row[$field[3]]));
+			} else {
+				$params[$field[0]] = stripslashes($row[$field[3]]);
+			}
 		}
 		cura_add_entry($params);
 	}
