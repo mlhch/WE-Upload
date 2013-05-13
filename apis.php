@@ -107,13 +107,16 @@ function cura_service_layers() {
 }
 
 /*
- * Ajax - locations.json
+ * Ajax - config.json
  */
-function cura_json_fields() {
+function cura_json_config() {
 	$fields = cura_fields ();
 	
 	echo json_encode ( array (
-			'fields' => $fields 
+			'canEdit' => current_user_can('cura-edit'),
+			'canDelete' => current_user_can('cura-delete'),
+			'canAdd' => 1,
+			'fields' => $fields,
 	) );
 	exit ();
 }
