@@ -33,7 +33,7 @@
 				var p = feature.properties;
 				var c = feature.geometry.coordinates;
 				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
-					'<br />[ ' + c[0] + ', ' + c[1] + ' ]',
+					'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
 					'<br />' + p.watershed_name].join(''));
 				layer.on('click', this.highlightIcon);
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
