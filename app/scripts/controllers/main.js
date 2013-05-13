@@ -68,8 +68,8 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 	CuraGeoJSON.query(function(json) {
 		$scope.geoLayer = Cura.geoJson(json, {
 			onFeatureClick: function() {
-				//$scope.filterOptions.featureId = this.feature.id;
-				$scope.selectedLayer = this;
+				$scope.filterOptions.featureId = this.feature.id;
+				//$scope.selectedLayer = this;
 				$scope.$apply();
 			}
 		});

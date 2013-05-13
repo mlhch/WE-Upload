@@ -91,8 +91,8 @@
 
 		doFilter: function(options) {
 			if (options && options.featureId) {
-				//var filters = [this.filters.byFeatureId];
-				//this.doFilterRows(filters, options);
+				var filters = [this.filters.byFeatureId];
+				this.doFilterRows(filters, options);
 			} else {
 				var filters = [
 				this.filters.searchText,
