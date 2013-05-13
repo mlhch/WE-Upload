@@ -443,7 +443,7 @@ function cura_demo_migrate() {
 	foreach ($observations as $row) {
 		$params = array();
 		foreach ($fields as $field) {
-			$params[$field[0]] = $row[$field[3]];
+			$params[$field[0]] = stripslashes($row[$field[3]]);
 		}
 		cura_add_entry($params);
 	}
