@@ -19,6 +19,7 @@
 				this.allLayers.push(this._layers[key]);
 			}
 		},
+
 		options: {
 			pointToLayer: function(featureData, latlng) {
 				var marker = L.marker(latlng, {
@@ -90,8 +91,8 @@
 
 		doFilter: function(options) {
 			if (options && options.featureId) {
-				var filters = [this.filters.byFeatureId];
-				this.doFilterFeatures(filters, options);
+				//var filters = [this.filters.byFeatureId];
+				//this.doFilterRows(filters, options);
 			} else {
 				var filters = [
 				this.filters.searchText,
@@ -99,19 +100,19 @@
 				this.filters.byStartDate,
 				this.filters.byEndDate //
 				];
-				this.doFilterFeatures(filters, options);
+				this.doFilterRows(filters, options);
 				this.doFilterIcons(filters, options);
 			}
 		},
 
-		features: [],
-		doFilterFeatures: function(filters, options) {
-			this.features.splice(0);
+		filteredRows: [],
+		doFilterRows: function(filters, options) {
+			this.filteredRows.splice(0);
 			this.allLayers.forEach(function(layer) {
 				if (filters.every(function(fn) {
 					return fn.call(this, layer.feature, options);
 				}, this)) {
-					this.features.push(layer.feature);
+					this.filteredRows.push(layer);
 				}
 			}, this);
 		},
