@@ -60,13 +60,13 @@ angular.module('services', ['ngResource'])
 	});
 }])
 
-	.factory('fields', ['$resource', function($resource) {
+	.factory('curaConfig', ['$resource', function($resource) {
 
 	return $resource('/wp-admin/admin-ajax.php', {}, {
 		query: {
 			method: 'GET',
 			params: {
-				action: 'cura_fields.json'
+				action: 'cura_config.json'
 			}
 		}
 	});
