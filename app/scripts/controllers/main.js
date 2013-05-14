@@ -67,11 +67,13 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 		$scope.sortList = sortList;
 	}, true);
 
+	/**
+	 * Fields toggle and sorter
+	 */
 	// click <li> to toggle field status
 	$scope.toggleFieldStatus = function(field) {
 		field[4] = !field[4];
 	}
-
 	// drag/drop to update fields order
 	jQuery('#fields-selector').sortable({
 		start: function(e, ui) {
@@ -128,11 +130,12 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 		$scope.geoLayer.unHighlightAll();
 	}
 
-	/*
+	/**
+	 * Button to export data as CSV
+	 */
 	$scope.exportAsCSV = function() {
 		location.href = ['/wp-admin/admin-ajax.php',
 			'?action=cura_observations.json',
-			'&export&watershed=' + filterOptions
-		}));
-};*/
+			'&export&watershed=' + $scope.filterOptions.location.id].join('');
+	};
 }]);
