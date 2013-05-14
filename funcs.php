@@ -139,11 +139,27 @@ function cura_get_data($field, $time, $bbox) {
 function cura_all_data() {
 	global $wpdb;
 	
+	$rows = cura_fields ();
+	$fields = array ();
+	foreach ( $rows as $row ) {
+		if ( $row[0] == 'datetime') {
+			continue;
+		}
+		$fields [] = $row [0];
+	}
+	
 	$sql = "
-		SELECT	*
+		SELECT	a.id
+				, a.`" . implode ( "`
+				, a.`", $fields ) . "`
+				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
+				, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
+				, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
 		FROM	`" . CURAH2O_TABLE . "` AS a
 		WHERE	`latitude` IS NOT NULL
 			AND	`longitude` IS NOT NULL
+		GROUP BY
+				watershed_name, station_name, location_id
 	";
 	return $wpdb->get_results ( $sql );
 }

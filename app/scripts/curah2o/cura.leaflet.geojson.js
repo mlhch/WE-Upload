@@ -33,7 +33,8 @@
 				var c = feature.geometry.coordinates;
 				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
 					'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
-					'<br />' + p.watershed_name].join(''));
+					'<br />' + p.watershed_name,
+					'<br />' + p.startDate + ' - ' + p.endDate].join(''));
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},
 			onFeatureClick: function() {}
@@ -136,10 +137,10 @@
 				}
 			},
 			byStartDate: function(feature, options) {
-				return !options.startDate || feature.properties.datetime >= options.startDate;
+				return !options.startDate || Date.parse(feature.properties.datetime) >= Date.parse(options.startDate);
 			},
 			byEndDate: function(feature, options) {
-				return !options.endDate || feature.properties.datetime <= options.endDate;
+				return !options.endDate || Date.parse(feature.properties.datetime) <= Date.parse(options.endDate);
 			},
 		},
 

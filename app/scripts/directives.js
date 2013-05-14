@@ -32,10 +32,12 @@ angular.module('directives', [])
 
 	.directive('datepicker', ['$parse', function($parse) {
 	return function($scope, $el, attrs) {
-		$el.datepicker({
+		$el.datetimepicker({
 			changeYear: true,
 			changeMonth: true,
-			dateFormat: 'yy-mm-dd',
+			ampm: true,
+			dateFormat: 'mm/dd/yy',
+			timeFormat: 'hh:mm TT',
 			defaultDate: attrs.defaultdate,
 			onSelect: function(dateText) {
 				$parse(attrs.ngModel).assign($scope, dateText);
