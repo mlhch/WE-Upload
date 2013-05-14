@@ -67,20 +67,22 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 	 */
 	CuraGeoJSON.query(function(json) {
 		$scope.geoLayer = Cura.geoJson(json, {
-			onFeatureClick: function() {
-				$scope.filterOptions.featureId = this.feature.id;
-				//$scope.selectedLayer = this;
+			onFeatureClick: function(options) {
+				var $event = options.originalEvent;
+				$scope.geoLayer.highlightLayer(this, $event);
+				if (!$event.metaKey && !$event.ctrlKey) {
+					$scope.filterOptions.featureIds = {};
+				}
+				$scope.filterOptions.featureIds[this.feature.id] = true;
 				$scope.$apply();
-			}
+			},
 		});
 
 		/**
 		 * watershed dropdown select
 		 */
 		$scope.locations = $scope.geoLayer.locations();
-		$scope.filterOptions = {
-			groupId: 0, // 0 => View All
-		}
+		$scope.resetFilterOptions();
 	});
 
 	/**
@@ -91,22 +93,24 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 			console.log('filter: ' + JSON.stringify(value) + ' <- ' + JSON.stringify(old));
 
 			if (value.searchText != '' && old && value.searchText != old.searchText) {
-				if (value.featureId != 0) {
-					value.featureId = 0;
+				if (Object.keys(value.featureIds).length != 0) {
+					value.featureIds = {};
 					return;
 				}
 			}
 			if (value.groupId !== '' && old && value.groupId !== old.groupId) {
-				if (value.featureId != 0) {
-					value.featureId = 0;
+				if (Object.keys(value.featureIds).length != 0) {
+					value.featureIds = {};
 					return;
 				}
 			}
-			if (value.featureId != 0 && old && value.featureId != old.featureId) {
-				if (value.groupId !== '' || value.searchText != '') {
-					value.groupId = '';
-					value.searchText = '';
-					return;
+			if (old && JSON.stringify(value.featureIds) != '{}') {
+				if (JSON.stringify(value.featureIds) != JSON.stringify(old.featureIds)) {
+					if (value.groupId !== '' || value.searchText != '') {
+						value.groupId = '';
+						value.searchText = '';
+						return;
+					}
 				}
 			}
 
@@ -116,20 +120,13 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 
 	$scope.resetFilterOptions = function() {
 		$scope.filterOptions = {
-			groupId: 0,
-		};
-		jQuery("#startDate").datepicker('setDate');
-		jQuery("#endDate").datepicker('setDate');
+			groupId: 0, // 0 => View All
+			searchText: '',
+			featureIds: {},
+		}
+		$scope.geoLayer.unHighlightAll();
 	}
 
-	/**
-	 * Click table row to highlight
-	 */
-	$scope.highlightRow = function(layer, $event) {
-		$scope.selectedLayer = layer;
-		$scope.selectedLayer.openPopup();
-		$scope.geoLayer.options.highlightIcon.apply(layer);
-	};
 	/* me.loadLocations(null, function() {
 		if (!/mobile | tablet | android / i.test(navigator.userAgent)) {
 	jQuery('.tooltip_description span').hide();

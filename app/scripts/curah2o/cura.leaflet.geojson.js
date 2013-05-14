@@ -6,7 +6,6 @@
 		iconAnchor: [10, 2]
 	});
 
-	var lastLayer;
 	var locations;
 
 	Cura.GeoJSON = L.GeoJSON.extend({
@@ -35,25 +34,7 @@
 				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
 					'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
 					'<br />' + p.watershed_name].join(''));
-				layer.on('click', this.highlightIcon);
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
-			},
-			highlightIcon: function() {
-				if (lastLayer && lastLayer._icon) {
-					lastLayer.options.riseOnHover = true;
-					lastLayer._icon.className = lastLayer._icon.className.replace(' highlighted', '');
-					lastLayer._resetZIndex();
-					L.DomEvent.on(lastLayer._icon, 'mouseover', lastLayer._bringToFront, lastLayer)
-					L.DomEvent.on(lastLayer._icon, 'mouseout', lastLayer._resetZIndex, lastLayer);
-				}
-
-				this.options.riseOnHover = false;
-				this._icon.className = this._icon.className + ' highlighted';
-				this._bringToFront();
-				L.DomEvent.off(this._icon, 'mouseover', this._bringToFront)
-				L.DomEvent.off(this._icon, 'mouseout', this._resetZIndex);
-
-				lastLayer = this;
 			},
 			onFeatureClick: function() {}
 		},
@@ -90,8 +71,8 @@
 		},
 
 		doFilter: function(options) {
-			if (options && options.featureId) {
-				var filters = [this.filters.byFeatureId];
+			if (options && options.featureIds && Object.keys(options.featureIds).length != 0) {
+				var filters = [this.filters.byFeatureIds];
 				this.doFilterRows(filters, options);
 			} else {
 				var filters = [
@@ -129,8 +110,8 @@
 		},
 
 		filters: {
-			byFeatureId: function(feature, options) {
-				return feature.id == options.featureId;
+			byFeatureIds: function(feature, options) {
+				return options.featureIds[feature.id];
 			},
 			searchText: function(feature, options) {
 				var s = options.searchText || '';
@@ -161,7 +142,52 @@
 				return !options.endDate || feature.properties.datetime <= options.endDate;
 			},
 		},
+
+		highlightedLayers: [],
+		highlightedClass: function(layer) {
+			return this.highlightedLayers.every(function(l) {
+				return l != layer
+			}) ? '' : 'highlight';
+		},
+
+		/**
+		 * Click table row to highlight
+		 */
+		highlightLayer: function(layer, $event) {
+			var layers = this.highlightedLayers;
+			if (!$event.metaKey && !$event.ctrlKey) {
+				layers.forEach(function(layer) {
+					this.unHighlight(layer);
+				}, this);
+				layers.splice(0);
+			}
+
+			layer.openPopup();
+			this.highlight(layer);
+
+			layers.push(layer);
+		},
+		highlight: function(layer) {
+			layer.options.riseOnHover = false;
+			layer._icon.className = layer._icon.className + ' highlighted';
+			layer._bringToFront();
+			L.DomEvent.off(layer._icon, 'mouseover', layer._bringToFront)
+			L.DomEvent.off(layer._icon, 'mouseout', layer._resetZIndex);
+		},
+		unHighlight: function(layer) {
+			layer.options.riseOnHover = true;
+			if (layer._icon) {
+				layer._icon.className = layer._icon.className.replace(' highlighted', '');
+				layer._resetZIndex();
+				L.DomEvent.on(layer._icon, 'mouseover', layer._bringToFront, layer)
+				L.DomEvent.on(layer._icon, 'mouseout', layer._resetZIndex, layer);
+			}
+		},
+		unHighlightAll: function() {
+			this.highlightedLayers.splice(0);
+		},
 	});
+
 
 	Cura.geoJson = function(geojson, options) {
 		return new Cura.GeoJSON(geojson, options);

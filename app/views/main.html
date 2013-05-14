@@ -20,9 +20,9 @@
 			<th style="text-align:center; width:10px">Action</th>
 		</tr>
 	</thead>
-	<tr ng-class="{1:'highlight',0:''}[(selectedLayer==layer)+0]"
+	<tr ng-class="geoLayer.highlightedClass(layer)"
 	 ng-repeat="layer in geoLayer.filteredRows"
-	 ng-click="highlightRow(layer)">
+	 ng-click="geoLayer.highlightLayer(layer, $event)">
 		<td ng-repeat="field in visibleFields">{{layer.feature.properties[field[0]]}}</td>
 		<td style="padding: 0px; text-align: center">
 			<button type="button" ng-click="openDialog(layer)"
