@@ -6,8 +6,6 @@
 		iconAnchor: [10, 2]
 	});
 
-	var locations;
-
 	Cura.GeoJSON = L.GeoJSON.extend({
 		allLayers: [],
 
@@ -38,37 +36,6 @@
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},
 			onFeatureClick: function() {}
-		},
-
-		locations: function() {
-			if (locations) {
-				return locations;
-			}
-
-			var map = {};
-			this.eachLayer(function(layer) {
-				var key = layer.feature.properties.watershed_name;
-				map[key] ? map[key]++ : (map[key] = 1)
-			});
-
-			locations = [{
-				id: "",
-				watershed_name: " - Select community group - "
-			}, {
-				id: 0,
-				watershed_name: "View All"
-			}];
-
-			var i = 1;
-			for (var key in map) {
-				locations.push({
-					id: i++,
-					watershed_name: key,
-					total: map[key]
-				})
-			}
-
-			return locations;
 		},
 
 		doFilter: function(options) {
@@ -119,21 +86,13 @@
 				return s == '' || feature.properties.station_name.toLowerCase().indexOf(s) != -1;
 			},
 			byCommunityGroup: function(feature, options) {
-				var groupId = typeof options.groupId == 'undefined' ? '' : options.groupId;
-				if (groupId === "") {
+				var location = options.location;
+				if (location.id === "") {
 					return true;
-				} else if (groupId === 0) {
+				} else if (location.id === 0) {
 					return true;
 				} else {
-					var watershed_name = "";
-					locations.every(function(value) {
-						if (value.id == groupId) {
-							watershed_name = value.watershed_name;
-							return false;
-						}
-						return true;
-					}, this);
-					return feature.properties.watershed_name == watershed_name;
+					return feature.properties.watershed_name == location.watershed_name;
 				}
 			},
 			byStartDate: function(feature, options) {

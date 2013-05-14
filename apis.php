@@ -116,6 +116,7 @@ function cura_json_config() {
 			'canEdit' => current_user_can('cura-edit'),
 			'canDelete' => current_user_can('cura-delete'),
 			'canAdd' => 1,
+			'locations' => cura_get_locations (),
 			'fields' => $fields,
 	) );
 	exit ();

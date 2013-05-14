@@ -2,7 +2,7 @@
 <div style="clear: both; height: 15px"></div>
 <div style="float: left; margin-bottom: 10px">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
-			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.groupId" ng-options="row.id as row.watershed_name for row in locations">
+			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.location" ng-options="row.watershed_name for row in locations">
 	</select>
 	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" />
 	<input class="ui-button ui-corner-all ui-state-active" type="text"
@@ -39,7 +39,7 @@
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Add new entry</span>
 	</button>
-	<button id="export_as_csv" type="button" style="font-size: 12px"
+	<button type="button" ng-click="export()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Export as CSV</span>
 	</button>
