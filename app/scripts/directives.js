@@ -227,3 +227,74 @@ angular.module('directives', [])
 		}
 	}
 }])
+
+	.directive('mobiletip', ['$cookieStore', function($cookieStore) {
+	return {
+		restrict: 'E',
+		template: [
+			'<div class="tooltip_description" title="Mobile site available!" style="display: none">',
+			'	<p>',
+			'		<span>Looks like you are on a mobile device. </span>Would you like to be redirected to the site optimized for mobile devices?',
+			'	</p>',
+			'	<p style="margin: 10px; text-align: left">',
+			'		<label><input type="checkbox" /> Remember my choice on this device</label>',
+			'	</p>',
+			'	<p style="margin-bottom: 0px; text-align: center">',
+			'		<button ng-click="gotoMobile()" style="padding: 3px 20px; margin: 10px 20px">Yes</button>',
+			'		<button ng-click="notgoMobile()" style="padding: 3px 20px; margin: 10px 20px">No</button>',
+			'	</p>',
+			'</div>'].join(''),
+		replace: true,
+		transclude: true,
+		link: function($scope, $el, iAttrs, controller) {
+			var $tip = jQuery(".tooltip_description");
+
+			if (!/mobile|tablet|android/i.test(navigator.userAgent)) {
+				$tip.find('span').hide();
+			}
+
+			if (!$cookieStore.get('mobile-redirect')) {
+				if (/mobile|tablet|android/i.test(navigator.userAgent)) {
+					$tip.dialog({
+						width: 400,
+						modal: true
+					});
+				}
+			} else {
+				$tip.find('input').attr('checked', 'checked');
+			}
+
+			$scope.mobileSite = function() {
+				if (!$scope.tipDialog) {
+					$scope.tipDialog = $tip.dialog({
+						width: 400,
+						modal: true
+					});
+				} else {
+					if ($tip.dialog('isOpen')) {
+						$tip.dialog('close');
+					} else {
+						$tip.dialog('open');
+					}
+				}
+			};
+			$scope.gotoMobile = function() {
+				if ($tip.find('input').is(':checked')) {
+					$cookieStore.put('mobile-redirect', 'YES');
+				} else {
+					$cookieStore.remove('mobile-redirect');
+				}
+				location.href = "../m/water-quality/";
+			};
+
+			$scope.notgoMobile = function() {
+				if ($tip.find('input').is(':checked')) {
+					$cookieStore.put('mobile-redirect', 'NO');
+				} else {
+					$cookieStore.remove('mobile-redirect');
+				}
+				$tip.dialog('close');
+			};
+		}
+	};
+}])

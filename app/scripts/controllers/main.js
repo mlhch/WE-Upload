@@ -126,21 +126,4 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 		}
 		$scope.geoLayer.unHighlightAll();
 	}
-
-	/* me.loadLocations(null, function() {
-		if (!/mobile | tablet | android / i.test(navigator.userAgent)) {
-	jQuery('.tooltip_description span').hide();
-}
-if (!jQuery.cookie('mobile-redirect')) {
-	if (/mobile|tablet|android/i.test(navigator.userAgent)) {
-		jQuery(".tooltip_description").dialog({
-			width: 400,
-			modal: true
-		});
-	}
-} else {
-	jQuery("#remember-choice").attr('checked', 'checked');
-}
-});
-*/
 }]);

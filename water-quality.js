@@ -102,8 +102,6 @@ function WaterQuality(config) {
 	this.initEventAddNew();
 	this.validateForm();
 	this.initEventTypeahead();
-	this.initEventExport();
-	this.initEventMobileSite();
 }
 
 WaterQuality.prototype = {
@@ -581,50 +579,5 @@ WaterQuality.prototype = {
 		me.typeaheadLocationItems = null;
 		me.typeaheadLocationRows = null;
 	},
-	initEventExport: function() {
-		var me = this;
-		
-		jQuery(function($) {
-			$('#export_as_csv').click(function() {
-				var watershed_name = $(me.filterLocations).val();
-				location.href = me.query("./observations.json?export&" + $.param({watershed: watershed_name}));
-			});
-		})
-	},
-	initEventMobileSite: function() {
-		var me = this;
-		
-		jQuery(function($) {
-			$('#mobile-site').click(function() {
-				if (!me.tipDialog) {
-					me.tipDialog = $( ".tooltip_description" ).dialog({
-						width: 400,
-						modal: true
-					});
-				} else {
-					if ($(".tooltip_description").dialog('isOpen')) {
-						$( ".tooltip_description" ).dialog('close');
-					} else {
-						$( ".tooltip_description" ).dialog('open');
-					}
-				}
-			});
-			$("#gotoMobile").click(function() {
-				if ($('#remember-choice').is(':checked')) {
-					$.cookie('mobile-redirect', 'YES');
-				} else {
-					$.removeCookie('mobile-redirect');
-				}
-				location.href = "../m/water-quality/";
-			});
-			$("#notgoMobile").click(function() {
-				if ($('#remember-choice').is(':checked')) {
-					$.cookie('mobile-redirect', 'NO');
-				} else {
-					$.removeCookie('mobile-redirect');
-				}
-				$( ".tooltip_description" ).dialog('close');
-			});
-		});
-	}
+
 }

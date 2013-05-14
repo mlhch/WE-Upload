@@ -43,7 +43,7 @@
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Export as CSV</span>
 	</button>
-	<button id="mobile-site" type="button" style="font-size: 12px"
+	<button type="button" ng-click="mobileSite()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Mobile Site</span>
 	</button>
@@ -53,3 +53,4 @@
 		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
 </ol>
 <dialog></dialog>
+<mobiletip></mobiletip>
