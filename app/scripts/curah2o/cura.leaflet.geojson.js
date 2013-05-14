@@ -29,10 +29,16 @@
 			onEachFeature: function(feature, layer) {
 				var p = feature.properties;
 				var c = feature.geometry.coordinates;
+
+				var startDate = new Date(Date.parse(p.startDate));
+				startDate = jQuery.datepicker.formatDate('mm/dd/yy', startDate);
+				var endDate = new Date(Date.parse(p.endDate));
+				endDate = jQuery.datepicker.formatDate('mm/dd/yy', endDate);
+
 				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
 					'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
 					'<br />' + p.watershed_name,
-					'<br />' + p.startDate + ' - ' + p.endDate].join(''));
+					'<br />' + startDate + ' - ' + endDate].join(''));
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},
 			onFeatureClick: function() {}
