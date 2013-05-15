@@ -198,10 +198,10 @@ angular.module('directives', [])
 						style: "padding: 0 2em; font-size: 12px;" + (layer ? '' : 'display:none'),
 						click: function() {
 							$scope.geoLayer.removeLayer(layer);
-
 							$scope.geoLayer.filteredRows.every(function(value, index) {
 								return value != layer || $scope.geoLayer.filteredRows.splice(index, 1) && false;
 							});
+							delFeature();
 							$scope.$apply();
 
 							$el.dialog('close');
@@ -213,8 +213,8 @@ angular.module('directives', [])
 						text: "Save",
 						style: "padding: 0 2em; font-size: 12px",
 						click: function() {
-							//Feature.save($scope.feature.properties);
 							saveFeature();
+							$el.dialog('close');
 						}
 					});
 				}
@@ -275,6 +275,30 @@ angular.module('directives', [])
 						}
 					});
 				}
+			}
+
+			function delFeature() {
+				Feature.remove($scope.feature.id, function(data, status) {
+					if (status == 'success') {
+						var result = JSON.parse(data);
+						if (result.affectedRows) {
+							$(me.dialog).dialog('close');
+							me.displayMessage('Entry ' + result.id + ' deleted');
+
+							var watershed = me.data[id][me.fields.watershed_name[3]]
+							delete me.data[id];
+							$("#entry-" + id).remove();
+							$(me.table).trigger("update");
+
+							me.clearTypeaheads();
+							me.loadLocations(watershed);
+						} else {
+							me.displayMessage('Data Entry ' + id + ' does not exist');
+						}
+					} else {
+						me.displayMessage('Sorry, the server encountered an error');
+					}
+				});
 			}
 
 			function validateForm() {

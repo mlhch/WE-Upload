@@ -92,6 +92,16 @@ angular.module('services', ['ngResource'])
 				//$scope.success = false;
 				//$scope.errors = data.errors;
 			});
-		}
+		},
+		remove: function(featureId) {
+			$http({
+				url: '/wp-admin/admin-ajax.php?action=cura_delete.action&id=' + featureId,
+				method: 'GET',
+			}).
+			success(function(data) {
+			}).
+			error(function(response) {
+			});
+		},
 	};
 }])
