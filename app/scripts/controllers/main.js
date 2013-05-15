@@ -130,6 +130,15 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 		$scope.geoLayer.unHighlightAll();
 	}
 
+	$scope.fieldValue = function(layer, propName) {
+		if (propName == 'latitude') {
+			return layer.feature.geometry.coordinates[0];
+		} else if (propName == 'longitude') {
+			return layer.feature.geometry.coordinates[1];
+		}
+		return layer.feature.properties[propName];
+	}
+
 	/**
 	 * Button to export data as CSV
 	 */

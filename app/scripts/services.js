@@ -71,3 +71,27 @@ angular.module('services', ['ngResource'])
 		}
 	});
 }])
+
+	.factory('Feature', ['$http', function($http) {
+
+	return {
+		save: function(urlencodedData) {
+			$http({
+				url: '/wp-admin/admin-ajax.php?action=cura_save.action',
+				method: 'POST',
+				data: urlencodedData,
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			}).
+			success(function(data) {
+				//$scope.success = true;
+			}).
+			error(function(response) {
+				//data = angular.fromJson(response)
+				//$scope.success = false;
+				//$scope.errors = data.errors;
+			});
+		}
+	};
+}])

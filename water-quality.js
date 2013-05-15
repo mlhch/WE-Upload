@@ -100,7 +100,6 @@ function WaterQuality(config) {
 	
 	this.clickDetails();
 	this.initEventAddNew();
-	this.validateForm();
 	this.initEventTypeahead();
 }
 
@@ -288,51 +287,7 @@ WaterQuality.prototype = {
 			});
 		});
 	},
-	saveEntry: function() {
-		var me = this;
-		
-		jQuery(document).ready(function ($) {
-			if ($(me.form).validate().form()) {
-				
-				$.post(me.query('save.action'), $(me.form).serialize(), function(data, status) {
-					if (status == 'success') {
-						var result = JSON.parse( data );
-						if (result.error) {
-							var error = [];
-							for (var i in result.error) {
-								var v = $(me.form).find('[name="' + i + '"]').val();
-								error.push(i + ' (' + v + ') : ' + result.error[i]);
-							}
-							me.displayMessage('Server validation errors:\n\n' + error.join('\n\n'))
-							return;
-						}
-						
-						if (result.affectedRows) {
-							$(me.dialog).dialog( 'close' );
-							
-							if (result.insertId) {
-								me.displayMessage('Entry ' + result.insertId + ' added');
-							} else {
-								me.displayMessage('Entry ' + result.id + ' updated');
-							}
-							
-							me.clearTypeaheads();
-							
-							var watershed = result.data[me.fields.watershed_name[3]];
-							me.loadLocations(watershed, function() {
-								me.loadData();
-							});
-						} else {
-							me.displayMessage('No changes updated')
-							$(me.dialog).dialog( 'close' );
-						}
-					} else {
-						me.displayMessage('Sorry, the server encountered an error');
-					}
-				});
-			}
-		});
-	},
+
 	
 	displayMessage: function(messageText) {
 		jQuery(document).ready(function($) {
@@ -376,41 +331,7 @@ WaterQuality.prototype = {
 			});
 		});
 	},
-	validateForm: function() {
-		var me = this;
-		
-		jQuery(document).ready(function ($) {
-			if (!$.validator) {
-				return;
-			}
-			
-			$.validator.addMethod("secchi_b", function(value, element, param) {
-				var value_a = $('input[name=secchi_a]').val();
-				var value_b = value;
-				var a = parseFloat(value_a);
-				var b = parseFloat(value_b);
-				
-				if (a && b) {
-					$('input[name=secchi_d]').val(a / 2 + b / 2);
-				}
-				
-				return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 4);
-			}, cura_validation_options.messages.secchi_b);
-			
-			$.validator.addMethod("secchi_d", function(value, element, param) {
-				var value_a = $('input[name=secchi_a]').val();
-				var value_b = $('input[name=secchi_b]').val();
-				var value_d = $('input[name=secchi_d]').val();
-				var a = parseFloat(value_a);
-				var b = parseFloat(value_b);
-				var d = parseFloat(value_d);
-				
-				return ('' === value_a && '' === value_b) || a + b == d + d;
-			}, cura_validation_options.messages.secchi_d);
-			
-			$(me.form).validate(cura_validation_options);
-		});
-	},
+	
 
 	initEventTypeahead: function(refresh) {
 		var me = this;
