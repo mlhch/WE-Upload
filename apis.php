@@ -13,7 +13,7 @@ function cura_geojson() {
 			'properties' => $obj,
 			'geometry' => array(
 				'type' => 'Point',
-				'coordinates' => array(floatval($obj->longitude), floatval($obj->latitude))
+				'coordinates' => array($obj->longitude, $obj->latitude)
 			)
 		);
 		unset($obj->id);
