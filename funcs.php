@@ -136,7 +136,7 @@ function cura_get_data($field, $time, $bbox) {
 	
 	return $objs;
 }
-function cura_all_data() {
+function cura_all_stations_with_latest_data() {
 	global $wpdb;
 	
 	$rows = cura_fields ();
@@ -152,14 +152,26 @@ function cura_all_data() {
 		SELECT	a.id
 				, a.`" . implode ( "`
 				, a.`", $fields ) . "`
-				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
-				, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
-				, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		WHERE	`latitude` IS NOT NULL
-			AND	`longitude` IS NOT NULL
-		GROUP BY
-				watershed_name, station_name, location_id
+				, DATE_FORMAT(a.datetime, '%m/%d/%Y %h:%i %p') datetime
+				, DATE_FORMAT(b.startDate, '%m/%d/%Y %h:%i %p') startDate
+				, DATE_FORMAT(b.endDate, '%m/%d/%Y %h:%i %p') endDate
+		FROM	(
+			SELECT	watershed_name, station_name, location_id
+					, MIN(datetime) startDate
+					, MAX(datetime) endDate
+			FROM	`" . CURAH2O_TABLE . "`
+			WHERE	`latitude` IS NOT NULL
+				AND	`longitude` IS NOT NULL
+			GROUP BY
+					watershed_name, station_name, location_id
+		) AS b
+		JOIN	`" . CURAH2O_TABLE . "` AS a
+			ON	a.watershed_name = b.watershed_name
+			AND	a.station_name = b.station_name
+			AND	a.location_id = b.location_id
+			AND	a.datetime = b.endDate
+		ORDER BY
+				a.datetime DESC
 	";
 	return $wpdb->get_results ( $sql );
 }

@@ -1,6 +1,6 @@
 <?php
 function cura_geojson() {
-	$objs = cura_all_data();
+	$objs = cura_all_stations_with_latest_data();
 
 	$fc = array(
 		'type' => 'FeatureCollection',
