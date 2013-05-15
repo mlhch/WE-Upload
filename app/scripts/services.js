@@ -75,7 +75,7 @@ angular.module('services', ['ngResource'])
 	.factory('Feature', ['$http', function($http) {
 
 	return {
-		save: function(urlencodedData) {
+		save: function(urlencodedData, success, error) {
 			$http({
 				url: '/wp-admin/admin-ajax.php?action=cura_save.action',
 				method: 'POST',
@@ -84,24 +84,32 @@ angular.module('services', ['ngResource'])
 					'Content-Type': 'application/x-www-form-urlencoded'
 				}
 			}).
-			success(function(data) {
-				//$scope.success = true;
-			}).
-			error(function(response) {
-				//data = angular.fromJson(response)
-				//$scope.success = false;
-				//$scope.errors = data.errors;
-			});
+			success(success).
+			error(error);
 		},
-		remove: function(featureId) {
+		remove: function(featureId, success, error) {
 			$http({
 				url: '/wp-admin/admin-ajax.php?action=cura_delete.action&id=' + featureId,
 				method: 'GET',
 			}).
-			success(function(data) {
-			}).
-			error(function(response) {
-			});
+			success(success).
+			error(error);
 		},
 	};
+}])
+
+	.factory('Toast', [function() {
+
+	return {
+		show: function(message) {
+			if (jQuery('#message').length == 0) {
+				jQuery('<div id="message"></div>').appendTo('body');
+			}
+
+			jQuery('#message').html(message).show().position({
+				at: 'top center',
+				of: window
+			}).fadeOut(5000);
+		}
+	}
 }])

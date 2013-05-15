@@ -99,7 +99,6 @@ function WaterQuality(config) {
 	}
 	
 	this.clickDetails();
-	this.initEventAddNew();
 	this.initEventTypeahead();
 }
 
@@ -248,61 +247,6 @@ WaterQuality.prototype = {
 	},
 
 
-	initEventAddNew: function() {
-		var me = this;
-		
-		jQuery(document).ready(function ($) {
-			if ($().datetimepicker) {
-				$('input[name=datetime]', $(me.form))
-					.datetimepicker({
-						ampm: true,
-						dateFormat: 'mm/dd/yy',
-						timeFormat: 'hh:mm TT'
-					})
-					.datetimepicker('setDate', new Date());
-			}
-			
-			$( me.btnAddNew ).click(function () {
-				$( 'input', $(me.form) ).each( function(index, input) {
-					if (input.name == 'id') {
-						input.value = 0;
-					} else if (me.fields[input.name]) {
-						var i = me.fields[input.name][3];
-						if (input.name == 'datetime') {
-							$(input).timepicker('enable');
-						}
-						
-						if (input.type == 'text') {
-							input.value = '';
-							input.readOnly = !me.canAdd;
-						} else if (input.type == 'radio') {
-							input.checked = false;
-							input.disabled = me.canAdd ? false : 'disabled';
-						}
-					}
-				})
-				$('input[name=datetime]', $(me.form)).datepicker().datepicker('setDate', new Date);
-				me.showDialog('Add Observation');
-				$.validator && $(me.form).validate().resetForm();
-			});
-		});
-	},
-
-	
-	displayMessage: function(messageText) {
-		jQuery(document).ready(function($) {
-			if ($('#message').length == 0) {
-				$('<div id="message"></div>').appendTo('body');
-			}
-
-			$('#message').html(messageText).show().position({
-				at : 'top center',
-				of : window
-			}).fadeOut(5000);
-		});
-	},
-	
-	
 
 	initEventTypeahead: function(refresh) {
 		var me = this;

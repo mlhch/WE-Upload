@@ -47,17 +47,18 @@ angular.module('directives', [])
 	}
 }])
 
-	.directive('dialog', ['$compile', 'Feature', function($compile, Feature) {
+	.directive('dialog', ['$compile', 'Feature', 'Toast', function($compile, Feature, Toast) {
 	return {
 		restrict: 'E',
 		template: [
-			'<div id="dialog-data-entry" style="display: none; margin: 10px 0 -3px">',
+			'<div id="dialog-data-entry" style="display: none;">',
 			'	<a id="catch-dialog-focus" href="#" style="position: absolute; left: -10000px">.</a>',
 			'	<form id="form-data-entry" method="post"></form>',
 			'</div>'].join(''),
 		replace: true,
 		transclude: true,
 		link: function($scope, $el, iAttrs, controller) {
+			var $form = $el.find('form');
 			validateForm();
 
 			var lastTr, fields = {}, layout = [
@@ -178,6 +179,26 @@ angular.module('directives', [])
 				}
 			});
 
+			$scope.addFeature = function() {
+				var now = new Date;
+				now.hour = now.getHours();
+				now.minute = now.getMinutes();
+				var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
+				var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
+				$scope.feature = {
+					id: 0,
+					properties: {
+						datetime: dt + ' ' + tm,
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [],
+					}
+				};
+				showDialog('Add Observation');
+				jQuery.validator && $form.validate().resetForm();
+			}
+
 			$scope.openDialog = function(layer) {
 				$scope.feature = layer.feature;
 				showDialog('Edit Observation', layer);
@@ -214,7 +235,6 @@ angular.module('directives', [])
 						style: "padding: 0 2em; font-size: 12px",
 						click: function() {
 							saveFeature();
-							$el.dialog('close');
 						}
 					});
 				}
@@ -236,68 +256,46 @@ angular.module('directives', [])
 			}
 
 			function saveFeature() {
-				var $form = $el.find('form');
 				if ($form.validate().form()) {
-					Feature.save($form.serialize(), function(data, status) {
-						if (status == 'success') {
-							var result = JSON.parse(data);
-							if (result.error) {
-								var error = [];
-								for (var i in result.error) {
-									var v = $(me.form).find('[name="' + i + '"]').val();
-									error.push(i + ' (' + v + ') : ' + result.error[i]);
-								}
-								me.displayMessage('Server validation errors:\n\n' + error.join('\n\n'))
-								return;
+					Feature.save($form.serialize(), function(resp) {
+						if (resp.error) {
+							var error = [];
+							for (var i in result.error) {
+								var v = $el.find('[name="' + i + '"]').val();
+								error.push(i + ' (' + v + ') : ' + result.error[i]);
 							}
-
-							if (result.affectedRows) {
-								$(me.dialog).dialog('close');
-
-								if (result.insertId) {
-									me.displayMessage('Entry ' + result.insertId + ' added');
-								} else {
-									me.displayMessage('Entry ' + result.id + ' updated');
-								}
-
-								me.clearTypeaheads();
-
-								var watershed = result.data[me.fields.watershed_name[3]];
-								me.loadLocations(watershed, function() {
-									me.loadData();
-								});
-							} else {
-								me.displayMessage('No changes updated')
-								$(me.dialog).dialog('close');
-							}
-						} else {
-							me.displayMessage('Sorry, the server encountered an error');
+							Toast.show('Server validation errors:\n\n' + error.join('\n\n'));
+							return;
 						}
+
+						if (resp.affectedRows) {
+							if (resp.insertId) {
+								Toast.show('Entry ' + resp.insertId + ' added');
+							} else {
+								Toast.show('Entry ' + resp.id + ' updated');
+							}
+							//me.clearTypeaheads();
+						} else {
+							Toast.show('No changes updated')
+						}
+						$el.dialog('close');
+					}, function() {
+						Toast.show('Sorry, the server encountered an error');
 					});
 				}
 			}
 
 			function delFeature() {
-				Feature.remove($scope.feature.id, function(data, status) {
-					if (status == 'success') {
-						var result = JSON.parse(data);
-						if (result.affectedRows) {
-							$(me.dialog).dialog('close');
-							me.displayMessage('Entry ' + result.id + ' deleted');
-
-							var watershed = me.data[id][me.fields.watershed_name[3]]
-							delete me.data[id];
-							$("#entry-" + id).remove();
-							$(me.table).trigger("update");
-
-							me.clearTypeaheads();
-							me.loadLocations(watershed);
-						} else {
-							me.displayMessage('Data Entry ' + id + ' does not exist');
-						}
+				Feature.remove($scope.feature.id, function(resp) {
+					if (resp.affectedRows) {
+						$el.dialog('close');
+						Toast.show('Entry ' + resp.id + ' deleted');
+						//me.clearTypeaheads();
 					} else {
-						me.displayMessage('Sorry, the server encountered an error');
+						Toast.show('Data Entry ' + resp.id + ' does not exist');
 					}
+				}, function() {
+					Toast.show('Sorry, the server encountered an error');
 				});
 			}
 
