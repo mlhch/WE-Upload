@@ -186,6 +186,7 @@ angular.module('directives', [])
 				var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
 				var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
 				$scope.feature = {
+					type: 'Feature',
 					id: 0,
 					properties: {
 						datetime: dt + ' ' + tm,
@@ -270,6 +271,10 @@ angular.module('directives', [])
 
 						if (resp.affectedRows) {
 							if (resp.insertId) {
+								$scope.feature.id = resp.insertId;
+								$scope.geoLayer.addData([$scope.feature]);
+								$scope.geoLayer.doFilter($scope.filterOptions);
+								$scope.$apply();
 								Toast.show('Entry ' + resp.insertId + ' added');
 							} else {
 								Toast.show('Entry ' + resp.id + ' updated');

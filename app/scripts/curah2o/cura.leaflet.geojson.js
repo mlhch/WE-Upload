@@ -7,15 +7,7 @@
 	});
 
 	Cura.GeoJSON = L.GeoJSON.extend({
-		allLayers: [],
-
-		initialize: function(geojson, options) {
-			L.GeoJSON.prototype.initialize.apply(this, arguments);
-
-			for (var key in this._layers) {
-				this.allLayers.push(this._layers[key]);
-			}
-		},
+		allLayers: {},
 
 		options: {
 			pointToLayer: function(featureData, latlng) {
@@ -44,6 +36,13 @@
 			onFeatureClick: function() {}
 		},
 
+		addLayer: function(layer) {
+			L.GeoJSON.prototype.addLayer.apply(this, arguments);
+
+			var id = L.stamp(layer);
+			this.allLayers[id] || (this.allLayers[id] = layer);
+		},
+
 		doFilter: function(options) {
 			if (options && options.featureIds && Object.keys(options.featureIds).length != 0) {
 				var filters = [this.filters.byFeatureIds];
@@ -63,24 +62,26 @@
 		filteredRows: [],
 		doFilterRows: function(filters, options) {
 			this.filteredRows.splice(0);
-			this.allLayers.forEach(function(layer) {
+			for (var id in this.allLayers) {
+				var layer = this.allLayers[id];
 				if (filters.every(function(fn) {
 					return fn.call(this, layer.feature, options);
 				}, this)) {
 					this.filteredRows.push(layer);
 				}
-			}, this);
+			}
 		},
 
 		doFilterIcons: function(filters, options) {
 			this.clearLayers();
-			this.allLayers.forEach(function(layer) {
+			for (var id in this.allLayers) {
+				var layer = this.allLayers[id];
 				if (filters.every(function(fn) {
 					return fn.call(this, layer.feature, options);
 				}, this)) {
 					this.addLayer(layer);
 				}
-			}, this);
+			}
 		},
 
 		filters: {
