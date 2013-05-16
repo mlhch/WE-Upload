@@ -172,17 +172,9 @@ function cura_json_typeaheads_location_id() {
  */
 function cura_json_observations() {
 	$request = cura_request();
-	$rows = cura_get_observations ( $request );
-	
-	$observations = array ();
-	foreach ( $rows as $obj ) {
-		$observations [$obj->id] = array_values ( ( array ) $obj );
-	}
-	
-	$fields = cura_fields ();
-	$result = array (
-			'observations' => $observations 
-	);
+
+	// making root as Array is for ngResource
+	$observations = cura_get_observations ( $request );
 	
 	if (isset ( $_REQUEST ['export'] )) {
 		$location = cura_get_location ( $id );
@@ -206,7 +198,7 @@ function cura_json_observations() {
 		
 		fclose ( $fp );
 	} else {
-		echo json_encode ( $result );
+		echo json_encode ( $observations );
 	}
 	exit ( 0 );
 }
@@ -214,16 +206,10 @@ function cura_json_observations() {
  * Ajax - save
  */
 function cura_action_save() {
-	$params = $_REQUEST;
-	unset ( $params ['action'] );
+	$params = (array) cura_request();
 	
 	if (empty ( $params ['lab_sample'] ) || $params ['lab_sample'] == 'N') {
 		$params ['lab_id'] = NULL;
-	}
-	if (empty ( $params ['datetime'] )) {
-		$params ['datetime'] = date ( 'Y-m-d H:i:s' );
-	} else {
-		$params ['datetime'] = date ( 'Y-m-d H:i:s', strtotime ( $params ['datetime'] ) );
 	}
 	
 	include 'lib/Validator.class.php';
@@ -232,12 +218,18 @@ function cura_action_save() {
 	$oValidator->addMethod ( "pattern", "cura_validation_pattern" );
 	$oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
 	$oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
-	$errors = $oValidator->validate ( $_POST );
+	$errors = $oValidator->validate ( $params );
 	if (! empty ( $errors )) {
 		echo json_encode ( array (
 				'error' => $errors 
 		) );
 		exit ();
+	}
+
+	if (empty ( $params ['datetime'] )) {
+		$params ['datetime'] = date ( 'Y-m-d H:i:s' );
+	} else {
+		$params ['datetime'] = date ( 'Y-m-d H:i:s', strtotime ( $params ['datetime'] ) );
 	}
 	
 	$values = array ();
@@ -286,7 +278,8 @@ function cura_action_save() {
 function cura_action_delete() {
 	cura_check_capability ( 'cura-delete' );
 	
-	$id = intval ( $_REQUEST ['id'] );
+	$request = cura_request();
+	$id = intval ( $request->id );
 	
 	$row = cura_get_entry ( $id );
 	$affectedRows = cura_delete_entry ( $id );

@@ -2,15 +2,6 @@
 
 angular.module('services', ['ngResource'])
 
-	.factory('CuraGeoJSON', ['$resource', function($resource) {
-
-	return $resource('cura.geojson', {}, {
-		query: {
-			method: 'GET'
-		}
-	});
-}])
-
 	.factory('serviceCall', ['$resource', function($resource) {
 
 	return $resource('services', {}, {
@@ -38,64 +29,45 @@ angular.module('services', ['ngResource'])
 	});
 }])
 
-	.factory('locations', ['$resource', function($resource) {
-
-	return $resource('/wp-admin/admin-ajax.php?action=cura_locations.json', {}, {
-		query: {
-			method: 'GET'
-		}
-	});
-}])
-
-	.factory('Observations', ['$resource', function($resource) {
-
-	return $resource('/wp-admin/admin-ajax.php?action=cura_observations.json', {}, {
-		query: {
-			method: 'POST',
-		}
-	});
-}])
 
 	.factory('curaConfig', ['$resource', function($resource) {
+	return $resource('/wp-admin/admin-ajax.php?action=cura_config.json');
+}])
 
+
+	.factory('CuraGeoJSON', ['$resource', function($resource) {
+	return $resource('cura.geojson');
+}])
+
+
+	.factory('Observation', ['$resource', function($resource) {
 	return $resource('/wp-admin/admin-ajax.php', {}, {
 		query: {
-			method: 'GET',
+			// Here we define 'POST' for 'query',
+			// because it is convenient for the filterOptions
+			method: 'POST',
+			isArray: true,
 			params: {
-				action: 'cura_config.json'
+				action: 'cura_observations.json',
+			}
+		},
+		save: {
+			method: 'POST',
+			params: {
+				action: 'cura_save.action',
+			}
+		},
+		delete: {
+			method: 'POST',
+			params: {
+				action: 'cura_delete.action',
 			}
 		}
 	});
 }])
 
-	.factory('Feature', ['$http', function($http) {
-
-	return {
-		save: function(urlencodedData, success, error) {
-			$http({
-				url: '/wp-admin/admin-ajax.php?action=cura_save.action',
-				method: 'POST',
-				data: urlencodedData,
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
-			}).
-			success(success).
-			error(error);
-		},
-		remove: function(featureId, success, error) {
-			$http({
-				url: '/wp-admin/admin-ajax.php?action=cura_delete.action&id=' + featureId,
-				method: 'GET',
-			}).
-			success(success).
-			error(error);
-		},
-	};
-}])
 
 	.factory('Toast', [function() {
-
 	return {
 		show: function(message) {
 			if (jQuery('#message').length == 0) {

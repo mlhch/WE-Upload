@@ -2,17 +2,17 @@
 
 curaApp.controller('MainCtrl', [
 	'$scope', '$cookieStore',
-	'CuraGeoJSON', 'curaConfig', 'locations', 'Observations',
+	'CuraGeoJSON', 'curaConfig', 'Observation',
 
-function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, Observations) {
+function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 	/**
 	 * Fields, Locations and other configurations
 	 */
-	curaConfig.query(function(json) {
-		$scope.config = json;
+	curaConfig.get(function(res) {
+		var config = $scope.config = res;
 
 		var fields = $cookieStore.get('fields');
-		$scope.fields = fields || json.fields;
+		$scope.fields = fields || config.fields;
 
 		$scope.locations = [{
 			id: "",
@@ -20,18 +20,18 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, Observations)
 		}, {
 			id: 0,
 			watershed_name: "View All"
-		}].concat(json.locations);
+		}].concat(config.locations);
 
 		/**
 		 * GeoJSON layer
 		 */
-		CuraGeoJSON.query(function(json) {
-			$scope.geoLayer = Cura.geoJson(json, {
+		CuraGeoJSON.get(function(res) {
+			$scope.geoLayer = Cura.geoJson(res, {
 				onFeatureClick: function(options) {
 					var $event = options.originalEvent;
 					var layers = $scope.geoLayer.highlightLayer(this, $event);
+					searchByLayers(layers);
 					$scope.$apply();
-					$scope.searchByLayers(layers);
 				}
 			});
 
@@ -94,21 +94,23 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, Observations)
 			searchText: '',
 			startDate: '',
 			endDate: '',
-			forceReset: Date.now(),
+			forceReset: Date.now(), // This makes 'reset' always refresh
 		}
 		$scope.geoLayer.unHighlightAll();
 	}
+
 	$scope.$watch('filterOptions', function(value) {
 		if (value) {
 			console.log('filter: ' + JSON.stringify(value));
-
 			$scope.geoLayer.doFilter(value);
-			Observations.query(value, function(json) {
-				$scope.observations = json.observations;
+			// use callback way to avoid table rows become 'empty' temporarily
+			Observation.query(value, function(res) {
+				$scope.observations = res;
 			});
 		}
 	}, true);
-	$scope.searchByLayers = function(layers) {
+
+	function searchByLayers(layers) {
 		var stations = layers.map(function(layer) {
 			var props = layer.feature.properties;
 			return {
@@ -117,36 +119,33 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, Observations)
 				location_id: props.location_id
 			}
 		});
-		Observations.query({
+		// use callback way to avoid table rows become 'empty' temporarily
+		Observation.query({
 			stations: stations
-		}, function(json) {
-			$scope.observations = json.observations;
+		}, function(res) {
+			$scope.observations = res;
 		});
 	}
 
 	$scope.highlightedRows = {};
-	$scope.highlightRow = function(row, $event) {
-		var obj = $scope.highlightedRows;
-		if (!$event.metaKey && !$event.ctrlKey) {
-			for (var key in obj) {
-				delete obj[key];
+	$scope.highlightRow = function(obj, $event) {
+		var map = $scope.highlightedRows;
+		if (!$event || !$event.metaKey && !$event.ctrlKey) {
+			for (var key in map) {
+				delete map[key];
 			}
 		}
-		$scope.highlightedRows[row[0]] = true;
+		$scope.highlightedRows[obj.id] = true;
 
-		var props = {};
-		$scope.fields.forEach(function(field) {
-			var propName = field[0];
-			var PropValue = row[field[3]];
-			(propName == 'watershed_name') && (props[propName] = PropValue);
-			(propName == 'station_name') && (props[propName] = PropValue);
-			(propName == 'location_id') && (props[propName] = PropValue);
-		});
-		$scope.geoLayer.highlightLayerByProperties(props, $event);
+		$scope.geoLayer.highlightLayerByProperties({
+			watershed_name: obj.watershed_name,
+			station_name: obj.station_name,
+			location_id: obj.location_id,
+		}, $event);
 	}
 
-	$scope.highlightedClass = function(row) {
-		return this.highlightedRows[row[0]] ? 'highlight' : '';
+	$scope.highlightedClass = function(obj) {
+		return this.highlightedRows[obj.id] ? 'highlight' : '';
 	}
 
 	/**

@@ -325,7 +325,7 @@ function cura_update_entry($id, $params) {
 	
 	$id = intval ( $id );
 	foreach ( $params as $k => $v ) {
-		if ('' === $v) {
+		if (null === $v) {
 			$values [] = "`$k` = NULL";
 		} else {
 			$values [] = "`$k` = '" . addslashes ( $v ) . "'";
@@ -403,6 +403,8 @@ function cura_get_observations($options) {
 		WHERE	1" . (empty ( $sql_filter ) ? "" : "
 			AND	" . implode ( "
 			AND	", $sql_filter )) . "
+		ORDER BY
+				a.datetime DESC
 	";
 	$objs = $wpdb->get_results ( $sql );
 	

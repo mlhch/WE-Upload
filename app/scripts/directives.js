@@ -47,7 +47,7 @@ angular.module('directives', [])
 	}
 }])
 
-	.directive('dialog', ['$compile', 'Feature', 'Toast', function($compile, Feature, Toast) {
+	.directive('dialog', ['$compile', 'Observation', 'Toast', function($compile, Observation, Toast) {
 	return {
 		restrict: 'E',
 		template: [
@@ -89,57 +89,39 @@ angular.module('directives', [])
 						'<td style="vertical-align: top" ' + colspan + '>',
 						'	<input class="field" type="text" name="' + propName + '"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%"',
-						'	 ng-model="feature.properties.lab_id"',
+						'	 ng-model="observation.lab_id"',
 						'	 ng-readonly="!config.canEdit"',
-						'	 ng-disabled="feature.properties.lab_sample==\'N\'" />',
+						'	 ng-disabled="Observation.lab_sample==\'N\'" />',
 						'</td>']);
 				} else if (propName == 'lab_sample') {
 					html = html.concat([
 						'<td class="label">' + propDesc + '</td>',
 						'<td>',
 						'	<label><input type="radio" value="Y" name="' + propName + '"',
-						'	 ng-model="feature.properties.lab_sample"',
+						'	 ng-model="observation.lab_sample"',
 						'	 ng-disabled="!config.canEdit" /> Yes</label> &nbsp; ',
 						'	<label><input type="radio" value="N" name="' + propName + '"',
-						'	 ng-model="feature.properties.lab_sample"',
+						'	 ng-model="observation.lab_sample"',
 						'	 ng-disabled="!config.canEdit"',
-						'	 ng-click="feature.properties.lab_id=\'\'" /> No</label>',
+						'	 ng-click="observation.lab_id=\'\'" /> No</label>',
 						'</td>']);
 				} else if (propName == 'coliform') {
 					html = html.concat([
 						'<td class="label">' + propDesc + '</td>',
 						'<td colspan="3">',
 						'	<label><input type="radio" name="' + propName + '"',
-						'	 ng-model="feature.properties.coliform"',
+						'	 ng-model="observation.coliform"',
 						'	 value="Present" ng-disabled="!config.canEdit" /> Present</label> &nbsp; ',
 						'	<label><input type="radio" name="' + propName + '"',
-						'	 ng-model="feature.properties.coliform"',
+						'	 ng-model="observation.coliform"',
 						'	 value="Absent" ng-disabled="!config.canEdit" /> Absent</label>',
-						'</td>']);
-				} else if (propName == 'latitude') {
-					html = html.concat([
-						'<td class="label">' + propDesc + '</td>',
-						'<td style="vertical-align: top" ' + colspan + '>',
-						'	<input class="field" type="text" name="' + propName + '"',
-						'	 ng-model="feature.geometry.coordinates[1]"',
-						'	 ng-readonly="!config.canEdit"',
-						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
-						'</td>']);
-				} else if (propName == 'longitude') {
-					html = html.concat([
-						'<td class="label">' + propDesc + '</td>',
-						'<td style="vertical-align: top" ' + colspan + '>',
-						'	<input class="field" type="text" name="' + propName + '"',
-						'	 ng-model="feature.geometry.coordinates[0]"',
-						'	 ng-readonly="!config.canEdit"',
-						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
 				} else if (propName == 'datetime') {
 					html = html.concat([
 						'<td class="label">' + propDesc + '</td>',
 						'<td style="vertical-align: top" ' + colspan + '>',
 						'	<input datepicker class="field" type="text" name="' + propName + '"',
-						'	 ng-model="feature.properties.datetime"',
+						'	 ng-model="observation.datetime"',
 						'	 ng-disabled="!config.canEdit"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
@@ -148,7 +130,7 @@ angular.module('directives', [])
 						'<td class="label">' + propDesc + '</td>',
 						'<td style="vertical-align: top" ' + colspan + '>',
 						'	<input class="field" type="text" name="' + propName + '"',
-						'	 ng-model="feature.properties[\'' + propName + '\']"',
+						'	 ng-model="observation[\'' + propName + '\']"',
 						'	 ng-readonly="!config.canEdit"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
@@ -164,7 +146,7 @@ angular.module('directives', [])
 
 					// Binding to Hidden Fields does not seem to work.
 					// @see https://groups.google.com/forum/?fromgroups=#!topic/angular/pjZm4KMEoyc
-					var html = ['<input ng-show="false" name="id" ng-model="feature.id" />'];
+					var html = ['<input ng-show="false" name="id" ng-model="Observation.id" />'];
 					html.push('<table style="width: 100%;">');
 					layout.forEach(function(row) {
 						html.push('<tr>');
@@ -179,30 +161,23 @@ angular.module('directives', [])
 				}
 			});
 
-			$scope.addFeature = function() {
+			$scope.openAddDialog = function() {
 				var now = new Date;
 				now.hour = now.getHours();
 				now.minute = now.getMinutes();
 				var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
 				var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
-				$scope.feature = {
-					type: 'Feature',
+				$scope.observation = {
 					id: 0,
-					properties: {
-						datetime: dt + ' ' + tm,
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [],
-					}
+					datetime: dt + ' ' + tm,
 				};
-				showDialog('Add Observation');
+				openDialog('Add Observation', $scope.observation);
 				jQuery.validator && $form.validate().resetForm();
 			}
 
-			$scope.openDialog = function(layer) {
-				$scope.feature = layer.feature;
-				showDialog('Edit Observation', layer);
+			$scope.openEditDialog = function(obj) {
+				$scope.observation = obj;
+				openDialog('Edit Observation', obj);
 
 				var validator = jQuery('#form-data-entry').validate();
 				validator.prepareForm();
@@ -210,23 +185,16 @@ angular.module('directives', [])
 				validator.elements().removeClass(validator.settings.errorClass);
 			};
 
-			function showDialog(title, layer) {
+			function openDialog(title, ob) {
 				var buttons = [];
 				var config = $scope.config;
 
 				if (config.canDelete) {
 					buttons.push({
 						text: "Delete",
-						style: "padding: 0 2em; font-size: 12px;" + (layer ? '' : 'display:none'),
+						style: "padding: 0 2em; font-size: 12px;" + (ob.id ? '' : 'display:none'),
 						click: function() {
-							$scope.geoLayer.removeLayer(layer);
-							$scope.geoLayer.filteredRows.every(function(value, index) {
-								return value != layer || $scope.geoLayer.filteredRows.splice(index, 1) && false;
-							});
-							delFeature();
-							$scope.$apply();
-
-							$el.dialog('close');
+							Observation.delete(ob, delSuccess, saveError);
 						}
 					});
 				}
@@ -235,7 +203,11 @@ angular.module('directives', [])
 						text: "Save",
 						style: "padding: 0 2em; font-size: 12px",
 						click: function() {
-							saveFeature();
+							if ($form.validate().form()) {
+								// Here we use Class.save instead of Instance.$save
+								// because the returned Resource is not at root node
+								Observation.save(ob, saveSuccess, saveError);
+							}
 						}
 					});
 				}
@@ -256,52 +228,58 @@ angular.module('directives', [])
 				});
 			}
 
-			function saveFeature() {
-				if ($form.validate().form()) {
-					Feature.save($form.serialize(), function(resp) {
-						if (resp.error) {
-							var error = [];
-							for (var i in result.error) {
-								var v = $el.find('[name="' + i + '"]').val();
-								error.push(i + ' (' + v + ') : ' + result.error[i]);
-							}
-							Toast.show('Server validation errors:\n\n' + error.join('\n\n'));
-							return;
-						}
+			function saveSuccess(resp) {
+				if (resp.error) {
+					var error = [];
+					for (var i in resp.error) {
+						var v = $el.find('[name="' + i + '"]').val();
+						error.push(i + ' (' + v + ') : ' + resp.error[i]);
+					}
+					Toast.show('Server validation errors:\n\n' + error.join('\n\n'));
+					return;
+				}
 
-						if (resp.affectedRows) {
-							if (resp.insertId) {
-								$scope.feature.id = resp.insertId;
-								$scope.geoLayer.addData([$scope.feature]);
-								$scope.geoLayer.doFilter($scope.filterOptions);
-								$scope.$apply();
-								Toast.show('Entry ' + resp.insertId + ' added');
-							} else {
-								Toast.show('Entry ' + resp.id + ' updated');
-							}
-							//me.clearTypeaheads();
-						} else {
-							Toast.show('No changes updated')
-						}
-						$el.dialog('close');
-					}, function() {
-						Toast.show('Sorry, the server encountered an error');
+				if (resp.affectedRows) {
+					if (resp.insertId) {
+						$scope.observation.id = resp.insertId;
+						$scope.geoLayer.addRawData($scope.observation);
+						var props = $scope.observation;
+						Observation.query({
+							stations: [{
+								watershed_name: props.watershed_name,
+								station_name: props.station_name,
+								location_id: props.location_id
+							}]
+						}, function(res) {
+							$scope.observations = res;
+							$scope.highlightRow(res[0]);
+						})
+						Toast.show('Entry ' + resp.insertId + ' added');
+					} else {
+						Toast.show('Entry ' + resp.id + ' updated');
+					}
+					//me.clearTypeaheads();
+				} else {
+					Toast.show('No changes updated')
+				}
+				$el.dialog('close');
+			}
+
+			function delSuccess(resp) {
+				if (resp.affectedRows) {
+					$el.dialog('close');
+					$scope.observations.every(function(value, index) {
+						return value.id != resp.id || $scope.observations.splice(index, 1) && false;
 					});
+					Toast.show('Entry ' + resp.id + ' deleted');
+					//me.clearTypeaheads();
+				} else {
+					Toast.show('Data Entry ' + resp.id + ' does not exist');
 				}
 			}
 
-			function delFeature() {
-				Feature.remove($scope.feature.id, function(resp) {
-					if (resp.affectedRows) {
-						$el.dialog('close');
-						Toast.show('Entry ' + resp.id + ' deleted');
-						//me.clearTypeaheads();
-					} else {
-						Toast.show('Data Entry ' + resp.id + ' does not exist');
-					}
-				}, function() {
-					Toast.show('Sorry, the server encountered an error');
-				});
+			function saveError() {
+				Toast.show('Sorry, the server encountered an error');
 			}
 
 			function validateForm() {

@@ -43,6 +43,25 @@
 			this.allLayers[id] || (this.allLayers[id] = layer);
 		},
 
+		addRawData: function(data) {
+			var id = data.id;
+			var latitude = data.latitude;
+			var longitude = data.longitude;
+			delete data.id;
+			delete data.latitude;
+			delete data.longitude;
+			var feature = {
+				type: 'Feature',
+				id: id,
+				properties: data,
+				geometry: {
+					type: 'Point',
+					coordinates: [longitude, latitude],
+				}
+			}
+			this.addData([feature]);
+		},
+
 		doFilter: function(options) {
 			this.clearLayers();
 			for (var id in this.allLayers) {
@@ -88,7 +107,7 @@
 		highlightedLayers: [],
 		highlightLayer: function(layer, $event) {
 			var layers = this.highlightedLayers;
-			if (!$event.metaKey && !$event.ctrlKey) {
+			if (!$event || !$event.metaKey && !$event.ctrlKey) {
 				layers.forEach(function(layer) {
 					this.unHighlight(layer);
 				}, this);
