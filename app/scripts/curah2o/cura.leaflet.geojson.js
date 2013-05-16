@@ -44,50 +44,22 @@
 		},
 
 		doFilter: function(options) {
-			if (options && options.featureIds && Object.keys(options.featureIds).length != 0) {
-				var filters = [this.filters.byFeatureIds];
-				this.doFilterRows(filters, options);
-			} else {
-				var filters = [
-				this.filters.searchText,
-				this.filters.byCommunityGroup,
-				this.filters.byStartDate,
-				this.filters.byEndDate //
-				];
-				this.doFilterRows(filters, options);
-				this.doFilterIcons(filters, options);
-			}
-		},
-
-		filteredRows: [],
-		doFilterRows: function(filters, options) {
-			this.filteredRows.splice(0);
-			for (var id in this.allLayers) {
-				var layer = this.allLayers[id];
-				if (filters.every(function(fn) {
-					return fn.call(this, layer.feature, options);
-				}, this)) {
-					this.filteredRows.push(layer);
-				}
-			}
-		},
-
-		doFilterIcons: function(filters, options) {
 			this.clearLayers();
 			for (var id in this.allLayers) {
 				var layer = this.allLayers[id];
-				if (filters.every(function(fn) {
-					return fn.call(this, layer.feature, options);
-				}, this)) {
-					this.addLayer(layer);
+				var allOK = true;
+				for (var key in this.filters) {
+					var filter = this.filters[key];
+					if (!filter.call(this, layer.feature, options)) {
+						allOK = false;
+						break;
+					}
 				}
+				allOK && this.addLayer(layer);
 			}
 		},
 
 		filters: {
-			byFeatureIds: function(feature, options) {
-				return options.featureIds[feature.id];
-			},
 			searchText: function(feature, options) {
 				var s = options.searchText || '';
 				return s == '' || feature.properties.station_name.toLowerCase().indexOf(s) != -1;
@@ -110,16 +82,10 @@
 			},
 		},
 
-		highlightedLayers: [],
-		highlightedClass: function(layer) {
-			return this.highlightedLayers.every(function(l) {
-				return l != layer
-			}) ? '' : 'highlight';
-		},
-
 		/**
 		 * Click table row to highlight
 		 */
+		highlightedLayers: [],
 		highlightLayer: function(layer, $event) {
 			var layers = this.highlightedLayers;
 			if (!$event.metaKey && !$event.ctrlKey) {
@@ -133,6 +99,20 @@
 			this.highlight(layer);
 
 			layers.push(layer);
+			return layers;
+		},
+		highlightLayerByProperties: function(props, $event) {
+			this.eachLayer(function(layer) {
+				var p = layer.feature.properties;
+				var ok = true;
+				for (var key in props) {
+					if (p[key] != props[key]) {
+						ok = false;
+						break;
+					}
+				}
+				ok && this.highlightLayer(layer, $event);
+			}, this);
 		},
 		highlight: function(layer) {
 			layer.options.riseOnHover = false;

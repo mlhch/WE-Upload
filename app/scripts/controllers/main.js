@@ -2,9 +2,9 @@
 
 curaApp.controller('MainCtrl', [
 	'$scope', '$cookieStore',
-	'CuraGeoJSON', 'curaConfig', 'locations', 'observations',
+	'CuraGeoJSON', 'curaConfig', 'locations', 'Observations',
 
-function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations) {
+function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, Observations) {
 	/**
 	 * Fields, Locations and other configurations
 	 */
@@ -29,13 +29,10 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 			$scope.geoLayer = Cura.geoJson(json, {
 				onFeatureClick: function(options) {
 					var $event = options.originalEvent;
-					$scope.geoLayer.highlightLayer(this, $event);
-					if (!$event.metaKey && !$event.ctrlKey) {
-						$scope.filterOptions.featureIds = {};
-					}
-					$scope.filterOptions.featureIds[this.feature.id] = true;
+					var layers = $scope.geoLayer.highlightLayer(this, $event);
 					$scope.$apply();
-				},
+					$scope.searchByLayers(layers);
+				}
 			});
 
 			$scope.resetFilterOptions();
@@ -91,52 +88,65 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, locations, observations)
 	/**
 	 * Search Options
 	 */
-	$scope.$watch('filterOptions', function(value, old) {
-		if (typeof value != 'undefined') {
-			console.log('filter: ' + JSON.stringify(value) + ' <- ' + JSON.stringify(old));
-
-			if (value.searchText != '' && old && value.searchText != old.searchText) {
-				if (Object.keys(value.featureIds).length != 0) {
-					value.featureIds = {};
-					return;
-				}
-			}
-			if (value.location.id !== '' && old && value.location.id !== old.location.id) {
-				if (Object.keys(value.featureIds).length != 0) {
-					value.featureIds = {};
-					return;
-				}
-			}
-			if (old && JSON.stringify(value.featureIds) != '{}') {
-				if (JSON.stringify(value.featureIds) != JSON.stringify(old.featureIds)) {
-					if (value.location.id !== '' || value.searchText != '') {
-						value.location.id = '';
-						value.searchText = '';
-						return;
-					}
-				}
-			}
-
-			$scope.geoLayer.doFilter(value);
-		}
-	}, true);
-
 	$scope.resetFilterOptions = function() {
 		$scope.filterOptions = {
 			location: $scope.locations[1], // View All
 			searchText: '',
-			featureIds: {},
+			startDate: '',
+			endDate: '',
+			forceReset: Date.now(),
 		}
 		$scope.geoLayer.unHighlightAll();
 	}
+	$scope.$watch('filterOptions', function(value) {
+		if (value) {
+			console.log('filter: ' + JSON.stringify(value));
 
-	$scope.fieldValue = function(layer, propName) {
-		if (propName == 'latitude') {
-			return layer.feature.geometry.coordinates[0];
-		} else if (propName == 'longitude') {
-			return layer.feature.geometry.coordinates[1];
+			$scope.geoLayer.doFilter(value);
+			Observations.query(value, function(json) {
+				$scope.observations = json.observations;
+			});
 		}
-		return layer.feature.properties[propName];
+	}, true);
+	$scope.searchByLayers = function(layers) {
+		var stations = layers.map(function(layer) {
+			var props = layer.feature.properties;
+			return {
+				watershed_name: props.watershed_name,
+				station_name: props.station_name,
+				location_id: props.location_id
+			}
+		});
+		Observations.query({
+			stations: stations
+		}, function(json) {
+			$scope.observations = json.observations;
+		});
+	}
+
+	$scope.highlightedRows = {};
+	$scope.highlightRow = function(row, $event) {
+		var obj = $scope.highlightedRows;
+		if (!$event.metaKey && !$event.ctrlKey) {
+			for (var key in obj) {
+				delete obj[key];
+			}
+		}
+		$scope.highlightedRows[row[0]] = true;
+
+		var props = {};
+		$scope.fields.forEach(function(field) {
+			var propName = field[0];
+			var PropValue = row[field[3]];
+			(propName == 'watershed_name') && (props[propName] = PropValue);
+			(propName == 'station_name') && (props[propName] = PropValue);
+			(propName == 'location_id') && (props[propName] = PropValue);
+		});
+		$scope.geoLayer.highlightLayerByProperties(props, $event);
+	}
+
+	$scope.highlightedClass = function(row) {
+		return this.highlightedRows[row[0]] ? 'highlight' : '';
 	}
 
 	/**

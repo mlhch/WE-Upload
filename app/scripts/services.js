@@ -47,15 +47,11 @@ angular.module('services', ['ngResource'])
 	});
 }])
 
-	.factory('observations', ['$resource', function($resource) {
+	.factory('Observations', ['$resource', function($resource) {
 
-	return $resource('/wp-admin/admin-ajax.php', {}, {
+	return $resource('/wp-admin/admin-ajax.php?action=cura_observations.json', {}, {
 		query: {
-			method: 'GET',
-			params: {
-				action: 'cura_observations.json',
-				watershed: '@watershed'
-			}
+			method: 'POST',
 		}
 	});
 }])
