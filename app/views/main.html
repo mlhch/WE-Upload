@@ -13,29 +13,12 @@
 	 placeHolder="End Date"  style="text-align: left; width: 150px" />
 	<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="font-size: 12px; width: 80px" ng-click="resetFilterOptions()"><span class="ui-button-text">Reset</span></button>
 </div>
-<table class="tablesorter" style="border-spacing: 1px;">
-	<thead>
-		<tr>
-			<th ng-repeat="field in visibleFields">{{field[2]}}</th>
-			<th style="text-align:center; width:10px">Action</th>
-		</tr>
-	</thead>
-	<tr ng-class="highlightedClass(row)"
-	 ng-repeat="row in observations"
-	 ng-click="highlightRow(row, $event)">
-		<td ng-repeat="field in visibleFields">{{row[field[3]]}}</td>
-		<td style="padding: 0px; text-align: center">
-			<button type="button" ng-click="openDialog(layer)"
-			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-			 style="font-size:12px; margin:3px 10px"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
-	</tr>
-</table>
 <div style="float: right; margin-bottom: 10px">
 	<button id="fields-config" type="button" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text" onclick="jQuery('#fields-selector').slideToggle()">More fields...</span>
 	</button>
-	<button type="button" ng-click="addFeature()" style="font-size: 12px"
+	<button type="button" ng-click="openAddDialog()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Add new entry</span>
 	</button>
@@ -52,5 +35,22 @@
 	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">{{field[2]}}
 		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
 </ol>
+<table class="tablesorter" style="border-spacing: 1px;">
+	<thead>
+		<tr>
+			<th ng-repeat="field in visibleFields">{{field[2]}}</th>
+			<th style="text-align:center; width:10px">Action</th>
+		</tr>
+	</thead>
+	<tr ng-class="highlightedClass(obj)"
+	 ng-repeat="obj in observations"
+	 ng-click="highlightRow(obj, $event)">
+		<td ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>
+		<td style="padding: 0px; text-align: center">
+			<button type="button" ng-click="openEditDialog(obj)"
+			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+			 style="font-size:12px; margin:3px 10px"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
+	</tr>
+</table>
 <dialog></dialog>
 <mobiletip></mobiletip>
