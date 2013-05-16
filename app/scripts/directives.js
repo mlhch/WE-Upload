@@ -60,6 +60,12 @@ function($compile, Observation, curaConfig, Toast) {
 		replace: true,
 		transclude: true,
 		link: function($scope, $el, iAttrs, controller) {
+			var typeaheadWatershedItems;
+			var typeaheadStationItems;
+			var typeaheadStationRows;
+			var typeaheadLocationItems;
+			var typeaheadLocationRows;
+
 			var $form = $el.find('form');
 			validateForm();
 
@@ -261,7 +267,7 @@ function($compile, Observation, curaConfig, Toast) {
 					} else {
 						Toast.show('Entry ' + resp.id + ' updated');
 					}
-					//me.clearTypeaheads();
+					clearTypeaheads();
 				} else {
 					Toast.show('No changes updated')
 				}
@@ -275,7 +281,7 @@ function($compile, Observation, curaConfig, Toast) {
 						return value.id != resp.id || $scope.observations.splice(index, 1) && false;
 					});
 					Toast.show('Entry ' + resp.id + ' deleted');
-					//me.clearTypeaheads();
+					clearTypeaheads();
 				} else {
 					Toast.show('Data Entry ' + resp.id + ' does not exist');
 				}
@@ -314,7 +320,6 @@ function($compile, Observation, curaConfig, Toast) {
 			}
 
 			function typeahead() {
-				var typeaheadWatershedItems;
 				$form.find("input[name=watershed_name]").typeahead({
 					source: function(query, callback) {
 						if (typeaheadWatershedItems) {
@@ -343,8 +348,6 @@ function($compile, Observation, curaConfig, Toast) {
 						return value;
 					}
 				});
-				var typeaheadStationItems;
-				var typeaheadStationRows;
 				$form.find("input[name=station_name]").typeahead({
 					source: function(query, callback) {
 						var watershed = $form.find("input[name=watershed_name]").val();
@@ -401,8 +404,6 @@ function($compile, Observation, curaConfig, Toast) {
 						return value;
 					}
 				});
-				var typeaheadLocationItems;
-				var typeaheadLocationRows;
 				$form.find("input[name=location_id]").typeahead({
 					source: function(query, callback) {
 						var watershed = $form.find("input[name=watershed_name]").val();
@@ -459,6 +460,16 @@ function($compile, Observation, curaConfig, Toast) {
 						return value;
 					}
 				});
+			}
+
+			function clearTypeaheads() {
+				typeaheadWatershedItems = null;
+
+				typeaheadStationItems = null;
+				typeaheadStationRows = null;
+
+				typeaheadLocationItems = null;
+				typeaheadLocationRows = null;
 			}
 		}
 	}

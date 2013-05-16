@@ -111,16 +111,4 @@ WaterQuality.prototype = {
 			}
 		});
 	},
-
-	clearTypeaheads: function() {
-		var me = this;
-		me.typeaheadWatershedItems = null;
-
-		me.typeaheadStationItems = null;
-		me.typeaheadStationRows = null;
-		
-		me.typeaheadLocationItems = null;
-		me.typeaheadLocationRows = null;
-	},
-
 }
