@@ -353,18 +353,35 @@ function cura_delete_entry($id) {
 	$affectedRows = $wpdb->query ( $sql );
 	return $affectedRows;
 }
-function cura_get_observations($params = array()) {
+function cura_get_observations($options) {
 	global $wpdb;
 	
-	$filters = ( array ) $params ['filters'];
 	$sql_filter = array ();
-	foreach ( $filters as $filter ) {
-		if ($filter ['value']) {
-			$sql_filter [] = sprintf ( "%s = '%s'", 			//
-			preg_match ( '/([^.]+)\.([^.]+)?/', $filter ['field'], $m ) ? 			//
-			"$m[1].`$m[2]`" : "`$filter[field]`", 			//
-			addslashes ( $filter ['value'] ) );
+	if (!empty($options->location) && intval($options->location->id)) {
+		$sql_filter [] = "b.id = " . intval($options->location->id);
+	}
+	if (!empty($options->searchText)) {
+		$sql_filter [] = "station_name LIKE '%" . $options->searchText . "%'";
+	}
+	if (!empty($options->startDate)) {
+		$dt = date('Y-m-d H:i:s', strtotime($options->startDate));
+		$sql_filter [] = "datetime >= '$dt'";
+	}
+	if (!empty($options->endDate)) {
+		$dt = date('Y-m-d H:i:s', strtotime($options->endDate));
+		$sql_filter [] = "datetime <= '$dt'";
+	}
+	if (!empty($options->stations)) {
+		$or = array();
+		foreach ($options->stations as $station) {
+			$and = array(
+				"a.watershed_name = '" . addslashes($station->watershed_name) . "'",
+				"a.station_name = '" . addslashes($station->station_name) . "'",
+				"a.location_id = '" . addslashes($station->location_id) . "'",
+			);
+			$or [] = "(" . implode(" AND ", $and) . ")";
 		}
+		$sql_filter = array( "(" . implode(" OR ", $or) . ")" );
 	}
 	
 	// The fields order is important
@@ -380,7 +397,7 @@ function cura_get_observations($params = array()) {
 				, a.`", $fields ) . "`
 				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
 		FROM	`" . CURAH2O_TABLE . "` AS a
-		LEFT JOIN
+		JOIN
 				`" . CURAH2O_TABLE_LOCATION . "` AS b
 			ON	a.watershed_name = b.watershed_name
 		WHERE	1" . (empty ( $sql_filter ) ? "" : "

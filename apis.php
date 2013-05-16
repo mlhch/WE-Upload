@@ -1,4 +1,11 @@
 <?php
+function cura_request() {
+	$phpInput = file_get_contents ( 'php://input' );
+	if (get_magic_quotes_gpc ()) {
+		$phpInput = stripslashes ( $phpInput );
+	}
+	return json_decode ( $phpInput );
+}
 function cura_geojson() {
 	$objs = cura_all_stations_with_latest_data();
 
@@ -164,18 +171,8 @@ function cura_json_typeaheads_location_id() {
  * Ajax - observations.json
  */
 function cura_json_observations() {
-	$id = isset ( $_REQUEST ['watershed'] ) ? $_REQUEST ['watershed'] : 0;
-	
-	$params = array (
-			'filters' => array (
-					array (
-							'field' => 'b.id',
-							'value' => $id 
-					) 
-			) 
-	);
-	
-	$rows = cura_get_observations ( $params );
+	$request = cura_request();
+	$rows = cura_get_observations ( $request );
 	
 	$observations = array ();
 	foreach ( $rows as $obj ) {
@@ -184,7 +181,6 @@ function cura_json_observations() {
 	
 	$fields = cura_fields ();
 	$result = array (
-			'fields' => $fields,
 			'observations' => $observations 
 	);
 	
