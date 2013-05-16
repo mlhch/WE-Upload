@@ -47,7 +47,9 @@ angular.module('directives', [])
 	}
 }])
 
-	.directive('dialog', ['$compile', 'Observation', 'Toast', function($compile, Observation, Toast) {
+	.directive('dialog', ['$compile', 'Observation', 'curaConfig', 'Toast',
+
+function($compile, Observation, curaConfig, Toast) {
 	return {
 		restrict: 'E',
 		template: [
@@ -157,7 +159,8 @@ angular.module('directives', [])
 					});
 					html.push('</table>');
 
-					jQuery('#form-data-entry').append($compile(html.join(''))($scope));
+					$form.append($compile(html.join(''))($scope));
+					typeahead();
 				}
 			});
 
@@ -283,10 +286,6 @@ angular.module('directives', [])
 			}
 
 			function validateForm() {
-				if (!jQuery.validator) {
-					return;
-				}
-
 				jQuery.validator.addMethod("secchi_b", function(value, element, param) {
 					var value_a = jQuery('input[name=secchi_a]').val();
 					var value_b = value;
@@ -311,7 +310,155 @@ angular.module('directives', [])
 					return ('' === value_a && '' === value_b) || a + b == d + d;
 				}, cura_validation_options.messages.secchi_d);
 
-				$el.find('form').validate(cura_validation_options);
+				$form.validate(cura_validation_options);
+			}
+
+			function typeahead() {
+				var typeaheadWatershedItems;
+				$form.find("input[name=watershed_name]").typeahead({
+					source: function(query, callback) {
+						if (typeaheadWatershedItems) {
+							return typeaheadWatershedItems;
+						}
+						curaConfig.locations(function(res) {
+							var items = [];
+							for (var i = 0, row; row = res[i++];) {
+								items.push(row.watershed_name);
+							}
+							typeaheadWatershedItems = items;
+							callback(items);
+							return;
+						});
+					},
+					updater: function(value) {
+						var els = [];
+						els.push($form.find("input[name=station_name]"));
+						els.push($form.find("input[name=location_id]"));
+						els.push($form.find("input[name=latitude]"));
+						els.push($form.find("input[name=longitude]"));
+						for (var i = 0, el; el = els[i++];) {
+							el.val('').attr('readOnly', false).removeClass('error');
+							$form.validate().errorsFor(el[0]).hide();
+						}
+						return value;
+					}
+				});
+				var typeaheadStationItems;
+				var typeaheadStationRows;
+				$form.find("input[name=station_name]").typeahead({
+					source: function(query, callback) {
+						var watershed = $form.find("input[name=watershed_name]").val();
+						if (watershed.length == 0) {
+							return;
+						}
+
+						typeaheadStationItems = typeaheadStationItems || {};
+						typeaheadStationRows = typeaheadStationRows || {};
+						if (typeaheadStationItems[watershed]) {
+							return typeaheadStationItems[watershed];
+						}
+						curaConfig.typeaheads_station_name({
+							watershed: watershed
+						}, function(res) {
+							var items = [];
+							for (var i = 0, row; row = res[i++];) {
+								items.push(row.station_name);
+							}
+							typeaheadStationItems[watershed] = items;
+							typeaheadStationRows[watershed] = res;
+							callback(items);
+						});
+					},
+					updater: function(value) {
+						var watershed = $form.find("input[name=watershed_name]").val();
+						var station = value;
+						if (watershed.length == 0 || station.length == 0) {
+							return value;
+						}
+
+						$form.find("input[name=location_id]").val('');
+						$form.find("input[name=latitude]").val('').attr('readOnly', false);
+						$form.find("input[name=longitude]").val('').attr('readOnly', false);
+
+						if (typeaheadStationItems[watershed]) {
+							var el, validator = $form.validate();
+							for (var i = 0, row; row = typeaheadStationRows[watershed][i++];) {
+								if (row.station_name == station) {
+									el = $form.find("input[name=location_id]").val(row.location_id);
+
+									el = $form.find("input[name=latitude]").val(row.latitude);
+									el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+
+									el = $form.find("input[name=longitude]").val(row.longitude);
+									el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+
+									validator.showErrors();
+									break;
+								}
+							}
+						}
+
+						return value;
+					}
+				});
+				var typeaheadLocationItems;
+				var typeaheadLocationRows;
+				$form.find("input[name=location_id]").typeahead({
+					source: function(query, callback) {
+						var watershed = $form.find("input[name=watershed_name]").val();
+						if (watershed.length == 0) {
+							return;
+						}
+
+						typeaheadLocationItems = typeaheadLocationItems || {};
+						typeaheadLocationRows = typeaheadLocationRows || {};
+						if (typeaheadLocationItems[watershed]) {
+							return typeaheadLocationItems[watershed];
+						}
+						curaConfig.typeaheads_location_id({
+							watershed: watershed
+						}, function(res) {
+							var items = [];
+							for (var i = 0, row; row = res[i++];) {
+								items.push(row.location_id);
+							}
+							typeaheadLocationItems[watershed] = items;
+							typeaheadLocationRows[watershed] = res;
+							callback(items);
+						});
+					},
+					updater: function(value) {
+						var watershed = $form.find("input[name=watershed_name]").val();
+						var location_id = value;
+						if (watershed.length == 0 || location_id.length == 0) {
+							return value;
+						}
+
+						$form.find("input[name=station_name]").val('');
+						$form.find("input[name=latitude]").val('').attr('readOnly', false);
+						$form.find("input[name=longitude]").val('').attr('readOnly', false);
+
+						if (typeaheadLocationRows[watershed]) {
+							var el, validator = $form.validate();
+							for (var i = 0, row; row = typeaheadLocationRows[watershed][i++];) {
+								if (row.location_id == location_id) {
+									el = $form.find("input[name=station_name]").val(row.station_name);
+
+									el = $form.find("input[name=latitude]").val(row.latitude);
+									el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+
+									el = $form.find("input[name=longitude]").val(row.longitude);
+									el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+
+									validator.showErrors();
+									break;
+								}
+							}
+						}
+
+						return value;
+					}
+				});
 			}
 		}
 	}

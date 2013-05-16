@@ -139,9 +139,7 @@ function cura_json_locations() {
 	
 	$locations = cura_get_locations ();
 	
-	echo json_encode ( array (
-			'locations' => $locations 
-	) );
+	echo json_encode ( $locations );
 	exit ();
 }
 /*
@@ -152,9 +150,7 @@ function cura_json_typeaheads_station_name() {
 	$location_id = isset ( $_REQUEST ['location_id'] ) ? $_REQUEST ['location_id'] : '';
 	$rows = cura_get_typeaheads_of_station ( $watershed, $location_id );
 	
-	echo json_encode ( array (
-			'typeaheads' => $rows 
-	) );
+	echo json_encode ( $rows );
 	exit ( 0 );
 }
 function cura_json_typeaheads_location_id() {
@@ -162,9 +158,7 @@ function cura_json_typeaheads_location_id() {
 	$station = isset ( $_REQUEST ['station'] ) ? $_REQUEST ['station'] : '';
 	$rows = cura_get_typeaheads_of_locationid ( $watershed, $station );
 	
-	echo json_encode ( array (
-			'typeaheads' => $rows 
-	) );
+	echo json_encode ( $rows );
 	exit ( 0 );
 }
 /*

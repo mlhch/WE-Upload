@@ -31,7 +31,35 @@ angular.module('services', ['ngResource'])
 
 
 	.factory('curaConfig', ['$resource', function($resource) {
-	return $resource('/wp-admin/admin-ajax.php?action=cura_config.json');
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		get: {
+			method: 'GET',
+			params: {
+				action: 'cura_config.json',
+			}
+		},
+		locations: {
+			method: 'GET',
+			isArray: true,
+			params: {
+				action: 'cura_locations.json',
+			}
+		},
+		typeaheads_station_name: {
+			method: 'GET',
+			isArray: true,
+			params: {
+				action: "cura_typeaheads_station_name.json"
+			}
+		},
+		typeaheads_location_id: {
+			method: 'GET',
+			isArray: true,
+			params: {
+				action: "cura_typeaheads_location_id.json"
+			}
+		},
+	});
 }])
 
 
