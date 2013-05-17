@@ -50,6 +50,73 @@ angular.module('directives', [])
 }])
 
 
+	.directive('tablesorter', ['$parse', function($parse) {
+	return {
+		restrict: 'E',
+		template: [
+			'<table class="tablesorter">',
+			'	<thead>',
+			'		<tr>',
+			'			<th ng-repeat="field in visibleFields">{{field[2]}}</th>',
+			'			<th style="text-align:center; width:10px">Action</th>',
+			'		</tr>',
+			'	</thead>',
+			'	<tr tablesorter-row ng-class="highlightedClass(obj)"',
+			'	 ng-repeat="obj in observations"',
+			'	 ng-click="highlightRow(obj, $event)">',
+			'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
+			'		<td style="padding: 0px; text-align: center">',
+			'			<button type="button" ng-click="openEditDialog(obj)"',
+			'			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"',
+			'			><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>',
+			'	</tr>',
+			'</table>'].join(''),
+	}
+}])
+
+
+	.directive('tablesorterRow', [function() {
+	return function(scope, iElement, iAttrs, controller) {
+		//console.log("row: " + scope.$index);
+	}
+}])
+
+
+	.directive('tablesorterCol', [function() {
+	return function(scope, iElement, iAttrs, controller) {
+		//console.log("r" + scope.$parent.$index + ", c" + scope.$index)
+		if (scope.$parent.$last && scope.$last) {
+			var $scope = scope.$parent.$parent;
+			var $tb = jQuery('table.tablesorter');
+			if ($tb[0].config) {
+				$tb.trigger('update');
+				setTimeout(function() {
+					$tb.trigger('sorton', [$scope.sortList]);
+				}, 1);
+				return;
+			}
+			var headers = {};
+			// the Action column don't need sortable
+			var cols = $tb.find('thead tr th').length;
+			headers[cols - 1] = {
+				sorter: false
+			};
+
+			$tb.tablesorter({
+				headers: headers,
+				sortList: $scope.sortList || [],
+				//widthFixed: true,
+				widgets: ['zebra'],
+			}).bind('sortEnd', function() {
+				$scope.sortList = this.config.sortList;
+				$scope.$apply();
+				jQuery(this).trigger("applyWidgets");
+			});
+		}
+	}
+}])
+
+
 	.directive('dialog', ['$compile', '$parse', 'Observation', 'curaConfig', 'Toast',
 
 function($compile, $parse, Observation, curaConfig, Toast) {

@@ -64,6 +64,10 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 		$scope.sortList = sortList;
 	}, true);
 
+	$scope.$watch('sortList', function(value) {
+		value && $cookieStore.put('sortList', value);
+	}, true);
+
 	/**
 	 * Fields toggle and sorter
 	 */

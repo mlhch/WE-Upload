@@ -36,24 +36,6 @@ WaterQuality.prototype = {
 	enableTableSorter: function() {
 		var me = this;
 		
-		var headers = {};
-		// the Action column don't need sortable
-		var cols = me.getVisibleFields().length;
-		headers[cols] = { sorter: false };
-		
-		jQuery(function ($) {
-			if ($.tablesorter) {
-				$( me.table ).tablesorter({
-					headers: headers,
-					sortList: me.sortList || [],
-					//widthFixed: true,
-					widgets: ['zebra'],
-				}).bind('sortEnd', function() {
-					$.cookie('sortList', this.config.sortList);
-					$(this).trigger("applyWidgets");
-				});
-			}
-		});
 		jQuery(document).ready(function ($) {
 			var pagesize = $.cookie('pagesize');
 			pagesize && $('.pagesize', $(me.pager)).val(pagesize);

@@ -15,6 +15,12 @@
 	color: orange
 }
 
+table.tablesorter {
+	border-spacing: 1px;
+}
+table.tablesorter thead tr th {
+	padding-right: 1em;
+}
 table.tablesorter tbody tr.highlight td {
 	background-color: lightblue
 }

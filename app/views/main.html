@@ -35,22 +35,6 @@
 	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">{{field[2]}}
 		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
 </ol>
-<table class="tablesorter" style="border-spacing: 1px;">
-	<thead>
-		<tr>
-			<th ng-repeat="field in visibleFields">{{field[2]}}</th>
-			<th style="text-align:center; width:10px">Action</th>
-		</tr>
-	</thead>
-	<tr ng-class="highlightedClass(obj)"
-	 ng-repeat="obj in observations"
-	 ng-click="highlightRow(obj, $event)">
-		<td ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>
-		<td style="padding: 0px; text-align: center">
-			<button type="button" ng-click="openEditDialog(obj)"
-			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-			 style="font-size:12px; margin:3px 10px"><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>
-	</tr>
-</table>
+<tablesorter></tablesorter>
 <dialog></dialog>
 <mobiletip></mobiletip>
