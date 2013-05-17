@@ -103,15 +103,15 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "do_%",
-				"placeHolder" => "1 ~ 120",
+				"placeHolder" => "1 ~ 130",
 				"description" => "DO (%) ",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
 								"min" => 1,
-								"max" => 120 
+								"max" => 130 
 						),
-						"message" => "A value between 0 and 120 calculated based on amount of oxygen in the water at the given temperature" 
+						"message" => "A value between 0 and 130 calculated based on amount of oxygen in the water at the given temperature" 
 				) 
 		),
 		array (

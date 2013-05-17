@@ -99,13 +99,13 @@ angular.module('services', ['ngResource'])
 	return {
 		show: function(message) {
 			if (jQuery('#message').length == 0) {
-				jQuery('<div id="message"></div>').appendTo('body');
+				jQuery('<div id="message" style="z-index:1000000"></div>').appendTo('body');
 			}
 
 			jQuery('#message').html(message).show().position({
 				at: 'top center',
 				of: window
-			}).fadeOut(5000);
+			}).delay(5000).fadeOut(3000);
 		}
 	}
 }])

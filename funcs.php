@@ -41,7 +41,7 @@ function cura_validation_pattern($value, $pattern) {
 	return 0 !== preg_match ( $pattern, $value );
 }
 function cura_validation_secchi_b($value, $ruleParam, $values) {
-	return abs ( $values ['secchi_a'] - $values ['secchi_b'] ) <= 2;
+	return abs ( $values ['secchi_a'] - $values ['secchi_b'] ) <= 4;
 }
 function cura_validation_secchi_d($value, $ruleParam, $values) {
 	return ($values ['secchi_a'] + $values ['secchi_b']) == ($value + $value);
