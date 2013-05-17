@@ -2,6 +2,7 @@
 
 angular.module('directives', [])
 
+
 	.directive('map', [function() {
 	return {
 		restrict: 'E',
@@ -30,6 +31,7 @@ angular.module('directives', [])
 	};
 }])
 
+
 	.directive('datepicker', ['$parse', function($parse) {
 	return function($scope, $el, attrs) {
 		$el.datetimepicker({
@@ -46,6 +48,7 @@ angular.module('directives', [])
 		});
 	}
 }])
+
 
 	.directive('dialog', ['$compile', '$parse', 'Observation', 'curaConfig', 'Toast',
 
@@ -100,6 +103,12 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 				}
 			});
 
+			$scope.isFieldDisabled = function() {
+				var config = $scope.config;
+				var ob = $scope.observation;
+				return ob && !((!ob.id && config.canAdd) || (ob.id && config.canEdit));
+			}
+
 			function cura_form_field(name, single) {
 				var field = fields[name],
 					propName = field[0],
@@ -115,20 +124,20 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 						'	<input class="field" type="text" name="' + propName + '"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%"',
 						'	 ng-model="observation.lab_id"',
-						'	 ng-readonly="!config.canEdit"',
-						'	 ng-disabled="Observation.lab_sample==\'N\'" />',
+						'	 ng-disabled="isFieldDisabled()||observation.lab_sample==\'N\'" />',
 						'</td>']);
 				} else if (propName == 'lab_sample') {
 					html = html.concat([
 						'<td class="label">' + propDesc + '</td>',
 						'<td>',
-						'	<label><input type="radio" value="Y" name="' + propName + '"',
+						'	<label><input type="radio" name="' + propName + '"',
 						'	 ng-model="observation.lab_sample"',
-						'	 ng-disabled="!config.canEdit" /> Yes</label> &nbsp; ',
-						'	<label><input type="radio" value="N" name="' + propName + '"',
+						'	 ng-disabled="isFieldDisabled()"',
+						'	 value="Y" /> Yes</label> &nbsp; ',
+						'	<label><input type="radio" name="' + propName + '"',
 						'	 ng-model="observation.lab_sample"',
-						'	 ng-disabled="!config.canEdit"',
-						'	 ng-click="observation.lab_id=\'\'" /> No</label>',
+						'	 ng-disabled="isFieldDisabled()"',
+						'	 ng-click="observation.lab_id=\'\'" value="N" /> No</label>',
 						'</td>']);
 				} else if (propName == 'coliform') {
 					html = html.concat([
@@ -136,10 +145,12 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 						'<td colspan="3">',
 						'	<label><input type="radio" name="' + propName + '"',
 						'	 ng-model="observation.coliform"',
-						'	 value="Present" ng-disabled="!config.canEdit" /> Present</label> &nbsp; ',
+						'	 ng-disabled="isFieldDisabled()"',
+						'	 value="Present" /> Present</label> &nbsp; ',
 						'	<label><input type="radio" name="' + propName + '"',
 						'	 ng-model="observation.coliform"',
-						'	 value="Absent" ng-disabled="!config.canEdit" /> Absent</label>',
+						'	 ng-disabled="isFieldDisabled()"',
+						'	 value="Absent" /> Absent</label>',
 						'</td>']);
 				} else if (propName == 'datetime') {
 					html = html.concat([
@@ -147,7 +158,7 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 						'<td style="vertical-align: top" ' + colspan + '>',
 						'	<input datepicker class="field" type="text" name="' + propName + '"',
 						'	 ng-model="observation.datetime"',
-						'	 ng-disabled="!config.canEdit"',
+						'	 ng-disabled="isFieldDisabled()"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
 				} else {
@@ -160,7 +171,7 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 						'<td style="vertical-align: top" ' + colspan + '>',
 						'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
 						'	 ng-model="observation[\'' + propName + '\']"',
-						'	 ng-readonly="!config.canEdit"',
+						'	 ng-disabled="isFieldDisabled()"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
 				}
@@ -319,6 +330,7 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 		}
 	}
 }])
+
 
 	.directive('mobiletip', ['$cookieStore', function($cookieStore) {
 	return {
