@@ -12,7 +12,13 @@ $jq_src = $wp_scripts->base_url . $wp_scripts->registered ['jquery']->src;
  *
  */
 function cura_form_field($name, $pos = 'left', $type = 'number') {
-	$fields = cura_fields ();
+	static $fields = null;
+	if (!$fields) {
+		$rows = cura_fields ();
+		foreach ($rows as $row) {
+			$fields[$row[0]] = $row;
+		}
+	}
 	$field = $fields [$name];
 	?>
 <div class="ui-block-<?php echo $pos == 'left' ? 'a' : 'b'?>">

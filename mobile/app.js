@@ -22,7 +22,11 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	}
 	
 	function getCache(key, defaultValue) {
-		return localStorage[key] ? JSON.parse(localStorage[key]) : defaultValue;
+		try {
+			return localStorage[key] ? JSON.parse(localStorage[key]) : defaultValue;
+		} catch (e) {
+			return defaultValue;
+		}
 	}
 	function setCache(key, value) {
 		localStorage[key] = JSON.stringify(value);
@@ -70,10 +74,12 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		list.find('li[role!="heading"]').remove();
 	
 		if (!locationList) {
-			$.getJSON(getQuery('/locations.json'), function(data) {
+			$.getJSON(getQuery('/config.json'), function(data) {
 				locationList = data.locations;
 				setCache('locationList', locationList);
 				renderLocationList(callback);
+				observationFields = data.fields;
+				setCache('observationFields', observationFields);
 			});
 		} else {
 			renderLocationList(callback);
@@ -134,21 +140,24 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		if (observationItems[id] && observationFields) {
 			renderObservationList(observationItems[id], observationFields, callback);
 		} else {
-			var url = getQuery('/observations.json?watershed=' + id);
-			$.getJSON(url, function(data) {
-				observationFields = data.fields;
-				observationItems[id] = data.observations;
-				setCache('observationFields', observationFields);
-				setCache('observationItems_' + id, observationItems[id]);
-				renderObservationList(observationItems[id], observationFields, callback);
+			var url = getQuery('/observations.json');
+			$.ajax({
+				url: url,
+				type: 'POST',
+				dataType: 'json',
+				contentType: 'json',
+				data: JSON.stringify({
+					location: currentWatershed
+				}),
+				success: function(data) {
+					observationItems[id] = data;
+					setCache('observationItems_' + id, observationItems[id]);
+					renderObservationList(observationItems[id], observationFields, callback);
+				}
 			});
 		}
 	})
 	function renderObservationList(rows, fields, callback) {
-		var location_id_index = fields['location_id'][3];
-		var station_name_index = fields['station_name'][3];
-		var datetime_index = fields['datetime'][3];
-		
 		var list = $('#list-observations');
 		list.find('li[role!="heading"]').remove();
 		
@@ -156,9 +165,9 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			var row = rows[i];
 			list.append([ '<li data-theme="c">',
 					'<a href="#details" data-transition="slide"',
-					' data="', row[0], '">',
-					row[location_id_index], ' - ', row[station_name_index], '</a>',
-					'<span class="date">', row[datetime_index], '</span>',
+					' data="', i, '">',
+					row.location_id, ' - ', row.station_name, '</a>',
+					'<span class="date">', row.datetime, '</span>',
 					'</li>' ].join(''));
 		}
 		
@@ -176,18 +185,16 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	});
 	$('#details').live('pageshow', function(e, ui) {
 		if (observationFields && currentObservation) {
-			var location_id_index = observationFields['location_id'][3];
-			var station_name_index = observationFields['station_name'][3];
 			var obj = currentObservation;
 			
-			$(this).find('h3').html(obj[location_id_index] + ' - ' + obj[station_name_index]);
+			$(this).find('h3').html(obj.location_id + ' - ' + obj.station_name);
 			
 			var container = $(this).find('div[data-role="content"]');
 			var html = ['<div class="ui-grid-a">'];
-			for (var key in observationFields) {
+			for (var i in observationFields) {
 				html.push(
-						['<div class="ui-block-a field">', observationFields[key][2], '</div>',
-						 '<div class="ui-block-b value">', obj[observationFields[key][3]],
+						['<div class="ui-block-a field">', observationFields[i][2], '</div>',
+						 '<div class="ui-block-b value">', obj[observationFields[i][0]],
 						 '</div>'].join(''));
 			}
 			html.push('</div>');
@@ -216,7 +223,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					return;
 				}
 				$.getJSON(getQuery("/locations.json"), function(json) {
-					locationList = json.locations;
+					locationList = json;
 					
 					var items = [];
 					for (var i = 0, row; row = locationList[i++];) {
@@ -252,7 +259,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					return me.typeaheadStationItems[watershed];
 				}
 				$.getJSON(getQuery("/typeaheads_station_name.json?watershed=" + watershed), function(json) {
-					var rows = json.typeaheads, items = [];
+					var rows = json, items = [];
 					for (var i = 0, row; row = rows[i++];) {
 						items.push(row.station_name);
 					}
@@ -306,7 +313,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					return me.typeaheadLocationItems[watershed];
 				}
 				$.getJSON(getQuery("/typeaheads_location_id.json?watershed=" + watershed), function(json) {
-					var rows = json.typeaheads, items = [];
+					var rows = json, items = [];
 					for (var i = 0, row; row = rows[i++];) {
 						items.push(row.location_id);
 					}
@@ -369,51 +376,58 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				}
 			}
 			
-			$.post(getQuery('/save.action'), params, function(data, status) {
-				if (status == 'success') {
-					var result = JSON.parse(data);
-					if (result.error) {
-						if (typeof result.error == 'string') {
-							alert(result.error);
-						}
-						if (typeof result.error == 'object') {
-							var error = [];
-							for (var i in result.error) {
-								var v = form.find('[name="' + i + '"]').val();
-								error.push(i + ' (' + v + ') : ' + result.error[i]);
+			$.ajax({
+				url: getQuery('/save.action'),
+				type: "POST",
+				dataType: "json",
+				contentType: "json",
+				data: JSON.stringify(params),
+				success: function(data, status) {
+					if (status == 'success') {
+						var result = data;
+						if (result.error) {
+							if (typeof result.error == 'string') {
+								alert(result.error);
 							}
-							alert('Server validation errors:\n\n' + error.join('\n\n'))
-						}
-						return;
-					}
-					if (result.affectedRows) {
-						if (result.insertId) {
-							alert('Entry ' + result.insertId + ' added');
-						} else {
-							alert('Entry ' + result.id + ' updated');
-						}
-						
-						clearCache('locationList');
-						if (locationList) {
-							for (var i = 0, row; row = locationList[i++];) {
-								var id = 'observationItems_' + row.id;
-								if (getCache(id)) {
-									clearCache(id);
-									observationItems[row.id] = null;
+							if (typeof result.error == 'object') {
+								var error = [];
+								for (var i in result.error) {
+									var v = form.find('[name="' + i + '"]').val();
+									error.push(i + ' (' + v + ') : ' + result.error[i]);
 								}
+								alert('Server validation errors:\n\n' + error.join('\n\n'))
 							}
-							locationList = null;
+							return;
 						}
-						
-						currentObservation = result.data;
-						setCache('currentObservation', currentObservation);
-						
-						history.back();
+						if (result.affectedRows) {
+							if (result.insertId) {
+								alert('Entry ' + result.insertId + ' added');
+							} else {
+								alert('Entry ' + result.id + ' updated');
+							}
+							
+							clearCache('locationList');
+							if (locationList) {
+								for (var i = 0, row; row = locationList[i++];) {
+									var id = 'observationItems_' + row.id;
+									if (getCache(id)) {
+										clearCache(id);
+										observationItems[row.id] = null;
+									}
+								}
+								locationList = null;
+							}
+							
+							currentObservation = result.data;
+							setCache('currentObservation', currentObservation);
+							
+							history.back();
+						} else {
+							alert('No changes updated');
+						}
 					} else {
-						alert('No changes updated');
+						alert('Sorry, the server encountered an error');
 					}
-				} else {
-					alert('Sorry, the server encountered an error');
 				}
 			});
 			
