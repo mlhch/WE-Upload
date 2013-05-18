@@ -14,9 +14,9 @@
 	<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="font-size: 12px; width: 80px" ng-click="resetFilterOptions()"><span class="ui-button-text">Reset</span></button>
 </div>
 <div style="float: right; margin-bottom: 10px">
-	<button id="fields-config" type="button" style="font-size: 12px"
+	<button type="button" ng-click="toggleFieldManager()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text" onclick="jQuery('#fields-selector').slideToggle()">More fields...</span>
+		<span class="ui-button-text">More fields...</span>
 	</button>
 	<button type="button" ng-click="openAddDialog()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
@@ -31,10 +31,7 @@
 		<span class="ui-button-text">Mobile Site</span>
 	</button>
 </div>
-<ol id="fields-selector" style="float: right; cursor: pointer">
-	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">{{field[2]}}
-		<input type="checkbox" id="ckb-{{field[0]}}" value="{{field[0]}}" ng-checked="field[4]" ng-model="field[4]" ng-click="$event.stopPropagation()" /></li>
-</ol>
+<field-manager></field-manager>
 <tablesorter></tablesorter>
 <tablesorter-pagination></tablesorter-pagination>
 <dialog></dialog>

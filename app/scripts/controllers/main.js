@@ -75,19 +75,6 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 	$scope.toggleFieldStatus = function(field) {
 		field[4] = !field[4];
 	}
-	// drag/drop to update fields order
-	jQuery('#fields-selector').sortable({
-		start: function(e, ui) {
-			ui.item.data('start', ui.item.index());
-		},
-		stop: function(e, ui) {
-			var start = ui.item.data('start'),
-				end = ui.item.index();
-
-			$scope.fields.splice(end, 0, $scope.fields.splice(start, 1)[0]);
-			$scope.$apply();
-		}
-	});
 
 	/**
 	 * Search Options

@@ -24,3 +24,27 @@ table.tablesorter thead tr th {
 table.tablesorter tbody tr.highlight td {
 	background-color: lightblue
 }
+
+ol.field-manager:before {
+	display: block;
+	color: #666;
+	content:
+		"Changing field settings will affect the current list view. To enable field click on its associated checkbox. To reorder fields click, drag and drop fields in position. Changes will persist for your next session."
+}
+ol.field-manager {
+	margin: 0 0 0 10px;
+	padding: 0px;
+	font-size: 12px;
+	display: none;
+	float: right;
+	cursor: pointer;
+}
+ol.field-manager li {
+	float: left;
+	margin: 0.25em 1em 0.25em 0;
+	padding: 0px 3px;
+	background-color: #f0f0f0;
+	border: 1px solid silver;
+	list-style-position: inside;
+	color: gray;
+}

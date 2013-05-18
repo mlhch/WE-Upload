@@ -50,6 +50,43 @@ angular.module('directives', [])
 }])
 
 
+	.directive('fieldManager', [function() {
+	return {
+		restrict: 'E',
+		template: [
+			'<ol class="field-manager">',
+			'	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">',
+			'		{{field[2]}}',
+			'		<input type="checkbox" value="{{field[0]}}"',
+			'		 ng-checked="field[4]" ng-model="field[4]"',
+			'		 ng-click="$event.stopPropagation()" />',
+			'	</li>',
+			'</ol>'].join(''),
+		replace: true,
+		transclude: true,
+		link: function(scope, iElement, iAttrs, controller) {
+			scope.toggleFieldManager = function() {
+				iElement.slideToggle()
+			}
+
+			// drag and drop to update fields order
+			iElement.sortable({
+				start: function(e, ui) {
+					ui.item.data('start', ui.item.index());
+				},
+				stop: function(e, ui) {
+					var start = ui.item.data('start'),
+						end = ui.item.index();
+
+					scope.fields.splice(end, 0, scope.fields.splice(start, 1)[0]);
+					scope.$apply();
+				}
+			});
+		}
+	}
+}])
+
+
 	.directive('tablesorter', ['$parse', function($parse) {
 	return {
 		restrict: 'E',

@@ -160,12 +160,14 @@ function cura_main_js_and_css() {
 	 */
 	
 	// main js source
+	/* to be history
 	$src = CURAH2O_PLUGIN_URL . 'water-quality.js';
 	wp_register_script ( 'water-quality', $src, array (
 			'jquery',
 			'jquery-ui-sortable' 
 	) );
 	wp_enqueue_script ( 'water-quality' );
+	*/
 	
 	/*
 	 * jquery.tablesorter.js support
@@ -197,36 +199,6 @@ function cura_main_js_and_css() {
 	 * column sortable and configurable
 	 */
 	wp_enqueue_script ( 'jquery-ui-sortable' );
-	add_action ( 'wp_head', 'jquery_ui_sortable_inline_css', 999 );
-	function jquery_ui_sortable_inline_css() {
-		?>
-<style type="text/css">
-#fields-selector:before {
-	display: block;
-	color: #666;
-	content:
-		"Changing field settings will affect the current list view. To enable field click on its associated checkbox. To reorder fields click, drag and drop fields in position. Changes will persist for your next session."
-}
-
-#fields-selector {
-	margin: 0 0 0 10px;
-	padding: 0px;
-	font-size: 12px;
-	display: none;
-}
-
-#fields-selector li {
-	float: left;
-	margin: 0.25em 1em 0.25em 0;
-	padding: 0px 3px;
-	background-color: #f0f0f0;
-	border: 1px solid silver;
-	list-style-position: inside;
-	color: gray;
-}
-</style>
-<?php
-	}
 	
 	/*
 	 * jQuery UI css
