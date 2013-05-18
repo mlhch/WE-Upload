@@ -18,11 +18,19 @@
 table.tablesorter {
 	border-spacing: 1px;
 }
-table.tablesorter thead tr th {
+table.tablesorter thead th {
 	padding-right: 1em;
 }
 table.tablesorter tbody tr.highlight td {
 	background-color: lightblue
+}
+table.tablesorter thead th,.talbesorter tbody td {
+	text-align: left;
+	line-height: normal;
+}
+table.tablesorter .right {
+	text-align: right;
+	vertical-align: middle;
 }
 
 ol.field-manager:before {
@@ -47,4 +55,81 @@ ol.field-manager li {
 	border: 1px solid silver;
 	list-style-position: inside;
 	color: gray;
+}
+
+.ob-dialog form {
+	font-size: 12px;
+}
+.ob-dialog td.label {
+	text-align: right;
+	padding: 0.5em 1em 0.5em 0;
+}
+.ob-dialog td {
+	width: 23%;
+}
+.ob-dialog td.label {
+	width: 27%;
+	vertical-align: top;
+}
+.ob-dialog input.error {
+	border: 1px solid red
+}
+.ob-dialog label.error {
+	color: red;
+}
+
+#message {
+	display: none;
+	position: absolute;
+	z-index: 100000;
+	width: auto;
+	border: 1px solid green;
+	background-color: lightgreen;
+	padding: 1em;
+}
+
+.ui-timepicker-div .ui-widget-header {
+	margin-bottom: 8px;
+}
+.ui-timepicker-div dl {
+	text-align: left;
+}
+.ui-timepicker-div dl dt {
+	height: 25px;
+	margin: 0 0 -25px 10px;
+}
+.ui-timepicker-div dl dd {
+	margin: 0 10px 10px 65px;
+}
+.ui-timepicker-div dl dt.ui_tpicker_time_label {
+	position: relative;
+	top: 53px;
+	left: 45px;
+	float: left;
+}
+.ui-timepicker-div dl dd.ui_tpicker_time {
+	position: relative;
+	top: 53px;
+	left: 25px;
+	height: 25px;
+	margin-bottom: -25px;
+	float: left;
+}
+.ui-timepicker-div td {
+	font-size: 90%;
+}
+.ui-tpicker-grid-label {
+	background: none;
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+.ui-datepicker {
+	font-size: 12px;
+}
+.ui-datepicker th {
+	line-height: normal;
+}
+.ui-datepicker td a {
+	text-align: center
 }

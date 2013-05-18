@@ -126,6 +126,7 @@ function cura_json_config() {
 			'locations' => cura_get_locations (),
 			'fields' => $fields,
 			'pluginUrl' => CURAH2O_PLUGIN_URL,
+			'validationOptions' => cura_validation_options(),
 	) );
 	exit ();
 }

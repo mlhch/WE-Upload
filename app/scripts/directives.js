@@ -257,9 +257,9 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 	return {
 		restrict: 'E',
 		template: [
-			'<div id="dialog-data-entry" style="display: none;">',
-			'	<a id="catch-dialog-focus" href="#" style="position: absolute; left: -10000px">.</a>',
-			'	<form id="form-data-entry" method="post"></form>',
+			'<div class="ob-dialog" style="display: none;">',
+			'	<a href="#" style="position: absolute; left: -10000px">.</a>',
+			'	<form method="post"></form>',
 			'</div>'].join(''),
 		replace: true,
 		transclude: true,
@@ -380,6 +380,17 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 			}
 
 			function enableFormValidator($form) {
+				var cura_validation_options = $scope.config.validationOptions;
+
+				for (var i in cura_validation_options.rules) {
+					var rules = cura_validation_options.rules[i];
+					for (var j in rules) {
+						if (j == 'pattern') {
+							rules[j] = new RegExp(rules[j].substr(1, rules[j].length - 2));
+						}
+					}
+				}
+
 				jQuery.validator.addMethod("secchi_b", function(value, element, param) {
 					var value_a = jQuery('input[name=secchi_a]').val();
 					var value_b = value;
