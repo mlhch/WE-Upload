@@ -711,24 +711,22 @@
                     fixColumnWidth(this);
                     // apply event handling to headers
                     // this is to big, perhaps break it out?
-                    $this.click(
+                    $headers.click(
 
                     function (e) {
-                    	if (e.target.tagName != 'TH') return;
                         var totalRows = ($this[0].tBodies[0] && $this[0].tBodies[0].rows.length) || 0;
-                        var cell = e.target;
-                        if (!cell.sortDisabled && totalRows > 0) {
+                        if (!this.sortDisabled && totalRows > 0) {
                             // Only call sortStart if sorting is
                             // enabled.
                             $this.trigger("sortStart");
                             // store exp, for speed
-                            var $cell = $(cell);
+                            var $cell = $(this);
                             // get current column index
-                            var i = cell.column;
+                            var i = this.column;
                             // get current column sort order
-                            cell.order = cell.count++ % 2;
+                            this.order = this.count++ % 2;
 							// always sort on the locked order.
-							if(cell.lockedOrder) cell.order = cell.lockedOrder;
+							if(this.lockedOrder) this.order = this.lockedOrder;
 							
 							// user only whants to sort on one
                             // column
@@ -744,7 +742,7 @@
                                     }
                                 }
                                 // add column to sort list
-                                config.sortList.push([i, cell.order]);
+                                config.sortList.push([i, this.order]);
                                 // multi column sorting
                             } else {
                                 // the user has clicked on an all
@@ -763,7 +761,7 @@
                                     }
                                 } else {
                                     // add column to sort list array
-                                    config.sortList.push([i, cell.order]);
+                                    config.sortList.push([i, this.order]);
                                 }
                             };
                             setTimeout(function () {
@@ -778,11 +776,9 @@
                             return false;
                         }
                         // cancel selection
-                    }).mousedown(function (e) {
-                    	if (e.target.tagName != 'TH') return;
-                    	var headerCell = e.target;
+                    }).mousedown(function () {
                         if (config.cancelSelection) {
-                        	headerCell.onselectstart = function () {
+                            this.onselectstart = function () {
                                 return false
                             };
                             return false;
@@ -792,7 +788,6 @@
                     $this.bind("update", function () {
                         var me = this;
                         setTimeout(function () {
-                        	$headers = buildHeaders($this[0]);
                             // rebuild parsers.
                             me.config.parsers = buildParserCache(
                             me, $headers);
@@ -864,10 +859,14 @@
                 return /^[-+]?\d*$/.test($.trim(s.replace(/[,.']/g, '')));
             };
             this.clearTableBody = function (table) {
-                var tbody = table.tBodies[0];
-                // this delete way will keep the ng-repeat directives
-                while(tbody.rows.length) {
-                    tbody.deleteRow(0);
+                if ($.browser.msie) {
+                    function empty() {
+                        while (this.firstChild)
+                        this.removeChild(this.firstChild);
+                    }
+                    empty.apply(table.tBodies[0]);
+                } else {
+                    table.tBodies[0].innerHTML = "";
                 }
             };
         }

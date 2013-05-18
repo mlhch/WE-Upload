@@ -1,3 +1,4 @@
+<?php $url = CURAH2O_PLUGIN_URL?>
 <div id="curaApp" ng-app="curaApp">
 
 	<!--[if lt IE 7]>
@@ -5,28 +6,31 @@
 	<![endif]-->
 
 	<!--[if lt IE 9]>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/es5-shim.min.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/json3.min.js"?>"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/es5-shim.min.js"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/json3.min.js"></script>
 	<![endif]-->
 
 	<!-- Add your site or application content here -->
 	<div class="container" ng-view></div>
 
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.markercluster.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/leaflet.awesome-markers.js"?>"></script>
+	<script src="<?php echo $url?>vendor/jquery.tablesorter/jquery.tablesorter.js"></script>
+	<script src="<?php echo $url?>vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.js"></script>
 
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-resource.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/vendor/angular-cookies.js"?>"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/leaflet.js"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/leaflet.markercluster.js"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/leaflet.awesome-markers.js"></script>
 
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/curah2o/cura.leaflet.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/curah2o/cura.leaflet.geojson.js"?>"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/angular.js"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/angular-resource.js"></script>
+	<script src="<?php echo $url?>app/scripts/vendor/angular-cookies.js"></script>
+
+	<script src="<?php echo $url?>app/scripts/curah2o/cura.leaflet.js"></script>
+	<script src="<?php echo $url?>app/scripts/curah2o/cura.leaflet.geojson.js"></script>
 
 	<!-- build:js scripts/scripts.js -->
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/services.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/directives.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/app.js"?>"></script>
-	<script src="<?php echo CURAH2O_PLUGIN_URL . "app/scripts/controllers/main.js"?>"></script>
+	<script src="<?php echo $url?>app/scripts/services.js"></script>
+	<script src="<?php echo $url?>app/scripts/directives.js"></script>
+	<script src="<?php echo $url?>app/scripts/app.js"></script>
+	<script src="<?php echo $url?>app/scripts/controllers/main.js"></script>
 	<!-- endbuild -->
 </div>

@@ -173,7 +173,7 @@ function($cookieStore, $compile) {
 		link: function(scope, iElement, iAttrs, controller) {
 			scope.$watch('config.pluginUrl', function(value) {
 				if (value) {
-					var url = value + 'lib/tablesorter/addons/pager/icons';
+					var url = value + 'vendor/jquery.tablesorter/addons/pager/icons';
 					var html = [
 						'	<form>',
 						'		<img src="' + url + '/first.png" class="first" width="30" />',

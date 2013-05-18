@@ -170,28 +170,16 @@ function cura_main_js_and_css() {
 	*/
 	
 	/*
-	 * jquery.tablesorter.js support
-	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/jquery.tablesorter.js';
-	wp_register_script ( 'tablesorter', $src, array (
-			'jquery' 
-	) );
-	wp_enqueue_script ( 'tablesorter' );
-	
-	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/themes/blue/style.css';
+	 * jquery.tablesorter.css support
+	 */	
+	$src = CURAH2O_PLUGIN_URL . 'vendor/jquery.tablesorter/themes/blue/style.css';
 	wp_register_style ( 'tablesorter', $src );
 	wp_enqueue_style ( 'tablesorter' );
 	
 	/*
-	 * add jquery.tablesorter.pager.js support
+	 * add jquery.tablesorter.pager.css support
 	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/addons/pager/jquery.tablesorter.pager.js';
-	wp_register_script ( 'tablesorter.pager', $src, array (
-			'tablesorter' 
-	) );
-	wp_enqueue_script ( 'tablesorter.pager' );
-	
-	$src = CURAH2O_PLUGIN_URL . 'lib/tablesorter/addons/pager/jquery.tablesorter.pager.css';
+	$src = CURAH2O_PLUGIN_URL . 'vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.css';
 	wp_register_style ( 'tablesorter.pager', $src );
 	wp_enqueue_style ( 'tablesorter.pager' );
 	
