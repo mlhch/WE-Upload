@@ -325,7 +325,7 @@ function cura_update_entry($id, $params) {
 	
 	$id = intval ( $id );
 	foreach ( $params as $k => $v ) {
-		if (null === $v) {
+		if (null === $v || '' === $v) {
 			$values [] = "`$k` = NULL";
 		} else {
 			$values [] = "`$k` = '" . addslashes ( $v ) . "'";

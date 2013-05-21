@@ -215,7 +215,7 @@ function cura_action_save() {
 	$oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
 	$oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
 	$errors = $oValidator->validate ( $params );
-	if (! empty ( $errors )) {
+	if ( false && ! empty ( $errors )) {
 		echo json_encode ( array (
 				'error' => $errors 
 		) );

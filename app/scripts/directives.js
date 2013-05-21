@@ -251,9 +251,9 @@ function($cookieStore, $compile) {
 }])
 
 
-	.directive('dialog', ['$compile', '$parse', 'Observation', 'curaConfig', 'Toast',
+	.directive('dialog', ['$compile', '$parse', '$timeout', 'Observation', 'curaConfig', 'Toast',
 
-function($compile, $parse, Observation, curaConfig, Toast) {
+function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 	return {
 		restrict: 'E',
 		template: [
@@ -430,7 +430,7 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 					datetime: dt + ' ' + tm,
 				};
 				openDialog('Add Observation', $scope.observation);
-				jQuery.validator && $form.validate().resetForm();
+				$form.validate().resetForm();
 			}
 
 			$scope.openEditDialog = function(obj) {
@@ -441,11 +441,16 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 				validator.prepareForm();
 				validator.hideErrors();
 				validator.elements().removeClass(validator.settings.errorClass);
+
+				$timeout(function() {
+					validator.form();
+				}, 10);
 			};
 
 			function openDialog(title, ob) {
 				var buttons = [];
 				var config = $scope.config;
+				var invalidTimes = 0;
 
 				if (config.canDelete) {
 					buttons.push({
@@ -465,6 +470,15 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 								// Here we use Class.save instead of Instance.$save
 								// because the returned Resource is not at root node
 								Observation.save(ob, saveSuccess, saveError);
+							} else {
+								invalidTimes++;
+								if (invalidTimes > 1) {
+									if (confirm('Save invalid data anyway?')) {
+										Observation.save(ob, saveSuccess, saveError);
+									} else {
+										invalidTimes = 0;
+									}
+								}
 							}
 						}
 					});
