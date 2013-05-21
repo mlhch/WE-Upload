@@ -182,8 +182,8 @@ function($cookieStore, $compile) {
 						'		<img src="' + url + '/next.png" class="next" width="30" />',
 						'		<img src="' + url + '/last.png" class="last" width="30" />',
 						'		<select class="pagesize">',
-						'			<option selected="selected" value="10">10</option>',
-						'			<option value="5">5</option>',
+						'			<option selected="selected" value="100">100</option>',
+						'			<option value="50">50</option>',
 						'		</select>',
 						'	</form>'].join('');
 					iElement.append($compile(html)(scope));
@@ -437,7 +437,7 @@ function($compile, $parse, Observation, curaConfig, Toast) {
 				$scope.observation = obj;
 				openDialog('Edit Observation', obj);
 
-				var validator = jQuery('#form-data-entry').validate();
+				var validator = $form.validate();
 				validator.prepareForm();
 				validator.hideErrors();
 				validator.elements().removeClass(validator.settings.errorClass);

@@ -28,9 +28,10 @@
 				endDate = jQuery.datepicker.formatDate('mm/dd/yy', endDate);
 
 				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
-					'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
-					'<br />' + p.watershed_name,
-					'<br />' + startDate + ' - ' + endDate].join(''));
+						'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
+						'<br />' + p.watershed_name,
+						'<br />' + startDate + ' - ' + endDate
+				].join(''));
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},
 			onFeatureClick: function() {}
@@ -43,7 +44,33 @@
 			this.allLayers[id] || (this.allLayers[id] = layer);
 		},
 
+		findLayerByProperties: function(props) {
+			var layers = [];
+			this.eachLayer(function(layer) {
+				var p = layer.feature.properties;
+				var ok = true;
+				for (var key in props) {
+					if (p[key] != props[key]) {
+						ok = false;
+						break;
+					}
+				}
+				ok && layers.push(layer);
+			}, this);
+			return layers;
+		},
+
 		addRawData: function(data) {
+			var layers = this.findLayerByProperties({
+				watershed_name: data.watershed_name,
+				station_name: data.station_name,
+				location_id: data.location_id,
+			});
+
+			if (layers.length) {
+				return;
+			}
+
 			var id = data.id;
 			var latitude = data.latitude;
 			var longitude = data.longitude;
@@ -121,16 +148,9 @@
 			return layers;
 		},
 		highlightLayerByProperties: function(props, $event) {
-			this.eachLayer(function(layer) {
-				var p = layer.feature.properties;
-				var ok = true;
-				for (var key in props) {
-					if (p[key] != props[key]) {
-						ok = false;
-						break;
-					}
-				}
-				ok && this.highlightLayer(layer, $event);
+			var layers = this.findLayerByProperties(props);
+			layers.forEach(function(layer) {
+				this.highlightLayer(layer, $event);
 			}, this);
 		},
 		highlight: function(layer) {
