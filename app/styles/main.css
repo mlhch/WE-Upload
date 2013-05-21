@@ -77,6 +77,11 @@ ol.field-manager li {
 .ob-dialog label.error {
 	color: red;
 }
+.ui-dialog .msg {
+	float: left;
+	margin: 5px;
+	color: orange;
+}
 
 #message {
 	display: none;

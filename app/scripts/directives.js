@@ -451,6 +451,8 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				var buttons = [];
 				var config = $scope.config;
 				var invalidTimes = 0;
+				var $msg = jQuery('.ui-dialog .msg');
+				$msg.hide();
 
 				if (config.canDelete) {
 					buttons.push({
@@ -477,6 +479,15 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 										Observation.save(ob, saveSuccess, saveError);
 									} else {
 										invalidTimes = 0;
+										$msg.hide();
+									}
+								} else {
+									$msg = jQuery('.ui-dialog .msg');
+									if ($msg.length == 0) {
+										var msg = '<span class="msg">Click again to save invalid inputs</span>';
+										jQuery('.ui-dialog-buttonpane').prepend(msg);
+									} else {
+										$msg.show();
 									}
 								}
 							}

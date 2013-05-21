@@ -191,7 +191,8 @@ function cura_main_js_and_css() {
 	/*
 	 * jQuery UI css
 	 */
-	$src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/redmond/jquery-ui.css';
+	//$src = 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/themes/redmond/jquery-ui.css';
+	$src = CURAH2O_PLUGIN_URL . 'app/styles/jquery-ui.css';
 	wp_register_style ( 'jquery-ui', $src );
 	wp_enqueue_style ( 'jquery-ui' );
 	
