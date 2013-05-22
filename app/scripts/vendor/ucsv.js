@@ -96,7 +96,7 @@ var CSV = (function () {
 					cur = cur.replace(/"/g, '""');
 
 					// If the field starts or ends with whitespace, contains " or , or is a string representing a number
-					if (rxNeedsQuoting.test(cur) || rxIsInt.test(cur) || rxIsFloat.test(cur)) {
+					if (rxNeedsQuoting.test(cur) || rxIsInt.test(cur)) {
 						cur = '"' + cur + '"';
 					// quote empty strings
 					} else if (cur === "") {

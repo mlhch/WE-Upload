@@ -409,8 +409,10 @@ function cura_get_observations($options) {
 	$objs = $wpdb->get_results ( $sql );
 	
 	foreach ( $objs as $obj ) {
-		foreach ( $obj as &$value ) {
-			is_numeric ( $value ) && $value = floatval ( $value );
+		foreach ( $obj as $key => &$value ) {
+			if ($key != 'latitude' && $key != 'longitude') {
+				is_numeric ( $value ) && $value = floatval ( $value );
+			}
 		}
 	}
 	

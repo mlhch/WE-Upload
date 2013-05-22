@@ -183,30 +183,4 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 	$scope.highlightedClass = function(obj) {
 		return this.highlightedRows[obj.id] ? 'highlight' : '';
 	}
-
-	/**
-	 * Button to export data as CSV
-	 */
-	$scope.exportAsCSV = function($event) {
-		var array = [];
-		array.push($scope.fields.map(function(field) {
-			return field[2]; // field description
-		}));
-		$scope.observations.forEach(function(ob) {
-			array.push($scope.fields.map(function(field) {
-				return ob[field[0]]; // field name
-			}));
-		});
-		var csv = CSV.arrayToCsv(array);
-
-		var w = window.open();
-		w.document.write([
-			'<a download="' + $scope.exportName + '"',
-			' href="data:application/download,' + encodeURIComponent(csv) + '"></a>',
-			'<script>document.getElementsByTagName("a")[0].click()</script>'].join(''));
-		setTimeout(function() {
-			w.close();
-			w = null;
-		}, 1000);
-	}
 }]);
