@@ -1,10 +1,10 @@
 'use strict';
 
 curaApp.controller('MainCtrl', [
-	'$scope', '$cookieStore',
+	'$scope', '$cookieStore', '$timeout',
 	'CuraGeoJSON', 'curaConfig', 'Observation',
 
-function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
+function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 	/**
 	 * Fields, Locations and other configurations
 	 */
@@ -90,10 +90,54 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 		$scope.geoLayer.unHighlightAll();
 	}
 
+	function setExportFileName(value) {
+		var name = ['water-quality'];
+		if (value.location) {
+			var l = value.location;
+			if (l.id === 0) {
+				name.push('-(group=all)');
+			} else if (l.id !== '') {
+				name.push('-(group=' + l.watershed_name + ')');
+			}
+		}
+		if (value.searchText) {
+			name.push('-(search=' + value.searchText + ')');
+		}
+		if (value.startDate || value.endDate) {
+			name.push('-(');
+			if (value.startDate) {
+				var startDate = new Date(Date.parse(value.startDate));
+				name.push(jQuery.datepicker.formatDate('yy-mm-dd', startDate));
+			} else {
+				name.push('?');
+			}
+			if (value.endDate) {
+				var endDate = new Date(Date.parse(value.endDate));
+				name.push('~' + jQuery.datepicker.formatDate('yy-mm-dd', endDate));
+			} else {
+				name.push('~?');
+			}
+			name.push(')');
+		}
+		if (value instanceof Array) {
+			value.forEach(function(value) {
+				name.push('-(station=' + value.watershed_name);
+				name.push(',' + value.station_name);
+				name.push(',' + value.location_id);
+				name.push(')');
+			});
+		}
+		name.push('.csv');
+
+		$scope.exportName = name.join('').toLowerCase().replace(/ /g, '-');
+		console.log($scope.exportName);
+	}
+
 	$scope.$watch('filterOptions', function(value) {
 		if (value) {
 			console.log('filter: ' + JSON.stringify(value));
 			$scope.geoLayer.doFilter(value);
+			setExportFileName(value);
 			// use callback way to avoid table rows become 'empty' temporarily
 			Observation.query(value, function(res) {
 				$scope.observations = res;
@@ -110,6 +154,7 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 				location_id: props.location_id
 			}
 		});
+		setExportFileName(stations);
 		// use callback way to avoid table rows become 'empty' temporarily
 		Observation.query({
 			stations: stations
@@ -142,9 +187,27 @@ function($scope, $cookieStore, CuraGeoJSON, curaConfig, Observation) {
 	/**
 	 * Button to export data as CSV
 	 */
-	$scope.exportAsCSV = function() {
-		location.href = ['/wp-admin/admin-ajax.php',
-			'?action=cura_observations.json',
-			'&export&watershed=' + $scope.filterOptions.location.id].join('');
-	};
+	$scope.exportAsCSV = function($event) {
+		var csv = [];
+		$scope.observations.forEach(function(ob) {
+			var values = [];
+			for (var key in ob) {
+				if (ob.hasOwnProperty(key)) {
+					values.push(ob[key]);
+				}
+			}
+			csv.push(values.join(','));
+		});
+		csv = encodeURIComponent(csv.join('\n'));
+
+		var w = window.open();
+		w.document.write([
+			'<a download="' + $scope.exportName + '"',
+			' href="data:application/download,' + csv + '"></a>',
+			'<script>document.getElementsByTagName("a")[0].click()</script>'].join(''));
+		setTimeout(function() {
+			w.close();
+			w = null;
+		}, 1000);
+	}
 }]);

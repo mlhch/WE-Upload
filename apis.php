@@ -172,30 +172,7 @@ function cura_json_observations() {
 	// making root as Array is for ngResource
 	$observations = cura_get_observations ( $request );
 	
-	if (isset ( $_REQUEST ['export'] )) {
-		$location = cura_get_location ( $id );
-		$name = $location ? urlencode ( $location->watershed_name ) : 'All';
-		header ( "Content-Type:text/csv;charset=utf-8" );
-		header ( 'Content-Description: File Transfer' );
-		header ( "content-Disposition: attachment; filename=WaterQuality-$name.csv" );
-		header ( 'Content-Transfer-Encoding: binary' );
-		$fp = fopen ( 'php://output', 'w' );
-		
-		$headers = array (
-				"id" 
-		);
-		foreach ( $fields as $row ) {
-			$headers [] = $row [2];
-		}
-		fputcsv ( $fp, $headers );
-		foreach ( $observations as $row ) {
-			fputcsv ( $fp, $row );
-		}
-		
-		fclose ( $fp );
-	} else {
-		echo json_encode ( $observations );
-	}
+	echo json_encode ( $observations );
 	exit ( 0 );
 }
 /*

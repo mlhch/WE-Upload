@@ -200,15 +200,16 @@ function($cookieStore, $compile) {
 				$tb.tablesorterPager({
 					container: iElement,
 					positionFixed: false,
+					size: scope.pagesize,
 				}).bind('applyWidgets', function() {
 					var config = this.config;
 
-					/*if (config.totalPages <= 1 && scope.filterOptions.location.id) {
+					if (config.totalPages <= 1 && scope.filterOptions.location.id) {
 						iElement.hide();
 						return;
 					} else {
 						iElement.show();
-					}*/
+					}
 
 					if (config.page < 1) {
 						var img = iElement.find(config.cssFirst);
@@ -833,4 +834,20 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 			}
 		});
 	}
+}])
+
+
+	.directive('curaButton', ['$timeout', function($timeout) {
+	return {
+		restrict: 'E',
+		template: [
+		'<button class="cura-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">',
+		'	<span class="ui-button-text"></span>',
+		'</button>'].join(''),
+		replace: true,
+		transclude: true,
+		link: function($scope, $el, $attrs, $controller) {
+			$el.find('span').html($attrs.text);
+		}
+	};
 }])
