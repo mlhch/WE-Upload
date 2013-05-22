@@ -188,22 +188,21 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 	 * Button to export data as CSV
 	 */
 	$scope.exportAsCSV = function($event) {
-		var csv = [];
+		var array = [];
+		array.push($scope.fields.map(function(field) {
+			return field[2]; // field description
+		}));
 		$scope.observations.forEach(function(ob) {
-			var values = [];
-			for (var key in ob) {
-				if (ob.hasOwnProperty(key)) {
-					values.push(ob[key]);
-				}
-			}
-			csv.push(values.join(','));
+			array.push($scope.fields.map(function(field) {
+				return ob[field[0]]; // field name
+			}));
 		});
-		csv = encodeURIComponent(csv.join('\n'));
+		var csv = CSV.arrayToCsv(array);
 
 		var w = window.open();
 		w.document.write([
 			'<a download="' + $scope.exportName + '"',
-			' href="data:application/download,' + csv + '"></a>',
+			' href="data:application/download,' + encodeURIComponent(csv) + '"></a>',
 			'<script>document.getElementsByTagName("a")[0].click()</script>'].join(''));
 		setTimeout(function() {
 			w.close();

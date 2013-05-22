@@ -104,7 +104,7 @@ $cura_fields = array (
 		array (
 				"field" => "do_%",
 				"placeHolder" => "1 ~ 130",
-				"description" => "DO (%) ",
+				"description" => "DO (%)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
