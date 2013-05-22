@@ -13,6 +13,8 @@
 	<!-- Add your site or application content here -->
 	<div class="container" ng-view></div>
 
+	<script src="<?php echo $url?>vendor/jquery-validation/jquery.validate.js"></script>
+	<script src="<?php echo $url?>vendor/jquery-validation/additional-methods.js"></script>
 	<script src="<?php echo $url?>app/scripts/vendor/ucsv.js"></script>
 	<script src="<?php echo $url?>vendor/jquery.tablesorter/jquery.tablesorter.js"></script>
 	<script src="<?php echo $url?>vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.js"></script>

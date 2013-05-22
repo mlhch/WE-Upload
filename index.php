@@ -213,21 +213,6 @@ function cura_main_js_and_css() {
 	wp_enqueue_script ( 'jquery-ui-timepicker' );
 	
 	/*
-	 * jQuery validation
-	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-validation-1.9.0/jquery.validate.min.js';
-	wp_register_script ( 'jquery-validation', $src, array (
-			'jquery' 
-	) );
-	wp_enqueue_script ( 'jquery-validation' );
-	
-	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-validation-1.9.0/additional-methods.min.js';
-	wp_register_script ( 'jquery-validation-methods', $src, array (
-			'jquery-validation' 
-	) );
-	wp_enqueue_script ( 'jquery-validation-methods' );
-	
-	/*
 	 * typeahead support
 	 */
 	$src = CURAH2O_PLUGIN_URL . 'lib/bootstrap/typeahead.js';
