@@ -149,8 +149,7 @@ function cura_json_locations() {
  */
 function cura_json_typeaheads_station_name() {
 	$watershed = isset ( $_REQUEST ['watershed'] ) ? $_REQUEST ['watershed'] : '';
-	$location_id = isset ( $_REQUEST ['location_id'] ) ? $_REQUEST ['location_id'] : '';
-	$rows = cura_get_typeaheads_of_station ( $watershed, $location_id );
+	$rows = cura_get_typeaheads_of_station ( $watershed );
 	
 	echo json_encode ( $rows );
 	exit ( 0 );

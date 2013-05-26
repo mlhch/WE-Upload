@@ -266,6 +266,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 		transclude: true,
 		link: function($scope, $el, iAttrs, controller) {
 			var $form = $el.find('form');
+			$scope.readOnly = {};
 
 			var lastTr, fields = {}, layout = [
 				['watershed_name', 'datetime'],
@@ -374,6 +375,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 						'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
 						'	 ng-model="observation[\'' + propName + '\']"',
 						'	 ng-disabled="isFieldDisabled()"',
+						'	 ng-readonly="readOnly[\'' + propName + '\']"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 						'</td>']);
 				}
@@ -427,11 +429,14 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				now.minute = now.getMinutes();
 				var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
 				var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
-				$scope.observation = {
-					id: 0,
-					datetime: dt + ' ' + tm,
-				};
-				openDialog('Add Observation', $scope.observation);
+				var $ob = {};
+				$scope.fields.forEach(function(field) {
+					$ob[field[0]] = '';
+				});
+				$ob.id = 0;
+				$ob.datetime = dt + ' ' + tm;
+				$scope.observation = $ob;
+				openDialog('Add Observation', $ob);
 				$form.validate().resetForm();
 			}
 
@@ -683,41 +688,42 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 
 	.directive('typeaheadWatershedName', ['$parse', 'curaConfig', function($parse, curaConfig) {
 	return function($scope, $el, $attrs) {
-		var typeaheadWatershedItems;
+		var _items = [];
 
 		$scope.$on('clearTypeaheads', function() {
-			typeaheadWatershedItems = null;
+			_items = [];
 		});
 
 		$el.typeahead({
 			source: function(query, callback) {
-				if (typeaheadWatershedItems) {
-					return typeaheadWatershedItems;
+				if (_items.length) {
+					return _items;
 				}
 				curaConfig.locations(function(res) {
-					var items = [];
 					for (var i = 0, row; row = res[i++];) {
-						items.push(row.watershed_name);
+						_items.push(row.watershed_name);
 					}
-					typeaheadWatershedItems = items;
-					callback(items);
+					callback(_items);
 					return;
 				});
 			},
-			updater: function(value) {
-				$attrs.ngModel && $parse($attrs.ngModel).assign($scope, value);
+			updater: function(watershed) {
+				var $ob = $scope.observation;
+				var $readOnly = $scope.readOnly;
+				$ob.watershed_name = watershed;
 
-				var els = [],
-					$form = $el.closest('form');
-				els.push($form.find("input[name=station_name]"));
-				els.push($form.find("input[name=location_id]"));
-				els.push($form.find("input[name=latitude]"));
-				els.push($form.find("input[name=longitude]"));
-				for (var i = 0, el; el = els[i++];) {
-					el.val('').attr('readOnly', false).removeClass('error');
+				var array = ['station_name', 'location_id', 'latitude', 'longitude'];
+				var $form = $el.closest('form');
+				for (var i = 0, name; name = array[i++];) {
+					$ob[name] = '';
+					$readOnly[name] = false;
+					var el = $form.find("input[name=" + name + "]");
+					el.removeClass('error');
 					$form.validate().errorsFor(el[0]).hide();
 				}
-				return value;
+
+				$scope.$apply();
+				return watershed;
 			}
 		});
 	}
@@ -726,74 +732,73 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 
 	.directive('typeaheadStationName', ['$parse', 'curaConfig', function($parse, curaConfig) {
 	return function($scope, $el, $attrs) {
-		var typeaheadStationItems, typeaheadStationRows;
+		var _items = {}, _rows = {};
 
 		$scope.$on('clearTypeaheads', function() {
-			typeaheadStationItems = null;
-			typeaheadStationRows = null;
+			_items = {};
+			_rows = {};
 		});
 
 		$el.typeahead({
 			source: function(query, callback) {
 				var $form = $el.closest('form');
-				var watershed = $form.find("input[name=watershed_name]").val();
+				var $ob = $scope.observation;
+				var watershed = $ob.watershed_name || '';
 				if (watershed.length == 0) {
 					return;
 				}
-
-				typeaheadStationItems = typeaheadStationItems || {};
-				typeaheadStationRows = typeaheadStationRows || {};
-				if (typeaheadStationItems[watershed]) {
-					return typeaheadStationItems[watershed];
+				if (_items[watershed]) {
+					return _items[watershed];
 				}
+				
 				curaConfig.typeaheads_station_name({
-					watershed: watershed
+					watershed: watershed,
 				}, function(res) {
-					var items = [];
+					var items = [], rows = {};
 					for (var i = 0, row; row = res[i++];) {
-						items.push(row.station_name);
+						if (!rows[row.station_name]) {
+							rows[row.station_name] = [];
+							items.push(row.station_name);
+						}
+						rows[row.station_name].push(row);
 					}
-					typeaheadStationItems[watershed] = items;
-					typeaheadStationRows[watershed] = res;
+					_items[watershed] = items;
+					_rows[watershed] = rows;
 					callback(items);
 				});
 			},
-			updater: function(value) {
-				$attrs.ngModel && $parse($attrs.ngModel).assign($scope, value);
+			updater: function(station) {
+				var $ob = $scope.observation;
+				var $readOnly = $scope.readOnly;
+				$ob.station_name = station;
 
-				var $form = $el.closest('form');
-				var watershed = $form.find("input[name=watershed_name]").val();
-				var station = value;
+				var watershed = $ob.watershed_name;
 				if (watershed.length == 0 || station.length == 0) {
-					return value;
+					return station;
 				}
 
-				$form.find("input[name=location_id]").val('');
-				$form.find("input[name=latitude]").val('').attr('readOnly', false);
-				$form.find("input[name=longitude]").val('').attr('readOnly', false);
+				if (_rows[watershed][station].length == 1) {
+					var $form = $el.closest('form');
+					var validator = $form.validate();
+					var row = _rows[watershed][station][0];
+					$ob.location_id = row.location_id;
+					$ob.latitude = row.latitude;
+					$ob.longitude = row.longitude;
+					$scope.$apply();
 
-				if (typeaheadStationItems[watershed]) {
-					var el, validator = $form.validate();
-					for (var i = 0, row; row = typeaheadStationRows[watershed][i++];) {
-						if (row.station_name == station) {
-							el = $form.find("input[name=location_id]").val(row.location_id);
-							$parse(el.attr('ng-model')).assign($scope, row.location_id);
+					$readOnly.latitude = row.latitude !== null
+						&& validator.check($form.find('input[name=latitude]')[0]);
+					$readOnly.longitude = row.longitude !== null
+						&& validator.check($form.find('input[name=longitude]')[0]);
 
-							el = $form.find("input[name=latitude]").val(row.latitude);
-							el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
-							$parse(el.attr('ng-model')).assign($scope, row.latitude);
-
-							el = $form.find("input[name=longitude]").val(row.longitude);
-							el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
-							$parse(el.attr('ng-model')).assign($scope, row.longitude);
-
-							validator.showErrors();
-							break;
-						}
-					}
+					validator.showErrors();
+				} else {
+					$ob.location_id = $ob.latitude = $ob.longitude = '';
+					$readOnly.latitude = $readOnly.longitude = false;
 				}
 
-				return value;
+				$scope.$apply();
+				return station;
 			}
 		});
 	}
@@ -802,74 +807,80 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 
 	.directive('typeaheadLocationId', ['$parse', 'curaConfig', function($parse, curaConfig) {
 	return function($scope, $el, $attrs) {
-		var typeaheadLocationItems, typeaheadLocationRows;
+		var _items = {}, _rows = {};
 
 		$scope.$on('clearTypeaheads', function() {
-			typeaheadLocationItems = null;
-			typeaheadLocationRows = null;
+			_items = {};
+			_rows = {};
 		});
 
 		$el.typeahead({
 			source: function(query, callback) {
-				var $form = $el.closest('form');
-				var watershed = $form.find("input[name=watershed_name]").val();
+				var $ob = $scope.observation;
+
+				var watershed = $ob.watershed_name || '';
 				if (watershed.length == 0) {
 					return;
 				}
 
-				typeaheadLocationItems = typeaheadLocationItems || {};
-				typeaheadLocationRows = typeaheadLocationRows || {};
-				if (typeaheadLocationItems[watershed]) {
-					return typeaheadLocationItems[watershed];
+				var station = $ob.station_name || '';
+				var _key = station ? 's-' + station : 'all';
+				if (_items[watershed] && _items[watershed][_key]) {
+					return _items[watershed][_key];
 				}
+
 				curaConfig.typeaheads_location_id({
-					watershed: watershed
+					watershed: watershed,
+					station: station,
 				}, function(res) {
-					var items = [];
+					var items = [], rows = [];
 					for (var i = 0, row; row = res[i++];) {
 						items.push(row.location_id);
+						rows.push(row);
 					}
-					typeaheadLocationItems[watershed] = items;
-					typeaheadLocationRows[watershed] = res;
+					_items[watershed] = _items[watershed] || {};
+					_items[watershed][_key] = items;
+					_rows[watershed] = _rows[watershed] || {};
+					_rows[watershed][_key] = rows;
 					callback(items);
 				});
 			},
-			updater: function(value) {
-				$attrs.ngModel && $parse($attrs.ngModel).assign($scope, value);
+			updater: function(location_id) {
+				var $ob = $scope.observation;
+				var $readOnly = $scope.readOnly;
+				$ob.location_id = location_id;
 
-				var $form = $el.closest('form');
-				var watershed = $form.find("input[name=watershed_name]").val();
-				var location_id = value;
+				var watershed = $ob.watershed_name;
 				if (watershed.length == 0 || location_id.length == 0) {
-					return value;
+					return location_id;
 				}
 
-				$form.find("input[name=station_name]").val('');
-				$form.find("input[name=latitude]").val('').attr('readOnly', false);
-				$form.find("input[name=longitude]").val('').attr('readOnly', false);
+				$ob.latitude = $ob.longitude = '';
+				$readOnly.latitude = $readOnly.longitude = false;
 
-				if (typeaheadLocationRows[watershed]) {
-					var el, validator = $form.validate();
-					for (var i = 0, row; row = typeaheadLocationRows[watershed][i++];) {
-						if (row.location_id == location_id) {
-							el = $form.find("input[name=station_name]").val(row.station_name);
-							$parse(el.attr('ng-model')).assign($scope, row.station_name);
+				var station = $ob.station_name;
+				var _key = station ? 's-' + station : 'all';
+				var $form = $el.closest('form');
+				var el, validator = $form.validate();
+				for (var i = 0, row; row = _rows[watershed][_key][i++];) {
+					if (row.location_id == location_id) {
+						$ob.station_name = row.station_name;
+						$ob.latitude = row.latitude;
+						$ob.longitude = row.longitude;
+						$scope.$apply();
 
-							el = $form.find("input[name=latitude]").val(row.latitude);
-							el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
-							$parse(el.attr('ng-model')).assign($scope, row.latitude);
+						$readOnly.latitude = row.latitude !== null
+							&& validator.check($form.find('input[name=latitude]')[0]);
+						$readOnly.longitude = row.longitude !== null
+							&& validator.check($form.find('input[name=longitude]')[0]);
+						$scope.$apply();
 
-							el = $form.find("input[name=longitude]").val(row.longitude);
-							el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
-							$parse(el.attr('ng-model')).assign($scope, row.longitude);
-
-							validator.showErrors();
-							break;
-						}
+						validator.showErrors();
+						break;
 					}
 				}
 
-				return value;
+				return location_id;
 			}
 		});
 	}

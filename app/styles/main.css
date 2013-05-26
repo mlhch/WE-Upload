@@ -18,13 +18,13 @@
 table.tablesorter {
 	border-spacing: 1px;
 }
-table.tablesorter thead th {
+table.tablesorter thead tr th {
 	padding-right: 1em;
 }
 table.tablesorter tbody tr.highlight td {
 	background-color: lightblue
 }
-table.tablesorter thead th,.talbesorter tbody td {
+table.tablesorter thead tr th,.talbesorter tbody tr td {
 	text-align: left;
 	line-height: normal;
 }

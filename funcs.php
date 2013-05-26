@@ -524,10 +524,11 @@ function cura_update_location($watershed_name) {
 function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	global $wpdb;
 	
+	// use MAX() allow the latest lat/lng values available
 	$sql = "
 		SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($location_id == '' ? '' : "
+		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($station_name == '' ? '' : "
 			AND	station_name = '" . addslashes ( $station_name ) . "'") . "
 		GROUP BY
 				location_id
@@ -546,16 +547,15 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	";
 	return $wpdb->get_results ( $sql, ARRAY_A );
 }
-function cura_get_typeaheads_of_station($watershed_name, $location_id) {
+function cura_get_typeaheads_of_station($watershed_name) {
 	global $wpdb;
 	
 	$sql = "
 		SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($location_id == '' ? '' : "
-			AND	location_id = '" . addslashes ( $location_id ) . "'") . "
+		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'
 		GROUP BY			
-				station_name
+				location_id, station_name
 	";
 	$sql = "
 		SELECT	station_name
