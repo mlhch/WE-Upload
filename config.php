@@ -48,43 +48,43 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "latitude",
-				"placeHolder" => "40 ~ 65",
+				"placeHolder" => "-90 ~ 90",
 				"description" => "Latitude",
 				"validation" => array (
 						"rules" => array (
 								"pattern" => "/(^[^.]+|\.\d{5})$/",
 								"required" => true,
 								"number" => true,
-								"min" => 40,
-								"max" => 65 
+								"min" => - 90,
+								"max" => 90
 						),
 						"messages" => array (
 								"pattern" => "Precision of 5 decimal places is required",
-								"required" => "Latitude decimal degrees, 40 ~ 65",
-								"number" => "Latitude decimal degrees, 40 ~ 65",
-								"min" => "Latitude decimal degrees, 40 ~ 65",
-								"max" => "Latitude decimal degrees, 40 ~ 65" 
+								"required" => "Latitude decimal degrees, -90 ~ 90",
+								"number" => "Latitude decimal degrees, -90 ~ 90",
+								"min" => "Latitude decimal degrees, -90 ~ 90",
+								"max" => "Latitude decimal degrees, -90 ~ 90" 
 						) 
 				) 
 		),
 		array (
 				"field" => "longitude",
-				"placeHolder" => "-130 ~ -53",
+				"placeHolder" => "-180 ~ 180",
 				"description" => "Longitude",
 				"validation" => array (
 						"rules" => array (
 								"pattern" => "/(^[^.]+|\.\d{5})$/",
 								"required" => true,
 								"number" => true,
-								"min" => - 130,
-								"max" => - 53 
+								"min" => - 180,
+								"max" => 180
 						),
 						"messages" => array (
 								"pattern" => "Precision of 5 decimal places is required",
-								"required" => "Longitude decimal degrees, -130 ~ -53",
-								"number" => "Longitude decimal degrees, -130 ~ -53",
-								"min" => "Longitude decimal degrees, -130 ~ -53",
-								"max" => "Longitude decimal degrees, -130 ~ -53" 
+								"required" => "Longitude decimal degrees, -180 ~ 180",
+								"number" => "Longitude decimal degrees, -180 ~ 180",
+								"min" => "Longitude decimal degrees, -180 ~ 180",
+								"max" => "Longitude decimal degrees, -180 ~ 180" 
 						) 
 				) 
 		),
