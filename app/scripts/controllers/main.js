@@ -10,9 +10,20 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 	 */
 	curaConfig.get(function(res) {
 		var config = $scope.config = res;
-
+		
+		function _in(subset, main) {
+			if (subset instanceof Array && main instanceof Array) {
+				return subset.every(function(s) { // every s find one m
+					return s instanceof Array && !main.every(function(m) { // at lease one m match s
+						// 0:field, 1:placeHolder, 2:description, 3:serial, 4:visible, 5:pattern
+						return !(m instanceof Array && m[0] == s[0] && m[1] == s[1] && m[2] == s[2] && m[5] == s[5]);
+					});
+				});
+			}
+			return false;
+		}
 		var fields = $cookieStore.get('fields');
-		$scope.fields = fields || config.fields;
+		$scope.fields = _in(fields, config.fields) && _in(config.fields, fields) ? fields : config.fields;
 
 		$scope.locations = [{
 			id: "",
