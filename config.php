@@ -154,6 +154,19 @@ $cura_fields = array (
 				) 
 		),
 		array (
+				"field" => "air_temp",
+				"placeHolder" => "-40 ~ 45",
+				"description" => "Aire Temp. (⁰C)",
+				"validation" => array (
+						"rules" => array (
+								"number" => true,
+								"min" => -40,
+								"max" => 45 
+						),
+						"message" => "A value between -40 and 45" 
+				) 
+		),
+		array (
 				"field" => "ph",
 				"placeHolder" => "3 ~ 10",
 				"description" => "pH",
@@ -260,6 +273,17 @@ $cura_fields = array (
 								"pattern" => "/^(Present|Absent)$/" 
 						),
 						"message" => "Invalid value, should be Present or Absent" 
+				) 
+		),
+		array (
+				"field" => "note",
+				"placeHolder" => "",
+				"description" => "Note",
+				"validation" => array (
+						"rules" => array (
+								"maxlength" => 200
+						),
+						"message" => "200 characters max" 
 				) 
 		) 
 );

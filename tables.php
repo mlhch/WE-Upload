@@ -49,3 +49,6 @@ CREATE TABLE IF NOT EXISTS `water_quality_location` (
   `count` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
+
+$sqls[] = "ALTER TABLE  `water_quality` ADD  `air_temp` FLOAT NULL DEFAULT NULL AFTER  `temp`";
+$sqls[] = "ALTER TABLE  `water_quality` ADD  `note` VARCHAR( 200 ) NULL";

@@ -274,12 +274,13 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				['latitude', 'longitude'],
 				['do_mgl', 'do_%'],
 				['cond', 'salinity'],
-				['temp', 'ph'],
+				['temp', 'air_temp'],
 				['secchi_a', 'secchi_b'],
-				['secchi_d'],
+				['secchi_d', 'ph'],
 				['lab_sample', 'lab_id'],
 				['nitrate', 'phosphate'],
-				['coliform']
+				['coliform'],
+				['note'],
 			];
 
 			$scope.$watch('fields', function(value) {
@@ -363,6 +364,16 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 						'	 ng-model="observation.datetime"',
 						'	 ng-disabled="isFieldDisabled()"',
 						'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
+						'</td>']);
+				} else if (propName == 'note') {
+					html = html.concat([
+						'<td class="label">' + propDesc + '</td>',
+						'<td style="vertical-align: top" ' + colspan + '>',
+						'	<textarea class="field" type="text" name="' + propName + '"',
+						'	 ng-model="observation[\'' + propName + '\']"',
+						'	 ng-disabled="isFieldDisabled()"',
+						'	 ng-readonly="readOnly[\'' + propName + '\']"',
+						'	 placeHolder="' + placeHolder + '" style="width: 100%"></textarea>',
 						'</td>']);
 				} else {
 					var directive = '';
