@@ -68,7 +68,7 @@
 			});
 
 			if (layers.length) {
-				return;
+				this.removeLayer(layers[0]);
 			}
 
 			var id = data.id;

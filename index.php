@@ -17,8 +17,11 @@ Author URI: malhch@gmail.com
 // //////////////////////////////////////////////////////////
 define ( 'CURAH2O_VERSION', '1.0' );
 // use this way to avoid symlink bug if this plugin is linked into plugins directory
-define ( 'CURAH2O_PLUGIN_URL', WP_PLUGIN_URL . '/water-quality/');
-//define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );
+if (strpos(__FILE__, '/wp-content/plugins/') !== false) {
+	define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );
+} else {
+	define ( 'CURAH2O_PLUGIN_URL', WP_PLUGIN_URL . '/water-quality/');
+}
 define ( 'CURAH2O_PLUGIN_DIR', plugin_dir_path ( __FILE__ ) );
 define ( 'CURAH2O_TABLE',			'water_quality' );
 define ( 'CURAH2O_TABLE_LOCATION',	'water_quality_location' );

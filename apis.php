@@ -206,7 +206,9 @@ function cura_action_save() {
 	
 	$values = array ();
 	if (empty ( $params ['id'] )) {
+		unset( $params ['id'] );
 		$result = cura_add_entry ( $params );
+		$id = 0;
 		
 		cura_update_layers ();
 	} else {
@@ -229,18 +231,18 @@ function cura_action_save() {
 			cura_update_layers ();
 		}
 		
-		if ($result ['data'] ['watershed_name'] != $oldEntry ['watershed_name']) {
-			cura_update_location ( $oldEntry ['watershed_name'] );
+		if ($result ['data']->watershed_name != $oldEntry->watershed_name) {
+			cura_update_location ( $oldEntry->watershed_name );
 		}
 	}
 	
-	cura_update_location ( $result ['data'] ['watershed_name'] );
+	cura_update_location ( $result ['data']->watershed_name );
 	
 	echo json_encode ( array (
 			'affectedRows' => $result ['affectedRows'],
 			'id' => $id,
 			'insertId' => $result ['insertId'],
-			data => array_values ( $result ['data'] ) 
+			'data' => $result ['data']
 	) );
 	exit ();
 }
@@ -253,9 +255,9 @@ function cura_action_delete() {
 	$request = cura_request();
 	$id = intval ( $request->id );
 	
-	$row = cura_get_entry ( $id );
+	$entry = cura_get_entry ( $id );
 	$affectedRows = cura_delete_entry ( $id );
-	cura_update_location ( $row ['watershed_name'] );
+	cura_update_location ( $entry->watershed_name );
 	
 	cura_update_layers ();
 	

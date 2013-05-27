@@ -472,6 +472,10 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				var $msg = jQuery('.ui-dialog .msg');
 				$msg.hide();
 
+				for (var key in $scope.readOnly) {
+					$scope.readOnly[key] = false;
+				}
+
 				if (config.canDelete) {
 					buttons.push({
 						text: "Delete",
@@ -543,7 +547,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				if (resp.affectedRows) {
 					if (resp.insertId) {
 						$scope.observation.id = resp.insertId;
-						$scope.geoLayer.addRawData($scope.observation);
+						$scope.geoLayer.addRawData(resp.data);
 						var props = $scope.observation;
 						Observation.query({
 							stations: [{
@@ -600,7 +604,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 					array.push($scope.fields.map(function(field) {
 						var name = field[0];
 						var value = ob[name];
-						var element = $form.find('input[name="' + name + '"]')[0];
+						var element = $form.find('[name="' + name + '"]')[0];
 						var isValid = validator.check( element );
 						if (isValid === false) {
 							validator.check( element )

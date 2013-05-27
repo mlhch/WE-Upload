@@ -273,6 +273,27 @@ function cura_table_info($tbname) {
 	$sql = "DESCRIBE `" . addslashes ( $tbname ) . "`";
 	return $wpdb->get_results ( $sql );
 }
+function cura_entry_info($id) {
+	global $wpdb;
+	$id = intval($id);
+	
+	$sql = "
+		SELECT	DATE_FORMAT(MIN(a.datetime), '%m/%d/%Y %h:%i %p') startDate
+				, DATE_FORMAT(MAX(a.datetime), '%m/%d/%Y %h:%i %p') endDate
+		FROM	(
+			SELECT	watershed_name, station_name, location_id
+			FROM	`" . CURAH2O_TABLE . "`
+			WHERE	id = $id
+		) AS b
+		JOIN	`" . CURAH2O_TABLE . "` AS a
+			ON	a.watershed_name = b.watershed_name
+			AND	a.station_name = b.station_name
+			AND	a.location_id = b.location_id
+		GROUP BY
+				a.watershed_name, a.station_name, a.location_id
+	";
+	return $wpdb->get_row ( $sql );
+}
 /*
  * get/add/update/delete entry
  */
@@ -296,7 +317,7 @@ function cura_get_entry($id) {
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	id = $id
 	";
-	return $wpdb->get_row ( $sql, ARRAY_A );
+	return $wpdb->get_row ( $sql );
 }
 function cura_add_entry($params = array()) {
 	global $wpdb;
@@ -314,6 +335,9 @@ function cura_add_entry($params = array()) {
 	$affectedRows = $wpdb->query ( $sql );
 	
 	$entry = cura_get_entry ( $wpdb->insert_id );
+	$info = cura_entry_info ( $wpdb->insert_id );
+	$entry->startDate = $info->startDate;
+	$entry->endDate = $info->endDate;
 	return array (
 			'affectedRows' => $affectedRows,
 			'data' => $entry,
