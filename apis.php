@@ -6,8 +6,8 @@ function cura_request() {
 	}
 	return json_decode ( $phpInput );
 }
-function cura_geojson() {
-	$objs = cura_all_stations_with_latest_data();
+function cura_json_features() {
+	$objs = cura_get_features();
 
 	$fc = array(
 		'type' => 'FeatureCollection',
@@ -15,7 +15,6 @@ function cura_geojson() {
 	);
 	foreach ($objs as $key => $obj) {
 		$fc['features'][] = array(
-			'id' => intval($obj->id),
 			'type' => 'Feature',
 			'properties' => $obj,
 			'geometry' => array(
@@ -23,17 +22,34 @@ function cura_geojson() {
 				'coordinates' => array($obj->longitude, $obj->latitude)
 			)
 		);
-		unset($obj->id);
 		unset($obj->latitude);
 		unset($obj->longitude);
-
-		foreach ($obj as $key => $value) {
-			if (is_numeric($value)) {
-				$obj->$key = floatval($value);
-			}
-		}
 	}
 	echo json_encode($fc);
+	exit ( 0 );
+}
+function cura_json_feature() {
+	$request = cura_request();
+
+	$obj = cura_get_feature($request->watershed_name, $request->station_name, $request->location_id);
+	if ($obj->watershed_name) {
+		$feature = array(
+			'type' => 'Feature',
+			'properties' => $obj,
+			'geometry' => array(
+				'type' => 'Point',
+				'coordinates' => array($obj->longitude, $obj->latitude)
+			)
+		);
+		unset($obj->latitude);
+		unset($obj->longitude);
+	} else {
+		$feature = array(
+			'type' => null,
+		);
+	}
+
+	echo json_encode($feature);
 	exit ( 0 );
 }
 /*
@@ -263,7 +279,8 @@ function cura_action_delete() {
 	
 	echo json_encode ( array (
 			'affectedRows' => $affectedRows,
-			'id' => $id 
+			'id' => $id,
+			'data' => $request
 	) );
 	exit ();
 }

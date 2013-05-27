@@ -92,11 +92,6 @@ if ($plugin_activated) {
 		}
 		add_shortcode ( 'water-quality', 'cura_water_quality_main' );
 		add_action ( 'wp_enqueue_scripts', 'cura_main_js_and_css' );
-		
-		// GeoJSON
-	} elseif (! $isMobile && 'cura.geojson' == $request) {
-		header('Content-Type: application/json');
-		cura_geojson ();
 
 		// Service call
 	} elseif (! $isMobile && 'services' == $request) {

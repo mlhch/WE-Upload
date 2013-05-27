@@ -64,7 +64,22 @@ angular.module('services', ['ngResource'])
 
 
 	.factory('CuraGeoJSON', ['$resource', function($resource) {
-	return $resource('cura.geojson');
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		query: {
+			// Here we define 'POST' for 'query',
+			// because it is convenient for the filterOptions
+			method: 'GET',
+			params: {
+				action: 'cura_features.json',
+			}
+		},
+		get: {
+			method: 'POST',
+			params: {
+				action: 'cura_feature.json',
+			}
+		},
+	});
 }])
 
 
