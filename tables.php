@@ -18,11 +18,11 @@ CREATE TABLE IF NOT EXISTS `water_quality` (
   `secchi_a` float DEFAULT NULL,
   `secchi_b` float DEFAULT NULL,
   `secchi_d` float DEFAULT NULL,
-  `lab_sample` enum('','Y','N') NOT NULL,
+  `lab_sample` enum('','Y','N') DEFAULT NULL,
   `lab_id` int(11) DEFAULT NULL,
   `nitrate` float DEFAULT NULL,
   `phosphate` float DEFAULT NULL,
-  `coliform` enum('','Present','Absent') NOT NULL,
+  `coliform` enum('','Present','Absent') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `location_id` (`location_id`,`station_name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
