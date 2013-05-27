@@ -52,3 +52,5 @@ CREATE TABLE IF NOT EXISTS `water_quality_location` (
 
 $sqls[] = "ALTER TABLE  `water_quality` ADD  `air_temp` FLOAT NULL DEFAULT NULL AFTER  `temp`";
 $sqls[] = "ALTER TABLE  `water_quality` ADD  `note` VARCHAR( 200 ) NULL";
+$sqls[] = "ALTER TABLE  `water_quality` CHANGE  `lab_sample`  `lab_sample` ENUM(  '',  'Y',  'N' ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL";
+$sqls[] = "ALTER TABLE  `water_quality` CHANGE  `coliform`  `coliform` ENUM(  '',  'Present',  'Absent' ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL";
