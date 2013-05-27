@@ -60,33 +60,15 @@
 			return layers;
 		},
 
-		addRawData: function(data) {
-			var layers = this.findLayerByProperties({
-				watershed_name: data.watershed_name,
-				station_name: data.station_name,
-				location_id: data.location_id,
-			});
+		updateLayer: function(props, feature) {
+			var layers = this.findLayerByProperties(props);
+			layers.forEach(function(layer) {
+				this.removeLayer(layer);
+			}, this);
 
-			if (layers.length) {
-				this.removeLayer(layers[0]);
+			if (feature.type == 'Feature') {
+				this.addData([feature]);
 			}
-
-			var id = data.id;
-			var latitude = data.latitude;
-			var longitude = data.longitude;
-			delete data.id;
-			delete data.latitude;
-			delete data.longitude;
-			var feature = {
-				type: 'Feature',
-				id: id,
-				properties: data,
-				geometry: {
-					type: 'Point',
-					coordinates: [longitude, latitude],
-				}
-			}
-			this.addData([feature]);
 		},
 
 		doFilter: function(options) {

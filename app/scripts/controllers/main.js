@@ -36,7 +36,7 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 		/**
 		 * GeoJSON layer
 		 */
-		CuraGeoJSON.get(function(res) {
+		CuraGeoJSON.query(function(res) {
 			$scope.geoLayer = Cura.geoJson(res, {
 				onFeatureClick: function(options) {
 					var $event = options.originalEvent;
@@ -49,6 +49,12 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 			$scope.resetFilterOptions();
 		});
 	})
+
+	$scope.$on('updateLayer', function($event, props) {
+		CuraGeoJSON.get(props, function(feature) {
+			$scope.geoLayer.updateLayer(props, feature);
+		});
+	});
 
 	$scope.$watch('fields', function(value) {
 		if (!value) {
@@ -96,9 +102,73 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 			searchText: '',
 			startDate: '',
 			endDate: '',
+			stations: [],
 			forceReset: Date.now(), // This makes 'reset' always refresh
 		}
 		$scope.geoLayer.unHighlightAll();
+	}
+
+	$scope.$watch('filterOptions', function(value) {
+		if (value) {
+			$scope.AllFilterOptions = value
+			$scope.geoLayer.doFilter(value);
+			setExportFileName(value);
+		}
+	}, true);
+
+	$scope.$watch('AllFilterOptions', function(value) {
+		if (value) {
+			console.log('filter: ' + JSON.stringify(value));
+			// use callback way to avoid table rows become 'empty' temporarily
+			Observation.query(value, function(res) {
+				$scope.observations = res;
+			});
+		}
+	}, true);
+
+	$scope.refreshFilter = function() {
+		$scope.AllFilterOptions.forceReset = Date.now();
+	}
+
+	function searchByLayers(layers) {
+		var stations = layers.map(function(layer) {
+			var props = layer.feature.properties;
+			return {
+				watershed_name: props.watershed_name,
+				station_name: props.station_name,
+				location_id: props.location_id
+			}
+		});
+		setExportFileName(stations);
+		$scope.AllFilterOptions = {
+			location: $scope.locations[0], // View All
+			searchText: '',
+			startDate: '',
+			endDate: '',
+			stations: stations,
+			forceReset: Date.now(), // This makes 'reset' always refresh
+		};
+	}
+
+	$scope.highlightedRows = {};
+	$scope.highlightRow = function(obj, $event) {
+		var map = $scope.highlightedRows;
+		if (!$event || !$event.metaKey && !$event.ctrlKey) {
+			for (var key in map) {
+				delete map[key];
+			}
+		}
+		$scope.highlightedRows[obj.id] = true;
+
+		$scope.geoLayer.highlightLayerByProperties({
+			watershed_name: obj.watershed_name,
+			station_name: obj.station_name,
+			location_id: obj.location_id,
+		}, $event);
+	}
+
+	$scope.highlightedClass = function(obj) {
+		return this.highlightedRows[obj.id] ? 'highlight' : '';
 	}
 
 	function setExportFileName(value) {
@@ -142,56 +212,5 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 
 		$scope.exportName = name.join('').toLowerCase().replace(/ /g, '-');
 		console.log($scope.exportName);
-	}
-
-	$scope.$watch('filterOptions', function(value) {
-		if (value) {
-			console.log('filter: ' + JSON.stringify(value));
-			$scope.geoLayer.doFilter(value);
-			setExportFileName(value);
-			// use callback way to avoid table rows become 'empty' temporarily
-			Observation.query(value, function(res) {
-				$scope.observations = res;
-			});
-		}
-	}, true);
-
-	function searchByLayers(layers) {
-		var stations = layers.map(function(layer) {
-			var props = layer.feature.properties;
-			return {
-				watershed_name: props.watershed_name,
-				station_name: props.station_name,
-				location_id: props.location_id
-			}
-		});
-		setExportFileName(stations);
-		// use callback way to avoid table rows become 'empty' temporarily
-		Observation.query({
-			stations: stations
-		}, function(res) {
-			$scope.observations = res;
-		});
-	}
-
-	$scope.highlightedRows = {};
-	$scope.highlightRow = function(obj, $event) {
-		var map = $scope.highlightedRows;
-		if (!$event || !$event.metaKey && !$event.ctrlKey) {
-			for (var key in map) {
-				delete map[key];
-			}
-		}
-		$scope.highlightedRows[obj.id] = true;
-
-		$scope.geoLayer.highlightLayerByProperties({
-			watershed_name: obj.watershed_name,
-			station_name: obj.station_name,
-			location_id: obj.location_id,
-		}, $event);
-	}
-
-	$scope.highlightedClass = function(obj) {
-		return this.highlightedRows[obj.id] ? 'highlight' : '';
 	}
 }]);

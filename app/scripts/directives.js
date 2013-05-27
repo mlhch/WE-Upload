@@ -547,18 +547,14 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				if (resp.affectedRows) {
 					if (resp.insertId) {
 						$scope.observation.id = resp.insertId;
-						$scope.geoLayer.addRawData(resp.data);
-						var props = $scope.observation;
-						Observation.query({
-							stations: [{
-								watershed_name: props.watershed_name,
-								station_name: props.station_name,
-								location_id: props.location_id
-							}]
-						}, function(res) {
-							$scope.observations = res;
-							$scope.highlightRow(res[0]);
-						})
+						var ob = resp.data;
+						var args = {
+							watershed_name: ob.watershed_name,
+							station_name: ob.station_name,
+							location_id: ob.location_id,
+						};
+						$scope.$broadcast('updateLayer', args);
+						$scope.refreshFilter();
 						Toast.show('Entry ' + resp.insertId + ' added');
 					} else {
 						Toast.show('Entry ' + resp.id + ' updated');
@@ -573,11 +569,16 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 			function delSuccess(resp) {
 				if (resp.affectedRows) {
 					$el.dialog('close');
-					$scope.observations.every(function(value, index) {
-						return value.id != resp.id || $scope.observations.splice(index, 1) && false;
-					});
 					Toast.show('Entry ' + resp.id + ' deleted');
 					$scope.$broadcast('clearTypeaheads');
+					$scope.refreshFilter();
+
+					var ob = resp.data;
+					$scope.$broadcast('updateLayer', {
+						watershed_name: ob.watershed_name,
+						station_name: ob.station_name,
+						location_id: ob.location_id,
+					});
 				} else {
 					Toast.show('Data Entry ' + resp.id + ' does not exist');
 				}
