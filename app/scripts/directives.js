@@ -497,7 +497,8 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 							} else {
 								invalidTimes++;
 								if (invalidTimes > 1) {
-									if (confirm('Save invalid data anyway?')) {
+									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+									if (confirm(msg)) {
 										Observation.save(ob, saveSuccess, saveError);
 									} else {
 										invalidTimes = 0;
