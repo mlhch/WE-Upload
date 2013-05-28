@@ -156,7 +156,7 @@ $cura_fields = array (
 		array (
 				"field" => "air_temp",
 				"placeHolder" => "-40 ~ 45",
-				"description" => "Aire Temp. (⁰C)",
+				"description" => "Air Temp. (⁰C)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
