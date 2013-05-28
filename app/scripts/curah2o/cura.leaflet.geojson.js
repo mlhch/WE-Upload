@@ -27,10 +27,10 @@
 				var endDate = new Date(Date.parse(p.endDate));
 				endDate = jQuery.datepicker.formatDate('mm/dd/yy', endDate);
 
-				layer.bindPopup(['<strong>' + p.station_name + '(' + p.location_id + ')</strong>',
-						'<br />[ ' + c[1] + ', ' + c[0] + ' ]',
-						'<br />' + p.watershed_name,
-						'<br />' + startDate + ' - ' + endDate
+				layer.bindPopup(['<span class="station">' + p.station_name + '(' + p.location_id + ')</span>',
+						'<span class="latlng">[ ' + c[1] + ', ' + c[0] + ' ]</span>',
+						'<span class="watershed">' + p.watershed_name + '</span>',
+						'<span class="daterange">' + startDate + ' - ' + endDate + '</span>'
 				].join(''));
 				layer.on('click', this.onFeatureClick); // need layer to be the future 'this'
 			},

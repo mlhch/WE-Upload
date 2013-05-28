@@ -1,5 +1,5 @@
 /* Will be compiled down to a single stylesheet with your sass files */
-
+html { -webkit-text-size-adjust: none; }
 #map {
 	width: 100%;
 	height: 400px;
@@ -142,4 +142,21 @@ ol.field-manager li {
 
 .cura-button {
 	font-size: 12px
+}
+
+
+.leaflet-popup-content span {
+	display: block;
+}
+.leaflet-popup-content .station {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.leaflet-popup-content .latlng {
+	font-size: 1em;
+	font-style: italic;
+	-webkit-text-size-adjust: none;
+}
+.leaflet-popup-content .daterange {
+	color: silver;
 }
