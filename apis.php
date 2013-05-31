@@ -285,7 +285,7 @@ function cura_action_import() {
 	$deleted = 0;
 	$added = 0;
 
-	if (!empty($_FILES['csvData'])) {
+	if (!empty($_FILES['csvData']['name'])) {
 		if (false !== ($fp = fopen($_FILES['csvData']['tmp_name'], 'r'))) {
 			$headers = array();
 			$locations = array();
@@ -328,6 +328,7 @@ function cura_action_import() {
 		echo "<script>alert('Error: $error')</script>";
 	} else {
 		echo "<script>alert('$deleted deleted, $added added')</script>";
+		echo "<script>top.curaCallback()</script>";
 	}
 	exit ();
 }

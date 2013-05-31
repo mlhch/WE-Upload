@@ -44,7 +44,13 @@ angular.module('directives', [])
 			onSelect: function(dateText) {
 				$parse(attrs.ngModel).assign($scope, dateText);
 				$scope.$apply();
-			}
+			},
+			onClose: function(dateText) {
+				if (dateText) {
+					$parse(attrs.ngModel).assign($scope, dateText);
+					$scope.$apply();
+				}
+			},
 		});
 	}
 }])
