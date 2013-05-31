@@ -128,7 +128,6 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 
 	$scope.refreshFilter = function() {
 		$scope.AllFilterOptions.forceReset = Date.now();
-		$scope.$apply();
 	}
 
 	function searchByLayers(layers) {
@@ -231,6 +230,7 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 			$form.submit();
 			$form[0].reset();
 			$scope.refreshFilter();
+			$scope.$apply();
 		})
 		$file.click();
 	}
