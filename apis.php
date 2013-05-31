@@ -196,11 +196,7 @@ function cura_json_observations() {
 function cura_action_save() {
 	$params = (array) cura_request();
 	
-	if (empty ( $params ['lab_sample'] ) || $params ['lab_sample'] == 'N') {
-		$params ['lab_id'] = NULL;
-	}
-	
-	include 'lib/Validator.class.php';
+	/*include 'lib/Validator.class.php';
 	$asOption = cura_validation_options ();
 	$oValidator = new Validator ( $asOption );
 	$oValidator->addMethod ( "pattern", "cura_validation_pattern" );
@@ -212,7 +208,7 @@ function cura_action_save() {
 				'error' => $errors 
 		) );
 		exit ();
-	}
+	}*/
 
 	if (empty ( $params ['datetime'] )) {
 		$params ['datetime'] = date ( 'Y-m-d H:i:s' );
@@ -282,6 +278,57 @@ function cura_action_delete() {
 			'id' => $id,
 			'data' => $request
 	) );
+	exit ();
+}
+function cura_action_import() {
+	$error = '';
+	$deleted = 0;
+	$added = 0;
+
+	if (!empty($_FILES['csvData'])) {
+		if (false !== ($fp = fopen($_FILES['csvData']['tmp_name'], 'r'))) {
+			$headers = array();
+			$locations = array();
+			while (false !== ($row = fgetcsv($fp))) {
+				if (empty($headers)) {
+					if ($row[0] != 'id') {
+						$error = 'No header information';
+						break;
+					} else {
+						$map = array('id' => 'id');
+						$fields = cura_fields();
+						foreach ($fields as $field) {
+							$map[$field[2]] = $field[0];
+						}
+						foreach ($row as $key => $value) {
+							$headers[$key] = $map[trim($value)];
+						}
+						continue;
+					}
+				}
+
+				$p = array_combine($headers, $row);
+				unset($p['id']);
+				$p['datetime'] = date('Y-m-d H:i:s', strtotime($p['datetime']));
+
+				$deleted += cura_delete_entries($p['watershed_name'], $p['station_name'], $p['location_id'], $p['datetime']);
+				$result = cura_add_entry($p);
+				$added += $result['affectedRows'];
+
+				$locations[$p['watershed_name']] = $p['watershed_name'];
+			}
+			fclose($fp);
+			foreach ($locations as $location) {
+				cura_update_location ( $location );
+			}
+			cura_update_layers();
+		}
+	}
+	if (!empty($error)) {
+		echo "<script>alert('Error: $error')</script>";
+	} else {
+		echo "<script>alert('$deleted deleted, $added added')</script>";
+	}
 	exit ();
 }
 function cura_check_capability($capability) {

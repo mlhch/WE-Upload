@@ -377,6 +377,22 @@ function cura_delete_entry($id) {
 	$affectedRows = $wpdb->query ( $sql );
 	return $affectedRows;
 }
+function cura_delete_entries($watershed_name, $station_name, $location_id, $datetime) {
+	global $wpdb;
+	
+	$id = intval ( $id );
+	$datetime = date('Y-m-d H:i:s', strtotime($datetime));
+	$sql = "
+		DELETE FROM
+				`" . CURAH2O_TABLE . "`
+		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
+			AND	station_name = '" . addslashes($station_name) . "'
+			AND	location_id = '" . addslashes($location_id) . "'
+			AND	datetime = '$datetime'";
+	
+	$affectedRows = $wpdb->query ( $sql );
+	return $affectedRows;
+}
 function cura_get_observations($options) {
 	global $wpdb;
 	

@@ -128,6 +128,7 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 
 	$scope.refreshFilter = function() {
 		$scope.AllFilterOptions.forceReset = Date.now();
+		$scope.$apply();
 	}
 
 	function searchByLayers(layers) {
@@ -212,5 +213,25 @@ function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation) {
 
 		$scope.exportName = name.join('').toLowerCase().replace(/ /g, '-');
 		console.log($scope.exportName);
+	}
+
+
+	$scope.importFromCSV = function() {
+		if (jQuery('#formImport').length == 0) {
+			var $form = jQuery([
+				'<form id="formImport" method="POST" enctype="multipart/form-data" target="quiet"',
+				' action="/wp-admin/admin-ajax.php?action=cura_import.action">',
+				'	<input type="file" name="csvData" />',
+				'</form><iframe id="quiet"></iframe>'].join('')).hide().appendTo(document.body);
+		} else {
+			var $form = jQuery('#formImport');
+		}
+		var $file = $form.find('[type=file]');
+		$file.change(function() {
+			$form.submit();
+			$form[0].reset();
+			$scope.refreshFilter();
+		})
+		$file.click();
 	}
 }]);
