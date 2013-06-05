@@ -86,9 +86,9 @@ form label.error {
 <script type='text/javascript'
 	src="<?php echo $base_url?>/../lib/bootstrap/typeahead.js"></script>
 <script type='text/javascript'
-	src="<?php echo $base_url?>/vendor/jquery-validation/jquery.validate.js"></script>
+	src="<?php echo $base_url?>/../vendor/jquery-validation/jquery.validate.js"></script>
 <script type='text/javascript'
-	src="<?php echo $base_url?>/vendor/jquery-validation/additional-methods.js"></script>
+	src="<?php echo $base_url?>/../vendor/jquery-validation/additional-methods.js"></script>
 <script type='text/javascript'>
 var cura_validation_options = <?php echo json_encode( cura_validation_options() )?>;
 for (var i in cura_validation_options.rules) {
