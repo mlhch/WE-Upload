@@ -201,41 +201,26 @@ var observationFields = <?php echo json_encode( cura_fields() )?>;
 				</div>
 				<div class="ui-grid-a">
 					<?php echo cura_form_field('temp')?>
-					<?php echo cura_form_field('ph', 'right')?>
+					<?php echo cura_form_field('air_temp', 'right')?>
 				</div>
 				<div class="ui-grid-a">
 					<?php echo cura_form_field('secchi_a')?>
 					<?php echo cura_form_field('secchi_b', 'right')?>
 				</div>
-				<label for="textinput18"> Secchi Disc Depth </label> <input
-					name="secchi_d" id="textinput18" placeholder="average A and B"
-					value="" type="number" />
 				<div class="ui-grid-a">
-					<div class="ui-block-a">
-						<label id="lab_sample_label" for="toggleswitch1"> Lab Sample </label>
-						<select name="lab_sample" id="lab_sample" data-theme="b"
-							data-role="slider" data-mini="true">
-							<option value="N">No</option>
-							<option value="Y">Yes</option>
-						</select>
-					</div>
-					<div class="ui-block-b">
-						<label for="textinput19"> Lab ID </label> <input name="lab_id"
-							id="textinput19" type="number" />
-					</div>
+					<?php echo cura_form_field('secchi_d')?>
+					<?php echo cura_form_field('ph', 'right')?>
+				</div>
+				<div class="ui-grid-a">
+					<?php echo cura_form_field('lab_sample')?>
+					<?php echo cura_form_field('lab_id', 'right')?>
 				</div>
 				<div class="ui-grid-a">
 					<?php echo cura_form_field('nitrate')?>
 					<?php echo cura_form_field('phosphate', 'right')?>
 				</div>
-				<div id="div_coliform">
-					<label for="toggleswitch2"> Coliform </label> &nbsp; <select
-						name="coliform" id="coliform" data-theme="b" data-role="slider"
-						data-mini="true">
-						<option value="Absent">Absent</option>
-						<option value="Present">Present</option>
-					</select>
-				</div>
+				<?php echo cura_form_field('coliform')?>
+				<?php echo cura_form_field('note')?>
 				<button id="save" type="submit" data-icon="check"
 					data-iconpos="right" data-theme="b">Submit</button>
 			</form>

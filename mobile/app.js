@@ -357,7 +357,10 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 		
 		$(this).find('#save').click(function() {
 			if (!form.validate().form()) {
-				return false;
+				var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+				if (!confirm(msg)) {
+					return false;
+				}
 			}
 			var params = {}, page = $('#newob');
 			
