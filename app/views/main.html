@@ -1,10 +1,10 @@
-<map basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-yelacea2/{z}/{x}/{y}.png"></map>
+<map basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-y9ohnort/{z}/{x}/{y}.png"></map>
 <div style="clear: both; height: 15px"></div>
 <div style="float: left; margin-bottom: 10px">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
 			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.location" ng-options="row.watershed_name for row in locations">
 	</select>
-	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" />
+	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" typeahead-station-name />
 	<input class="ui-button ui-corner-all ui-state-active" type="text"
 	 datepicker ng-model="filterOptions.startDate" defaultDate="-1m"
 	 placeHolder="Start Date"  style="text-align: left; width: 150px" />

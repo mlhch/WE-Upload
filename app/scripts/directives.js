@@ -537,6 +537,9 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 					height: 450,
 					zIndex: 99999,
 					buttons: buttons,
+					close: function( event, ui ) {
+						$scope.observation = null;
+					}
 				});
 			}
 
@@ -766,10 +769,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 			source: function(query, callback) {
 				var $form = $el.closest('form');
 				var $ob = $scope.observation;
-				var watershed = $ob.watershed_name || '';
-				if (watershed.length == 0) {
-					return;
-				}
+				var watershed = $ob && $ob.watershed_name || '';
 				if (_items[watershed]) {
 					return _items[watershed];
 				}
@@ -791,12 +791,15 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				});
 			},
 			updater: function(station) {
+				$parse($attrs.ngModel).assign($scope, station);
+
 				var $ob = $scope.observation;
 				var $readOnly = $scope.readOnly;
-				$ob.station_name = station;
+				$ob && ($ob.station_name = station);
 
-				var watershed = $ob.watershed_name;
+				var watershed = $ob && $ob.watershed_name || '';
 				if (watershed.length == 0 || station.length == 0) {
+					$scope.$apply();
 					return station;
 				}
 
