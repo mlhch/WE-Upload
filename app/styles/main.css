@@ -36,6 +36,11 @@ table.tablesorter .right {
 	vertical-align: middle;
 }
 
+.buttons {
+	float: right;
+	margin-bottom: 10px;
+}
+
 ol.field-manager:before {
 	display: block;
 	color: #666;

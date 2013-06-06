@@ -61,7 +61,7 @@ angular.module('directives', [])
 		restrict: 'E',
 		template: [
 			'<ol class="field-manager">',
-			'	<li ng-repeat="field in fields" ng-click="toggleFieldStatus(field)">',
+			'	<li ng-repeat="field in fields" ng-click="field[4]=!field[4]">',
 			'		{{field[2]}}',
 			'		<input type="checkbox" value="{{field[0]}}"',
 			'		 ng-checked="field[4]" ng-model="field[4]"',
@@ -104,7 +104,7 @@ angular.module('directives', [])
 			'			<th style="text-align:center; width:10px">Action</th>',
 			'		</tr>',
 			'	</thead>',
-			'	<tr tablesorter-row ng-class="highlightedClass(obj)"',
+			'	<tr tablesorter-row ng-class="highlightedRows[obj.id]&&\'highlight\'||\'\'"',
 			'	 ng-repeat="obj in observations"',
 			'	 ng-click="highlightRow(obj, $event)">',
 			'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
@@ -475,9 +475,6 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 			function openDialog(title, ob) {
 				var buttons = [];
 				var config = $scope.config;
-				var invalidTimes = 0;
-				var $msg = jQuery('.ui-dialog .msg');
-				$msg.hide();
 
 				for (var key in $scope.readOnly) {
 					$scope.readOnly[key] = false;
@@ -502,23 +499,9 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 								// because the returned Resource is not at root node
 								Observation.save(ob, saveSuccess, saveError);
 							} else {
-								invalidTimes++;
-								if (invalidTimes > 1) {
-									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
-									if (confirm(msg)) {
-										Observation.save(ob, saveSuccess, saveError);
-									} else {
-										invalidTimes = 0;
-										$msg.hide();
-									}
-								} else {
-									$msg = jQuery('.ui-dialog .msg');
-									if ($msg.length == 0) {
-										var msg = '<span class="msg">Click again to save invalid inputs</span>';
-										jQuery('.ui-dialog-buttonpane').prepend(msg);
-									} else {
-										$msg.show();
-									}
+								var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+								if (confirm(msg)) {
+									Observation.save(ob, saveSuccess, saveError);
 								}
 							}
 						}
@@ -558,18 +541,20 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				if (resp.affectedRows) {
 					if (resp.insertId) {
 						$scope.observation.id = resp.insertId;
-						var ob = resp.data;
-						var args = {
-							watershed_name: ob.watershed_name,
-							station_name: ob.station_name,
-							location_id: ob.location_id,
-						};
-						$scope.$broadcast('updateLayer', args);
-						$scope.refreshFilter();
 						Toast.show('Entry ' + resp.insertId + ' added');
 					} else {
 						Toast.show('Entry ' + resp.id + ' updated');
 					}
+
+					var ob = resp.data;
+					var args = {
+						watershed_name: ob.watershed_name,
+						station_name: ob.station_name,
+						location_id: ob.location_id,
+					};
+					$scope.$broadcast('updateLayer', args);
+					$scope.refreshFilter();
+
 					$scope.$broadcast('clearTypeaheads');
 				} else {
 					Toast.show('No changes updated')

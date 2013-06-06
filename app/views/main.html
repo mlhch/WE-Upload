@@ -11,9 +11,9 @@
 	<input class="ui-button ui-corner-all ui-state-active" type="text"
 	 datepicker ng-model="filterOptions.endDate"
 	 placeHolder="End Date"  style="text-align: left; width: 150px" />
-	<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="font-size: 12px; width: 80px" ng-click="resetFilterOptions()"><span class="ui-button-text">Reset</span></button>
+	<cura-button ng-click="resetFilterOptions(this)" text="Reset"></cura-button>
 </div>
-<div style="float: right; margin-bottom: 10px">
+<div class="buttons">
 	<button type="button" ng-click="toggleFieldManager()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">More fields...</span>
@@ -22,8 +22,8 @@
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Add new entry</span>
 	</button>
-	<cura-button ng-click="exportAsCSV()" text="Export as CSV"></cura-button>
-	<cura-button ng-click="importFromCSV()" text="Import from CSV"></cura-button>
+	<cura-button ng-click="exportAsCSV(this)" text="Export as CSV"></cura-button>
+	<cura-button ng-click="importFromCSV(this)" text="Import from CSV"></cura-button>
 	<button type="button" ng-click="mobileSite()" style="font-size: 12px"
 		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 		<span class="ui-button-text">Mobile Site</span>
