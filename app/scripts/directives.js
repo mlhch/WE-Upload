@@ -114,6 +114,7 @@ angular.module('directives', [])
 			'			><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>',
 			'	</tr>',
 			'</table>'].join(''),
+		replace: true,
 	}
 }])
 
