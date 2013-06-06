@@ -10,7 +10,7 @@ html { -webkit-text-size-adjust: none; }
 	color: #D8DEE3;
 	-webkit-text-stroke: 1px black;
 }
-.icon-tint.ie10::before {
+.icon-tint.ie10::before, .icon-tint.ff::before {
     text-shadow: 1px 1px 1px #000, -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000;
 }
 .icon-tint.highlighted {

@@ -1,9 +1,10 @@
 (function(window, document, undefined) {
 	var msie = parseInt(((/msie (\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]),10);
+	var firefox = parseInt(((/firefox\/(\d+)/.exec(navigator.userAgent.toLowerCase()) || [])[1]),10);
 
 	var waterIcon = L.divIcon({
 		iconSize: false, // use css defined size
-		className: msie == 10 ? 'ie10 icon-tint' : 'icon-tint',
+		className: msie == 10 ? 'ie10 icon-tint' : firefox ? 'ff icon-tint' : 'icon-tint',
 		iconAnchor: [10, 2]
 	});
 
