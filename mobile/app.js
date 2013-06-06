@@ -9,6 +9,10 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 	var currentWatershed = null;
 	var currentObservation = null;
 	var locationList = null;
+	var typeaheadStationItems = {};
+	var typeaheadStationRows = {};
+	var typeaheadLocationItems = {};
+	var typeaheadLocationRows = {};
 	//var observationFields = observationFields || null;
 	var observationItems = {};
 	
@@ -253,18 +257,21 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					return ;
 				}
 				
-				me.typeaheadStationItems = me.typeaheadStationItems || {};
-				me.typeaheadStationRows = me.typeaheadStationRows || {};
-				if (me.typeaheadStationItems[watershed]) {
-					return me.typeaheadStationItems[watershed];
+				if (typeaheadStationItems[watershed]) {
+					return typeaheadStationItems[watershed];
 				}
 				$.getJSON(getQuery("/typeaheads_station_name.json?watershed=" + watershed), function(json) {
-					var rows = json, items = [];
-					for (var i = 0, row; row = rows[i++];) {
-						items.push(row.station_name);
+					var items = [], rows = {};
+					for (var i = 0, row; row = json[i++];) {
+						if (!rows[row.station_name]) {
+							rows[row.station_name] = [];
+							items.push(row.station_name);
+						}
+						rows[row.station_name].push(row);
 					}
-					me.typeaheadStationItems[watershed] = items;
-					me.typeaheadStationRows[watershed] = rows;
+
+					typeaheadStationItems[watershed] = items;
+					typeaheadStationRows[watershed] = rows;
 					callback(items);
 				});
 			},
@@ -279,22 +286,19 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
 				form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
 				
-				if (me.typeaheadStationRows[watershed]) {
+				if (typeaheadStationRows[watershed][station].length == 1) {
 					var el, validator = form.validate();
-					for (var i = 0, row; row = me.typeaheadStationRows[watershed][i++];) {
-						if (row.station_name == station) {
-							el = form.find( "input[name=location_id]" ).val(row.location_id);
-							
-							el = form.find( "input[name=latitude]" ).val(row.latitude);
-							el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
-							
-							el = form.find( "input[name=longitude]" ).val(row.longitude);
-							el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
-							
-							validator.showErrors();
-							break;
-						}
-					}
+					var row = typeaheadStationRows[watershed][station][0];
+					
+					el = form.find( "input[name=location_id]" ).val(row.location_id);
+					
+					el = form.find( "input[name=latitude]" ).val(row.latitude);
+					el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+					
+					el = form.find( "input[name=longitude]" ).val(row.longitude);
+					el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+					
+					validator.showErrors();
 				}
 				
 				return value;
@@ -307,18 +311,16 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					return ;
 				}
 				
-				me.typeaheadLocationItems = me.typeaheadLocationItems || {};
-				me.typeaheadLocationRows = me.typeaheadLocationRows || {};
-				if (me.typeaheadLocationItems[watershed]) {
-					return me.typeaheadLocationItems[watershed];
+				if (typeaheadLocationItems[watershed]) {
+					return typeaheadLocationItems[watershed];
 				}
 				$.getJSON(getQuery("/typeaheads_location_id.json?watershed=" + watershed), function(json) {
 					var rows = json, items = [];
 					for (var i = 0, row; row = rows[i++];) {
 						items.push(row.location_id);
 					}
-					me.typeaheadLocationItems[watershed] = items;
-					me.typeaheadLocationRows[watershed] = rows;
+					typeaheadLocationItems[watershed] = items;
+					typeaheadLocationRows[watershed] = rows;
 					callback(items);
 				});
 			},
@@ -333,9 +335,9 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				form.find( "input[name=latitude]" ).val('').attr('readOnly', false);
 				form.find( "input[name=longitude]" ).val('').attr('readOnly', false);
 				
-				if (me.typeaheadLocationRows[watershed]) {
+				if (typeaheadLocationRows[watershed]) {
 					var el, validator = form.validate();
-					for (var i = 0, row; row = me.typeaheadLocationRows[watershed][i++];) {
+					for (var i = 0, row; row = typeaheadLocationRows[watershed][i++];) {
 						if (row.location_id == location_id) {
 							el = form.find( "input[name=station_name]" ).val(row.station_name);
 							
@@ -423,6 +425,10 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 							
 							currentObservation = result.data;
 							setCache('currentObservation', currentObservation);
+
+
+							typeaheadStationItems = {};
+							typeaheadLocationItems = {};
 							
 							history.back();
 						} else {
