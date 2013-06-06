@@ -87,6 +87,9 @@
 				}
 				allOK && this.addLayer(layer);
 			}
+
+			var bounds = this.getBounds();
+			bounds.isValid() ? this._map.fitBounds(bounds) : this._map.fitWorld();
 		},
 
 		filters: {
