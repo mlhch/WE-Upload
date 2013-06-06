@@ -2,7 +2,8 @@
 <div style="clear: both; height: 15px"></div>
 <div style="float: left; margin-bottom: 10px">
 	<select class="ui-button ui-widget ui-state-default ui-corner-all"
-			style="font-size: 12px; height: 30px; width: 250px" ng-model="filterOptions.location" ng-options="row.watershed_name for row in locations">
+			style="font-size: 12px; height: 30px; width: 250px; text-align: left; padding: 5px"
+			ng-model="filterOptions.location" ng-options="row.watershed_name for row in locations">
 	</select>
 	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" typeahead-station-name />
 	<input class="ui-button ui-corner-all ui-state-active" type="text"
@@ -14,20 +15,11 @@
 	<cura-button ng-click="resetFilterOptions(this)" text="Reset"></cura-button>
 </div>
 <div class="buttons">
-	<button type="button" ng-click="toggleFieldManager()" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">More fields...</span>
-	</button>
-	<button type="button" ng-click="openAddDialog()" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">Add new entry</span>
-	</button>
+	<cura-button ng-click="toggleFieldManager()" text="More fields..."></cura-button>
+	<cura-button ng-click="openAddDialog()" text="Add new entry"></cura-button>
 	<cura-button ng-click="exportAsCSV(this)" text="Export as CSV"></cura-button>
 	<cura-button ng-click="importFromCSV(this)" text="Import from CSV"></cura-button>
-	<button type="button" ng-click="mobileSite()" style="font-size: 12px"
-		class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
-		<span class="ui-button-text">Mobile Site</span>
-	</button>
+	<cura-button ng-click="mobileSite()" text="Mobile Site"></cura-button>
 </div>
 <field-manager></field-manager>
 <tablesorter></tablesorter>
