@@ -110,6 +110,28 @@ angular.module('services', ['ngResource'])
 }])
 
 
+	.factory('Photo', ['$resource', function($resource) {
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		query: {
+			method: 'GET',
+			isArray: true,
+			params: {
+				action: 'cura_photo.action',
+				id: '@id',
+			}
+		},
+		remove: {
+			method: 'DELETE',
+			params: {
+				action: 'cura_photo.action',
+				id: '@id',
+				file: '@name',
+			}
+		},
+	});
+}])
+
+
 	.factory('Toast', [function() {
 	return {
 		show: function(message) {

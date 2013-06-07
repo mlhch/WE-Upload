@@ -262,9 +262,59 @@ function($cookieStore, $compile) {
 }])
 
 
-	.directive('dialog', ['$compile', '$parse', '$timeout', 'Observation', 'curaConfig', 'Toast',
+	.directive('jqueryFileUpload', ['Photo',
+function(Photo) {
+	return {
+		restrict: 'E',
+		template: [
+			'<div>',
+			'	<input class="field" type="file" multiple>',
+			'	<p ng-repeat="photo in photos" style="padding: 3px; border-bottom: 1px solid #f0f0f0">{{photo.name}}',
+			'		<span class="ui-icon ui-icon-closethick"',
+			'		 ng-click="removePhoto(photo)" style="float: right"></span></p>',
+			'	<div id="progress" style="height: 3px;">',
+			'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
+			'	</div>',
+			'</div>',
+		].join(''),
+		replace: true,
+		link: function($scope, $el) {
+			$el.find('input').fileupload({
+		        dataType: 'json',
+		        add: function (e, data) {
+		        	$el.find('.bar').css('width', '0%');
+		        	data.id = $scope.observation.id;
+					data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action&id=' + data.id;
+					jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
+			    },
+		        done: function (e, data) {
+		            $scope.photos.push(new Photo(data.result[0]));
+		            $scope.$apply();
+		            $el.find('.bar').css('width', '0%');
+		        },
+		        progressall: function (e, data) {
+		            var progress = parseInt(data.loaded / data.total * 100, 10);
+		            $el.find('.bar').css('width', progress + '%');
+		        }
+		    });
+		    $scope.removePhoto = function(photo) {
+		    	photo.$remove({
+		    		id: photo.id,
+		    		file: photo.name
+		    	}, function() {
+		    		$scope.photos.every(function(value, index) {
+		    			return value != photo ? true : $scope.photos.splice(index, 1) && false;
+		    		})
+		    	})
+		    }
+		}
+	}
+}])
 
-function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
+
+	.directive('dialog', ['$compile', '$parse', '$timeout', 'Observation', 'curaConfig', 'Toast', 'Photo',
+
+function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 	return {
 		restrict: 'E',
 		template: [
@@ -310,6 +360,11 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 						});
 						html.push('</tr>');
 					});
+					html.push([
+						'<td class="label">Photo</td>',
+						'<td style="vertical-align: top" colspan="3">',
+						'	<jquery-file-upload></jquery-file-upload>',
+						'</td>'].join(''));
 					html.push('</table>');
 
 					$form.append($compile(html.join(''))($scope));
@@ -482,6 +537,10 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast) {
 				for (var key in $scope.readOnly) {
 					$scope.readOnly[key] = false;
 				}
+
+			    $scope.photos = Photo.query({
+			    	id: ob ? ob.id : 0
+			    });
 
 				if (config.canDelete) {
 					buttons.push({

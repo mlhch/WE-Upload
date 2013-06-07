@@ -13,6 +13,9 @@
 	<!-- Add your site or application content here -->
 	<div class="container" ng-view></div>
 
+	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.iframe-transport.js"></script>
+	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.fileupload.js"></script>
+
 	<script src="<?php echo $url?>vendor/jquery-validation/jquery.validate.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-validation/additional-methods.js"></script>
 	<script src="<?php echo $url?>app/scripts/vendor/ucsv.js"></script>

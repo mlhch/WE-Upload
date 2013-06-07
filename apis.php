@@ -190,6 +190,39 @@ function cura_json_observations() {
 	echo json_encode ( $observations );
 	exit ( 0 );
 }
+
+function cura_action_photo() {
+	require('vendor/jquery-file-upload/UploadHandler.php');
+	class Photo extends UploadHandler {
+	    public function get($print_response = true) {
+	        $files = $this->get_file_objects();
+	        foreach ($files as $file) {
+	        	$file->id = $this->options['id'];
+	        }
+	        return $this->generate_response($files, $print_response);
+	    }
+	    public function delete() {
+	    	parent::delete(false);
+	    }
+	    public function post() {
+	    	$result = parent::post(false);
+	    	return $this->generate_response($result[$this->options['param_name']], true);
+	    }
+	}
+	$id = isset($_GET['id']) && intval($_GET['id']) > 0 ? intval($_GET['id']) : 0;
+	new Photo(
+		$options = array(
+			'id' => $id,
+			'upload_dir' => cura_photo_path($id),
+		)
+	);
+	exit;
+}
+
+function cura_photo_path($id) {
+	return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
+}
+
 /*
  * Ajax - save
  */
@@ -249,6 +282,13 @@ function cura_action_save() {
 	}
 	
 	cura_update_location ( $result ['data']->watershed_name );
+
+	if ($result ['insertId']) {
+		$old_mask = umask(0);
+		mkdir(cura_photo_path($result ['insertId']), 0755, true);
+		umask($old_mask);
+		exec('mv ' . cura_photo_path(0) . '* ' . cura_photo_path($result ['insertId']));
+	}
 	
 	echo json_encode ( array (
 			'affectedRows' => $result ['affectedRows'],

@@ -68,9 +68,15 @@ ol.field-manager li {
 .ob-dialog form {
 	font-size: 12px;
 }
+.ob-dialog input, .ob-dialog textarea {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: 2px;
+	margin: 2px 0 1px;
+}
 .ob-dialog td.label {
 	text-align: right;
-	padding: 0.5em 1em 0.5em 0;
+	padding: 0.5em 0.5em 0.5em 0;
 }
 .ob-dialog td {
 	width: 23%;
