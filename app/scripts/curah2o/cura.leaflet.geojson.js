@@ -90,7 +90,7 @@
 
 			var bounds = this.getBounds();
 			if (bounds.isValid()) {
-				var zoom = this._map.getBoundsZoom(bounds, (inside = true));
+				var zoom = this._map.getBoundsZoom(bounds) - 1;
 				this._map.setView(L.latLngBounds(bounds).getCenter(), zoom || this._map.getZoom());
 			}
 		},
