@@ -91,9 +91,7 @@
 			var bounds = this.getBounds();
 			if (bounds.isValid()) {
 				var zoom = this._map.getBoundsZoom(bounds, (inside = true));
-				if (zoom != null) {
-					this._map.setView(L.latLngBounds(bounds).getCenter(), zoom);
-				}
+				this._map.setView(L.latLngBounds(bounds).getCenter(), zoom || this._map.getZoom());
 			}
 		},
 
