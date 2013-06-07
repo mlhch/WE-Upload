@@ -9,7 +9,7 @@ angular.module('directives', [])
 		template: '<div id="map"></div>',
 		replace: true,
 		transclude: true,
-		link: function($scope, $el, iAttrs, controller) {
+		link: function($scope, $el, $attrs) {
 			console.log('initializing map');
 			var map = L.map('map', {
 				maxZoom: 14,
@@ -17,14 +17,17 @@ angular.module('directives', [])
 			});
 
 			console.log('adding basemap layer.');
-			map.addLayer(new L.TileLayer(iAttrs.basemap));
+			map.addLayer(new L.TileLayer($attrs.basemap));
+			if ($attrs.lat && $attrs.lng && $attrs.zoom) {
+				map.setView([$attrs.lat, $attrs.lng], $attrs.zoom);
+			}
 
 			$scope.$watch('geoLayer', function(value) {
 				if (value) {
 					console.log('adding geoLayer layer');
 					map.addLayer(value);
-					var bounds = value.getBounds();
-					bounds.isValid() ? map.fitBounds(bounds) : map.fitWorld();
+					//var bounds = value.getBounds();
+					//bounds.isValid() ? map.fitBounds(bounds) : map.fitWorld();
 				}
 			});
 		}
