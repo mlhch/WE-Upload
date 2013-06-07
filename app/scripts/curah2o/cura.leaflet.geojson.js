@@ -89,7 +89,12 @@
 			}
 
 			var bounds = this.getBounds();
-			bounds.isValid() ? this._map.fitBounds(bounds) : this._map.fitWorld();
+			if (bounds.isValid()) {
+				var zoom = this._map.getBoundsZoom(bounds, (inside = true));
+				if (zoom != null) {
+					this._map.setView(L.latLngBounds(bounds).getCenter(), zoom);
+				}
+			}
 		},
 
 		filters: {
