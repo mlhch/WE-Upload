@@ -192,7 +192,7 @@ function cura_json_observations() {
 }
 
 function cura_action_photo() {
-	require('vendor/jquery-file-upload/UploadHandler.php');
+	require('vendor/jquery-file-upload/UploadHandler.php');error_reporting(E_ALL);ini_set('display_errors', 'on');
 	class Photo extends UploadHandler {
 	    public function get($print_response = true) {
 	        $files = $this->get_file_objects();
@@ -209,6 +209,51 @@ function cura_action_photo() {
 	    	return $this->generate_response($result[$this->options['param_name']], true);
 	    }
 	}
+	if (!empty($_GET['download'])) {
+		$basepath = cura_photo_path();
+		$files = scandir($basepath, 1);
+
+		$zip = new ZipArchive();
+		$filename = $basepath . 'tmp.zip';
+		if (file_exists($filename)) {
+			unlink($filename);
+		}
+		if ($zip->open($filename, ZipArchive::CREATE) !== true) {
+			echo 'Create zip file error';
+			exit;
+		}
+
+		while (!empty($files)) {
+			$file = array_pop($files);
+			if ($file[0] == '.') {
+				continue;
+			}
+			if (is_dir($basepath . $file)) {
+				//echo "dir: $file<br />";
+				$_files = scandir($basepath . $file, 1);
+				foreach ($_files as $_file) {
+					if ($_file[0] == '.' || $_file == 'thumbnail') {
+						continue;
+					}
+					$files[] = $file . '/' . $_file;
+				}
+			} elseif (is_file($basepath . $file)) {
+				//echo "file: $file<br />";
+				$zip->addFile($basepath . $file, 'photos/' . str_replace('/', '', $file));
+			} else {
+				//echo "???: $file<br />";
+			}
+		}
+		$zip->close();
+
+		header("Content-Type: application/zip");
+		header("Content-disposition: attachment; filename=photos.zip");
+		header("Content-Length: " . filesize($filename));
+		readfile($filename);
+		
+		exit;
+	}
+
 	$id = isset($_GET['id']) && intval($_GET['id']) > 0 ? intval($_GET['id']) : 0;
 	new Photo(
 		$options = array(
@@ -219,7 +264,10 @@ function cura_action_photo() {
 	exit;
 }
 
-function cura_photo_path($id) {
+function cura_photo_path($id = '') {
+	if ($id === '') {
+		return CURAH2O_PLUGIN_DIR . 'photos/';
+	}
 	return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
 }
 

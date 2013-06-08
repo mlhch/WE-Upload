@@ -117,7 +117,6 @@ angular.module('services', ['ngResource'])
 			isArray: true,
 			params: {
 				action: 'cura_photo.action',
-				id: '@id',
 			}
 		},
 		remove: {

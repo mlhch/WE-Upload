@@ -307,6 +307,9 @@ function(Photo) {
 		    		})
 		    	})
 		    }
+			$scope.downloadPhotos = function() {
+				location.href = '/wp-admin/admin-ajax.php?action=cura_photo.action&download=true';
+			}
 		}
 	}
 }])
