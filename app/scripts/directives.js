@@ -655,15 +655,15 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 			$scope.exportAsCSV = function($event) {
 				var validator = $form.validate();
 				var array = [];
-				array.push($scope.fields.map(function(field) {
+				array.push(['id'].concat($scope.fields.map(function(field) {
 					return field[2]; // field description
-				}));
+				})));
 				$scope.observation = {};
 				$scope.observations.forEach(function(ob) {
 					$scope.fields.forEach(function(field) {
 						$form.find('input[name="' + field[0] + '"]').val(ob[field[0]]);
 					})
-					array.push($scope.fields.map(function(field) {
+					array.push([ob.id].concat($scope.fields.map(function(field) {
 						var name = field[0];
 						var value = ob[name];
 						var element = $form.find('[name="' + name + '"]')[0];
@@ -672,7 +672,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 							validator.check( element )
 						}
 						return isValid !== false ? value : '**' + value; // field name
-					}));
+					})));
 				});
 				var csv = CSV.arrayToCsv(array);
 

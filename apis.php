@@ -139,6 +139,7 @@ function cura_json_config() {
 			'canEdit' => current_user_can('cura-edit'),
 			'canDelete' => current_user_can('cura-delete'),
 			'canAdd' => 1,
+			'canImport' => current_user_can('cura-import'),
 			'locations' => cura_get_locations (),
 			'fields' => $fields,
 			'pluginUrl' => CURAH2O_PLUGIN_URL,
@@ -373,7 +374,12 @@ function cura_action_import() {
 	$deleted = 0;
 	$added = 0;
 
-	if (!empty($_FILES['csvData']['name'])) {
+	$capability = 'cura-import';
+	if (! current_user_can ( $capability )) {
+		$error = 'You don\'t have "' . $capability . '" capability';
+	}
+
+	if (empty($error) && !empty($_FILES['csvData']['name'])) {
 		if (false !== ($fp = fopen($_FILES['csvData']['tmp_name'], 'r'))) {
 			$headers = array();
 			$locations = array();
@@ -413,7 +419,7 @@ function cura_action_import() {
 		}
 	}
 	if (!empty($error)) {
-		echo "<script>alert('Error: $error')</script>";
+		echo '<script>alert("Error: ' . addslashes($error) . '")</script>';
 	} else {
 		echo "<script>alert('$deleted deleted, $added added')</script>";
 		echo "<script>top.curaCallback()</script>";

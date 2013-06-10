@@ -72,6 +72,7 @@ if ($plugin_activated) {
 			$wp_roles->add_cap ( 'administrator', 'cura-add' );
 			$wp_roles->add_cap ( 'administrator', 'cura-edit' );
 			$wp_roles->add_cap ( 'administrator', 'cura-delete' );
+			$wp_roles->add_cap ( 'administrator', 'cura-import' );
 		}
 	}
 	
