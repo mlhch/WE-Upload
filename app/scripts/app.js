@@ -121,7 +121,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 				var fields = $cookieStore.get('fields');
 				// Detect server side fields configuration changes
 				$scope.fields = this.fieldsChanged(fields, config.fields) ? config.fields : fields;
-				$scope.locations = $scope.locations.concat(config.locations);
+				$scope.locations = $scope.locationsPrefix.concat(config.locations);
 			},
 			geoLayer: function(res, $scope) {
 				var geoLayer = $scope.geoLayer = Cura.geoJson(res, {
@@ -135,7 +135,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 			},
 			resetFilterOptions: function($scope) {
 				$scope.filterOptions = {
-					location: $scope.locations[1], // View All
+					location: $scope.locationsPrefix[1], // View All
 					searchText: '',
 					startDate: '',
 					endDate: '',

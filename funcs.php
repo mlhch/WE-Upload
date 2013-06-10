@@ -444,7 +444,7 @@ function cura_get_observations($options) {
 			AND	" . implode ( "
 			AND	", $sql_filter )) . "
 		ORDER BY
-				a.datetime DESC
+				a.datetime DESC, a.id DESC
 	";
 	$objs = $wpdb->get_results ( $sql );
 	

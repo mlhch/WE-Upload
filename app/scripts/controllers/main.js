@@ -5,7 +5,7 @@ curaApp.controller('MainCtrl', [
 		'CuraGeoJSON', 'curaConfig', 'Observation', 'cura',
 
 	function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation, cura) {
-		$scope.locations = [{
+		$scope.locationsPrefix = [{
 				id: "",
 				watershed_name: " - Select community group - "
 			}, {
@@ -61,6 +61,9 @@ curaApp.controller('MainCtrl', [
 		$scope.$on('updateLayer', function($event, props) {
 			CuraGeoJSON.get(props, function(feature) {
 				$scope.geoLayer.updateLayer(props, feature);
+			});
+			curaConfig.get(function(res) {
+				cura.config(res, $scope, $cookieStore);
 			});
 		});
 	}

@@ -370,7 +370,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 						'</td>'].join(''));
 					html.push('</table>');
 
-					$form.append($compile(html.join(''))($scope));
+					$form.html('').append($compile(html.join(''))($scope));
 					enableFormValidator($form);
 				}
 			});
