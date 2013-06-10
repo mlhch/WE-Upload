@@ -36,7 +36,7 @@ $cura_fields = array (
 		),
 		array (
 				"field" => "datetime",
-				"placeHolder" => date ( "m/d/Y H:i A" ),
+				"placeHolder" => '',
 				"description" => "Date and Time",
 				"visible" => 1,
 				"validation" => array (
