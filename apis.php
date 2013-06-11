@@ -183,17 +183,77 @@ function cura_json_typeaheads_location_id() {
  * Ajax - observations.json
  */
 function cura_json_observations() {
-	$request = cura_request();
+	if (!empty ( $_REQUEST ['downloadPhoto'] )) {
+		$request = json_decode ( stripslashes($_REQUEST ['downloadPhoto'] ));
+	} else {
+		$request = cura_request();
+	}
 
 	// making root as Array is for ngResource
 	$observations = cura_get_observations ( $request );
+
+	if (!empty ( $_REQUEST ['downloadPhoto'] )) {
+		ob_start();
+		$fp = fopen ( 'php://output', 'w' );
+		$headers = array (
+				"id" 
+		);
+		$fields = cura_fields();
+		foreach ( $fields as $row ) {
+			$headers [] = $row [2];
+		}
+		fputcsv ( $fp, $headers );
+		foreach ( $observations as $row ) {
+			$array = array($row->id);
+			foreach ($fields as $field) {
+				$array[] = $row->$field[0];
+			}
+			fputcsv ( $fp, $array );
+		}
+		fclose ( $fp );
+		$csv = ob_get_clean();
+
+		$zip = new ZipArchive();
+		$basepath = cura_photo_path();
+		$filename = $basepath . 'tmp.zip';
+		if (file_exists($filename)) {
+			unlink($filename);
+		}
+		if ($zip->open($filename, ZipArchive::CREATE) !== true) {
+			echo 'Create zip file error';
+			exit;
+		}
+
+		$zip->addFromString('water-quality.csv', $csv);
+		foreach ($observations as $row) {
+			$dir = cura_photo_path($row->id);
+			if (is_dir($dir)) {
+				$files = scandir($dir, 1);
+				foreach ($files as $file) {
+					if ($file[0] != '.' && is_file($dir . $file)) {
+						$type = preg_replace('/^.*\./', '', $file);
+						$datetime = date('Y-m-d_H.i', strtotime($row->datetime));
+						$zip->addFile("$dir$file", "photos/{$row->id}_$datetime.$type");
+						break;
+					}
+				}
+			}
+		}
+		$zip->close();
+
+		header ( "Content-Type:application/csv;charset=utf-8" );
+		header ( 'Content-Description: File Transfer' );
+		header ( "content-Disposition: attachment; filename=water-quality.zip" );
+		readfile($filename);
+	} else {
+		echo json_encode ( $observations );
+	}
 	
-	echo json_encode ( $observations );
 	exit ( 0 );
 }
 
 function cura_action_photo() {
-	require('vendor/jquery-file-upload/UploadHandler.php');error_reporting(E_ALL);ini_set('display_errors', 'on');
+	require('vendor/jquery-file-upload/UploadHandler.php');
 	class Photo extends UploadHandler {
 	    public function get($print_response = true) {
 	        $files = $this->get_file_objects();

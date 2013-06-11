@@ -307,9 +307,6 @@ function(Photo) {
 		    		})
 		    	})
 		    }
-			$scope.downloadPhotos = function() {
-				location.href = '/wp-admin/admin-ajax.php?action=cura_photo.action&download=true';
-			}
 		}
 	}
 }])
@@ -653,7 +650,7 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 			 * Button to export data as CSV
 			 */
 			$scope.exportAsCSV = function($event) {
-				var validator = $form.validate();
+				/*var validator = $form.validate();
 				var array = [];
 				array.push(['id'].concat($scope.fields.map(function(field) {
 					return field[2]; // field description
@@ -684,7 +681,19 @@ function($compile, $parse, $timeout, Observation, curaConfig, Toast, Photo) {
 				setTimeout(function() {
 					w.close();
 					w = null;
-				}, 1000);
+				}, 1000);*/
+
+				var obj = angular.extend({}, $scope.AllFilterOptions);
+				obj.downloadPhoto = 1;
+				if (!jQuery('#downloadPhoto').length) {
+					jQuery([
+						'<form id="downloadPhoto" method="post"',
+						' action="/wp-admin/admin-ajax.php?action=cura_observations.json">',
+						'	<input type="hidden" name="downloadPhoto" />',
+						'</form>'].join('')).appendTo(jQuery('body'));
+				}
+				jQuery('#downloadPhoto input').val(JSON.stringify(obj));
+				jQuery('#downloadPhoto').submit();
 			}
 		}
 	}
