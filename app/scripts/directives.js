@@ -392,12 +392,6 @@ angular.module('directives', [])
 					}
 				});
 
-				$scope.isFieldDisabled = function() {
-					var config = $scope.config;
-					var ob = $scope.observation;
-					return ob && !((!ob.id && config.canAdd) || (ob.id && config.canEdit));
-				}
-
 				function cura_form_field(name, single) {
 					var field = fields[name],
 						propName = field[0],
@@ -413,7 +407,7 @@ angular.module('directives', [])
 								'	<input class="field" type="text" name="' + propName + '"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%"',
 								'	 ng-model="observation.lab_id"',
-								'	 ng-disabled="isFieldDisabled()||observation.lab_sample==\'N\'" />',
+								'	 ng-disabled="observation.lab_sample==\'N\'" />',
 								'</td>'
 						]);
 					} else if (propName == 'lab_sample') {
@@ -422,11 +416,9 @@ angular.module('directives', [])
 								'<td>',
 								'	<label><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.lab_sample"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 value="Y" /> Yes</label> &nbsp; ',
 								'	<label><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.lab_sample"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 ng-click="observation.lab_id=\'\'" value="N" /> No</label>',
 								'</td>'
 						]);
@@ -436,11 +428,9 @@ angular.module('directives', [])
 								'<td colspan="3">',
 								'	<label><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.coliform"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 value="Present" /> Present</label> &nbsp; ',
 								'	<label><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.coliform"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 value="Absent" /> Absent</label>',
 								'</td>'
 						]);
@@ -450,7 +440,6 @@ angular.module('directives', [])
 								'<td style="vertical-align: top" ' + colspan + '>',
 								'	<input datepicker class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation.datetime"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 								'</td>'
 						]);
@@ -460,7 +449,6 @@ angular.module('directives', [])
 								'<td style="vertical-align: top" ' + colspan + '>',
 								'	<textarea class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation[\'' + propName + '\']"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%"></textarea>',
 								'</td>'
@@ -475,7 +463,6 @@ angular.module('directives', [])
 								'<td style="vertical-align: top" ' + colspan + '>',
 								'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation[\'' + propName + '\']"',
-								'	 ng-disabled="isFieldDisabled()"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 								'</td>'
@@ -590,6 +577,26 @@ angular.module('directives', [])
 									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
 									if (confirm(msg)) {
 										Observation.save(ob, saveSuccess, saveError);
+									}
+								}
+							}
+						});
+					}
+					if (config.canEdit || (config.canAdd && ob.id)) {
+						buttons.push({
+							text: "Save As",
+							style: "padding: 0 2em; font-size: 12px",
+							click: function() {
+								var newOb = angular.extend({}, ob);
+								newOb.id = 0;
+								if ($form.validate().form()) {
+									// Here we use Class.save instead of Instance.$save
+									// because the returned Resource is not at root node
+									Observation.save(newOb, saveSuccess, saveError);
+								} else {
+									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+									if (confirm(msg)) {
+										Observation.save(newOb, saveSuccess, saveError);
 									}
 								}
 							}
