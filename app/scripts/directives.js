@@ -683,39 +683,6 @@ angular.module('directives', [])
 				 * Button to export data as CSV
 				 */
 				$scope.exportAsCSV = function($event) {
-					/*var validator = $form.validate();
-				var array = [];
-				array.push(['id'].concat($scope.fields.map(function(field) {
-					return field[2]; // field description
-				})));
-				$scope.observation = {};
-				$scope.observations.forEach(function(ob) {
-					$scope.fields.forEach(function(field) {
-						$form.find('input[name="' + field[0] + '"]').val(ob[field[0]]);
-					})
-					array.push([ob.id].concat($scope.fields.map(function(field) {
-						var name = field[0];
-						var value = ob[name];
-						var element = $form.find('[name="' + name + '"]')[0];
-						var isValid = validator.check( element );
-						if (isValid === false) {
-							validator.check( element )
-						}
-						return isValid !== false ? value : '**' + value; // field name
-					})));
-				});
-				var csv = CSV.arrayToCsv(array);
-
-				var w = window.open();
-				w.document.write([
-					'<a download="' + $scope.exportName + '"',
-					' href="data:application/download,' + encodeURIComponent(csv) + '"></a>',
-					'<script>document.getElementsByTagName("a")[0].click()</script>'].join(''));
-				setTimeout(function() {
-					w.close();
-					w = null;
-				}, 1000);*/
-
 					var obj = angular.extend({}, $scope.AllFilterOptions);
 					obj.downloadPhoto = 1;
 					if (!jQuery('#downloadPhoto').length) {

@@ -28,69 +28,6 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 			return false;
 		}
 
-		function searchByLayers(layers, $scope) {
-			var stations = layers.map(function(layer) {
-				var props = layer.feature.properties;
-				return {
-					watershed_name: props.watershed_name,
-					station_name: props.station_name,
-					location_id: props.location_id
-				}
-			});
-			$scope.exportName = getExportFileName(stations);
-
-			$scope.AllFilterOptions = {
-				location: $scope.locations[0], // View All
-				searchText: '',
-				startDate: '',
-				endDate: '',
-				stations: stations,
-				forceReset: Date.now(), // This makes 'reset' always refresh
-			};
-		}
-
-		function getExportFileName(value) {
-			var name = ['water-quality'];
-			if (value.location) {
-				var l = value.location;
-				if (l.id === 0) {
-					name.push('-(group=all)');
-				} else if (l.id !== '') {
-					name.push('-(group=' + l.watershed_name + ')');
-				}
-			}
-			if (value.searchText) {
-				name.push('-(search=' + value.searchText + ')');
-			}
-			if (value.startDate || value.endDate) {
-				name.push('-(');
-				if (value.startDate) {
-					var startDate = new Date(Date.parse(value.startDate));
-					name.push(jQuery.datepicker.formatDate('yy-mm-dd', startDate));
-				} else {
-					name.push('?');
-				}
-				if (value.endDate) {
-					var endDate = new Date(Date.parse(value.endDate));
-					name.push('~' + jQuery.datepicker.formatDate('yy-mm-dd', endDate));
-				} else {
-					name.push('~?');
-				}
-				name.push(')');
-			}
-			if (value instanceof Array) {
-				value.forEach(function(value) {
-					name.push('-(station=' + value.watershed_name);
-					name.push(',' + value.station_name);
-					name.push(',' + value.location_id);
-					name.push(')');
-				});
-			}
-			name.push('.csv');
-
-			return name.join('').toLowerCase().replace(/ /g, '-');
-		}
-
 		function importFromCSV($scope) {
 			if (jQuery('#formImport').length == 0) {
 				jQuery([
@@ -137,16 +74,6 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					}
 				});
 			},
-			resetFilterOptions: function($scope) {
-				$scope.filterOptions = {
-					location: $scope.locationsPrefix[1], // View All
-					searchText: '',
-					startDate: '',
-					endDate: '',
-					stations: [],
-					forceReset: Date.now(), // This makes 'reset' always refresh
-				}
-			},
 			watchFields: function(value, $scope, $cookieStore) {
 				$cookieStore.put('fields', value);
 
@@ -168,7 +95,6 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 				}
 				$scope.sortList = sortList;
 			},
-			getExportFileName: getExportFileName,
 			importFromCSV: importFromCSV,
 			highlightRow: function(obj, $event, $scope) {
 				var map = $scope.highlightedRows || ($scope.highlightedRows = {});

@@ -15,15 +15,6 @@ curaApp.controller('MainCtrl', [
 		];
 
 
-		curaConfig.get(function(res) {
-			cura.config(res, $scope, $cookieStore);
-		});
-		CuraGeoJSON.query(function(res) {
-			cura.geoLayer(res, $scope);
-		});
-		cura.resetFilterOptions($scope);
-
-
 		$scope.refreshFilter = function() {
 			$scope.AllFilterOptions.forceReset = Date.now();
 		}
@@ -34,7 +25,16 @@ curaApp.controller('MainCtrl', [
 			cura.highlightLocation(location_id, $event, $scope);
 		}
 		$scope.importFromCSV = cura.importFromCSV;
-		$scope.resetFilterOptions = cura.resetFilterOptions;
+		$scope.resetFilterOptions = function() {
+			$scope.filterOptions = {
+				location: $scope.locationsPrefix[1], // View All
+				searchText: '',
+				startDate: '',
+				endDate: '',
+				locationIds: [],
+				forceReset: Date.now(), // This makes 'reset' always refresh
+			}
+		};
 
 
 		$scope.$watch('fields', function(value) {
@@ -47,7 +47,6 @@ curaApp.controller('MainCtrl', [
 			if (value) {
 				$scope.AllFilterOptions = value
 				$scope.geoLayer && $scope.geoLayer.doFilter(value);
-				$scope.exportName = cura.getExportFileName(value);
 			}
 		}, true);
 		$scope.$watch('AllFilterOptions', function(value) {
@@ -90,5 +89,14 @@ curaApp.controller('MainCtrl', [
 				cura.config(res, $scope, $cookieStore);
 			});
 		});
+
+
+		curaConfig.get(function(res) {
+			cura.config(res, $scope, $cookieStore);
+		});
+		CuraGeoJSON.query(function(res) {
+			cura.geoLayer(res, $scope);
+		});
+		$scope.resetFilterOptions();
 	}
 ]);
