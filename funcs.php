@@ -151,7 +151,7 @@ function cura_get_features() {
 		WHERE	`latitude` IS NOT NULL
 			AND	`longitude` IS NOT NULL
 		GROUP BY
-				watershed_name, station_name, location_id
+				location_id
 	";
 	return $wpdb->get_results ( $sql );
 }
