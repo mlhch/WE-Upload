@@ -568,7 +568,10 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	$sql = "
 		SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
 		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes ( $watershed_name ) . "'" . ($station_name == '' ? '' : "
+		WHERE	1"
+				. ($watershed_name == '' ? '' : "
+			AND	watershed_name = '" . addslashes ( $watershed_name ) . "'")
+				. ($station_name == '' ? '' : "
 			AND	station_name = '" . addslashes ( $station_name ) . "'") . "
 		GROUP BY
 				location_id

@@ -945,11 +945,7 @@ angular.module('directives', [])
 			$el.typeahead({
 				source: function(query, callback) {
 					var $ob = $scope.observation;
-
 					var watershed = $ob.watershed_name || '';
-					if (watershed.length == 0) {
-						return;
-					}
 
 					var station = $ob.station_name || '';
 					var _key = station ? 's-' + station : 'all';
@@ -978,11 +974,7 @@ angular.module('directives', [])
 					var $ob = $scope.observation;
 					var $readOnly = $scope.readOnly;
 					$ob.location_id = location_id;
-
 					var watershed = $ob.watershed_name;
-					if (watershed.length == 0 || location_id.length == 0) {
-						return location_id;
-					}
 
 					$ob.latitude = $ob.longitude = '';
 					$readOnly.latitude = $readOnly.longitude = false;
