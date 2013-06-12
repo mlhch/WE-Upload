@@ -582,9 +582,9 @@ angular.module('directives', [])
 							}
 						});
 					}
-					if (config.canEdit || (config.canAdd && ob.id)) {
+					if (ob.id && (config.canEdit || config.canAdd)) {
 						buttons.push({
-							text: "Save As",
+							text: "Save As New",
 							style: "padding: 0 2em; font-size: 12px",
 							click: function() {
 								var newOb = angular.extend({}, ob);
