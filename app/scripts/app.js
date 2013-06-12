@@ -97,19 +97,14 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 			},
 			importFromCSV: importFromCSV,
 			highlightRow: function(obj, $event, $scope) {
-				var map = $scope.highlightedRows || ($scope.highlightedRows = {});
 				if (!$event || !$event.metaKey && !$event.ctrlKey) {
-					for (var key in map) {
-						delete map[key];
-					}
+					$scope.highlightedRows = {};
+				} else {
+					$scope.highlightedRows = $scope.highlightedRows || {};
 				}
 				$scope.highlightedRows[obj.id] = true;
 
-				$scope.geoLayer.highlightLayerByProperties({
-					watershed_name: obj.watershed_name,
-					station_name: obj.station_name,
-					location_id: obj.location_id,
-				}, $event);
+				$scope.highlightLocation(obj.location_id, $event);
 			},
 			highlightLocation: function(location_id, $event, $scope) {
 				if (!$event || !$event.metaKey && !$event.ctrlKey) {

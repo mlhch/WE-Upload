@@ -155,7 +155,7 @@ function cura_get_features() {
 			WHERE	`latitude` IS NOT NULL
 				AND	`longitude` IS NOT NULL
 			GROUP BY
-					location_id
+					watershed_name, location_id
 		) AS b
 		JOIN	`" . CURAH2O_TABLE . "` AS a
 			ON	CONCAT(a.datetime, '#', a.id) = b.datetime_id
