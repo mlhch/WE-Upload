@@ -46,6 +46,11 @@
 			this.allLayers[id] || (this.allLayers[id] = layer);
 		},
 
+		findLayerByLocationId: function(location_id) {
+			return this.findLayerByProperties({
+				location_id: location_id,
+			});
+		},
 		findLayerByProperties: function(props) {
 			var layers = [];
 			this.eachLayer(function(layer) {
@@ -118,31 +123,6 @@
 			},
 		},
 
-		/**
-		 * Click table row to highlight
-		 */
-		highlightedLayers: [],
-		highlightLayer: function(layer, $event) {
-			var layers = this.highlightedLayers;
-			if (!$event || !$event.metaKey && !$event.ctrlKey) {
-				layers.forEach(function(layer) {
-					this.unHighlight(layer);
-				}, this);
-				layers.splice(0);
-			}
-
-			layer.openPopup();
-			this.highlight(layer);
-
-			layers.push(layer);
-			return layers;
-		},
-		highlightLayerByProperties: function(props, $event) {
-			var layers = this.findLayerByProperties(props);
-			layers.forEach(function(layer) {
-				this.highlightLayer(layer, $event);
-			}, this);
-		},
 		highlight: function(layer) {
 			layer.options.riseOnHover = false;
 			layer._icon.className = layer._icon.className + ' highlighted';

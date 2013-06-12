@@ -127,8 +127,8 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 				var geoLayer = $scope.geoLayer = Cura.geoJson(res, {
 					onFeatureClick: function(options) {
 						var $event = options.originalEvent;
-						var layers = geoLayer.highlightLayer(this, $event);
-						searchByLayers(layers, $scope);
+						$scope.highlightLocation(this.feature.properties.location_id, $event);
+						//searchByLayers(layers, $scope);
 						$scope.$apply();
 					}
 				});
@@ -180,7 +180,15 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					station_name: obj.station_name,
 					location_id: obj.location_id,
 				}, $event);
-			}
+			},
+			highlightLocation: function(location_id, $event, $scope) {
+				if (!$event || !$event.metaKey && !$event.ctrlKey) {
+					$scope.highlightedLocations = {};
+				} else {
+					$scope.highlightedLocations = $scope.highlightedLocations || {};
+				}
+				$scope.highlightedLocations[location_id] = true;
+			},
 		}
 	}
 })

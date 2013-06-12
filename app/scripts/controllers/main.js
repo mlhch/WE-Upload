@@ -30,6 +30,9 @@ curaApp.controller('MainCtrl', [
 		$scope.highlightRow = function(obj, $event) {
 			cura.highlightRow(obj, $event, $scope);
 		}
+		$scope.highlightLocation = function(location_id, $event) {
+			cura.highlightLocation(location_id, $event, $scope);
+		}
 		$scope.importFromCSV = cura.importFromCSV;
 		$scope.resetFilterOptions = cura.resetFilterOptions;
 
@@ -54,6 +57,28 @@ curaApp.controller('MainCtrl', [
 				Observation.query(value, function(res) {
 					$scope.observations = res;
 				});
+			}
+		}, true);
+		$scope.$watch('highlightedLocations', function(value, oldValue) {
+			if (oldValue) {
+				for (var location_id in oldValue) {
+					if (!value[location_id]) {
+						$scope.geoLayer.findLayerByLocationId(location_id).forEach(function(layer) {
+							layer.closePopup();
+							$scope.geoLayer.unHighlight(layer);
+						});
+					}
+				}
+			}
+			if (value) {
+				for (var location_id in value) {
+					if (oldValue && !oldValue[location_id]) {
+						$scope.geoLayer.findLayerByLocationId(location_id).forEach(function(layer) {
+							layer.openPopup();
+							$scope.geoLayer.highlight(layer);
+						});
+					}
+				}
 			}
 		}, true);
 
