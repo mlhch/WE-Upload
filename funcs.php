@@ -140,18 +140,25 @@ function cura_get_features() {
 	global $wpdb;
 	
 	$sql = "
-		SELECT	watershed_name
-				, station_name
-				, location_id
-				, latitude
-				, longitude
-				, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
-				, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	`latitude` IS NOT NULL
-			AND	`longitude` IS NOT NULL
-		GROUP BY
-				location_id
+		SELECT	a.watershed_name
+				, a.station_name
+				, a.location_id
+				, a.latitude
+				, a.longitude
+				, b.startDate
+				, b.endDate
+		FROM	(
+			SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
+					, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
+					, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
+			FROM	`" . CURAH2O_TABLE . "`
+			WHERE	`latitude` IS NOT NULL
+				AND	`longitude` IS NOT NULL
+			GROUP BY
+					location_id
+		) AS b
+		JOIN	`" . CURAH2O_TABLE . "` AS a
+			ON	CONCAT(a.datetime, '#', a.id) = b.datetime_id
 	";
 	return $wpdb->get_results ( $sql );
 }
@@ -411,17 +418,12 @@ function cura_get_observations($options) {
 		$dt = date('Y-m-d H:i:s', strtotime($options->endDate));
 		$sql_filter [] = "datetime <= '$dt'";
 	}
-	if (!empty($options->stations)) {
+	if (!empty($options->locationIds)) {
 		$or = array();
-		foreach ($options->stations as $station) {
-			$and = array(
-				"a.watershed_name = '" . addslashes($station->watershed_name) . "'",
-				"a.station_name = '" . addslashes($station->station_name) . "'",
-				"a.location_id = '" . addslashes($station->location_id) . "'",
-			);
-			$or [] = "(" . implode(" AND ", $and) . ")";
+		foreach ($options->locationIds as $location_id) {
+			$or [] = "a.location_id = '" . addslashes($location_id) . "'";
 		}
-		$sql_filter = array( "(" . implode(" OR ", $or) . ")" );
+		$sql_filter [] = "(" . implode(" OR ", $or) . ")";
 	}
 	
 	// The fields order is important
@@ -444,7 +446,7 @@ function cura_get_observations($options) {
 			AND	" . implode ( "
 			AND	", $sql_filter )) . "
 		ORDER BY
-				a.datetime DESC, a.id DESC
+				a.datetime DESC, a.watershed_name, a.station_name, a.id DESC
 	";
 	$objs = $wpdb->get_results ( $sql );
 	

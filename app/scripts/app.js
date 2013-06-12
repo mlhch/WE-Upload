@@ -128,7 +128,11 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					onFeatureClick: function(options) {
 						var $event = options.originalEvent;
 						$scope.highlightLocation(this.feature.properties.location_id, $event);
-						//searchByLayers(layers, $scope);
+						$scope.resetFilterOptions($scope);
+						$scope.filterOptions.locationIds = [];
+						for (var location_id in $scope.highlightedLocations) {
+							$scope.filterOptions.locationIds.push(location_id);
+						}
 						$scope.$apply();
 					}
 				});

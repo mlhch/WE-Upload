@@ -52,7 +52,6 @@ curaApp.controller('MainCtrl', [
 		}, true);
 		$scope.$watch('AllFilterOptions', function(value) {
 			if (value) {
-				console.log('filter: ' + JSON.stringify(value));
 				// use callback way to avoid table rows become 'empty' temporarily
 				Observation.query(value, function(res) {
 					$scope.observations = res;
@@ -72,7 +71,7 @@ curaApp.controller('MainCtrl', [
 			}
 			if (value) {
 				for (var location_id in value) {
-					if (oldValue && !oldValue[location_id]) {
+					if (!oldValue || !oldValue[location_id]) {
 						$scope.geoLayer.findLayerByLocationId(location_id).forEach(function(layer) {
 							layer.openPopup();
 							$scope.geoLayer.highlight(layer);
