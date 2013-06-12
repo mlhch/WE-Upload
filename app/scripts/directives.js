@@ -840,7 +840,7 @@ angular.module('directives', [])
 					var array = ['station_name', 'location_id', 'latitude', 'longitude'];
 					var $form = $el.closest('form');
 					for (var i = 0, name; name = array[i++];) {
-						$ob[name] = '';
+						//$ob[name] = '';
 						$readOnly[name] = false;
 						var el = $form.find("input[name=" + name + "]");
 						el.removeClass('error');
