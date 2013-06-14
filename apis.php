@@ -31,7 +31,7 @@ function cura_json_features() {
 function cura_json_feature() {
 	$request = cura_request();
 
-	$obj = cura_get_feature($request->watershed_name, $request->station_name, $request->location_id);
+	$obj = cura_get_feature($request->watershed_name, $request->location_id);
 	if ($obj->watershed_name) {
 		$feature = array(
 			'type' => 'Feature',

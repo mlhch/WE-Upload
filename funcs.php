@@ -162,7 +162,7 @@ function cura_get_features() {
 	";
 	return $wpdb->get_results ( $sql );
 }
-function cura_get_feature($watershed_name, $station_name, $location_id) {
+function cura_get_feature($watershed_name, $location_id) {
 	global $wpdb;
 	
 	$sql = "
@@ -177,7 +177,6 @@ function cura_get_feature($watershed_name, $station_name, $location_id) {
 		WHERE	`latitude` IS NOT NULL
 			AND	`longitude` IS NOT NULL
 			AND	watershed_name = '" . addslashes($watershed_name) . "'
-			AND	station_name = '" . addslashes($station_name) . "'
 			AND	location_id = '" . addslashes($location_id) . "'
 	";
 	return $wpdb->get_row ( $sql );
@@ -566,9 +565,8 @@ function cura_update_location($watershed_name) {
 function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	global $wpdb;
 	
-	// use MAX() allow the latest lat/lng values available
 	$sql = "
-		SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
+		SELECT	MAX(id) id
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	1"
 				. ($watershed_name == '' ? '' : "
@@ -584,11 +582,11 @@ function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 				, latitude
 				, longitude
 				, datetime
-		FROM	`" . CURAH2O_TABLE . "`
+		FROM	`" . CURAH2O_TABLE . "` AS a
 		JOIN	($sql) t
-			ON	CONCAT(datetime, '#', id) = t.datetime_id
+			ON	a.id = t.id
 		ORDER BY
-				datetime DESC
+				a.id DESC
 	";
 	return $wpdb->get_results ( $sql, ARRAY_A );
 }
