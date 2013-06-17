@@ -39,6 +39,7 @@ angular.module('directives', [])
 				affixEl.css({
 					width: $el.width() + 'px',
 					height: height + 'px',
+					left: $el.offset().left + 'px',
 					top: '0px',
 				}).affix({
 					offset: {
