@@ -213,19 +213,6 @@ function cura_main_js_and_css() {
 			'jquery-ui-slider' 
 	) );
 	wp_enqueue_script ( 'jquery-ui-timepicker' );
-	
-	/*
-	 * typeahead support
-	 */
-	$src = CURAH2O_PLUGIN_URL . 'lib/bootstrap/typeahead.js';
-	wp_register_script ( 'bootstrap-typeahead', $src, array (
-			'jquery' 
-	) );
-	wp_enqueue_script ( 'bootstrap-typeahead' );
-	
-	$src = CURAH2O_PLUGIN_URL . 'lib/bootstrap/typeahead.css';
-	wp_register_style ( 'bootstrap-typeahead', $src );
-	wp_enqueue_style ( 'bootstrap-typeahead' );
 
 	/**
 	 * CuraH2O Phase 2

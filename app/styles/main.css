@@ -96,6 +96,10 @@ ol.field-manager li {
 	margin: 5px;
 	color: orange;
 }
+.typeahead {
+	font-size: 12px;
+	z-index: 200000;
+}
 
 #message {
 	display: none;

@@ -12,6 +12,7 @@
 
 	<!-- Add your site or application content here -->
 	<div class="container" ng-view></div>
+	<script src="<?php echo $url?>vendor/bootstrap/bootstrap-typeahead-2.1.0-customized.js"></script>
 
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.iframe-transport.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.fileupload.js"></script>
