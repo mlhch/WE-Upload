@@ -14,6 +14,7 @@
 	<div ng-view></div>
 
 	<script src="<?php echo $url?>vendor/bootstrap/js/bootstrap-typeahead-2.1.0-customized.js"></script>
+	<script src="<?php echo $url?>vendor/bootstrap/js/bootstrap-affix.js"></script>
 
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.iframe-transport.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.fileupload.js"></script>

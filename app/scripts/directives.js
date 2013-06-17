@@ -7,10 +7,18 @@ angular.module('directives', [])
 	function() {
 		return {
 			restrict: 'E',
-			template: '<div id="map"></div>',
+			template: [
+				'<div>',
+				'	<div style="height: 100%">',
+				'		<div id="map" style="height: 100%"></div>',
+				'	</div>',
+				'</div>'
+			].join(''),
 			replace: true,
-			transclude: true,
 			link: function($scope, $el, $attrs) {
+				var height = parseInt($attrs.height) || 300;
+				$el.css('height', height + 'px');
+
 				console.log('initializing map');
 				var map = L.map('map', {
 					maxZoom: 14,
@@ -31,6 +39,17 @@ angular.module('directives', [])
 						//bounds.isValid() ? map.fitBounds(bounds) : map.fitWorld();
 					}
 				});
+				
+				var affixEl = $el.find('#map').parent();
+				affixEl.css({
+					width: $el.width() + 'px',
+					height: height + 'px',
+					top: '0px',
+				}).affix({
+					offset: {
+						top: $el.offset().top + height + 100,
+					}
+				})
 			}
 		};
 	}
