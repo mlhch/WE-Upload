@@ -2,8 +2,8 @@
 
 var pluginUrl = angular.element('script:last')[0].src.replace('app/scripts/app.js', '');
 angular.element('head').append([
-		'<link rel="stylesheet" href="' + pluginUrl + 'app/styles/bootstrap/css/bootstrap.css" />',
-		//'<link rel="stylesheet" href="' + pluginUrl + 'app/styles/bootstrap/css/bootstrap-responsive.css" />',
+		'<link rel="stylesheet" href="' + pluginUrl + 'vendor/bootstrap/css/bootstrap.css" />',
+		//'<link rel="stylesheet" href="' + pluginUrl + 'vendor/bootstrap/css/bootstrap-responsive.css" />',
 		'<link rel="stylesheet" href="' + pluginUrl + 'app/styles/main.css" />'
 ]);
 
