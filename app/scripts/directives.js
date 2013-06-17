@@ -127,7 +127,7 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<table class="tablesorter">',
+					'<table class="tablesorter table table-hover">',
 					'	<thead>',
 					'		<tr>',
 					'			<th ng-repeat="field in visibleFields">{{field[2]}}</th>',
@@ -139,10 +139,7 @@ angular.module('directives', [])
 					'	 ng-repeat="obj in observations"',
 					'	 ng-click="highlightRow(obj, $event)">',
 					'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
-					'		<td style="padding: 0px; text-align: center">',
-					'			<button type="button" ng-click="openEditDialog(obj)"',
-					'			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"',
-					'			><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>',
+					'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj)">Details</button></td>',
 					'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
 					'	</tr>',
 					'</table>'
@@ -357,7 +354,7 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<div class="ob-dialog" style="display: none;">',
+					'<div class="cura-dlg hide">',
 					'	<a href="#" style="position: absolute; left: -10000px">.</a>',
 					'	<form method="post"></form>',
 					'</div>'
@@ -401,8 +398,8 @@ angular.module('directives', [])
 							html.push('</tr>');
 						});
 						html.push([
-								'<td class="label">Photo</td>',
-								'<td style="vertical-align: top" colspan="3">',
+								'<td>Photo</td>',
+								'<td colspan="3">',
 								'	<jquery-file-upload></jquery-file-upload>',
 								'</td>'
 						].join(''));
@@ -423,8 +420,8 @@ angular.module('directives', [])
 					// input[name] is needed by validation
 					if (propName == 'lab_id') {
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
-								'<td style="vertical-align: top" ' + colspan + '>',
+								'<td>' + propDesc + '</td>',
+								'<td ' + colspan + '>',
 								'	<input class="field" type="text" name="' + propName + '"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%"',
 								'	 ng-model="observation.lab_id"',
@@ -433,32 +430,32 @@ angular.module('directives', [])
 						]);
 					} else if (propName == 'lab_sample') {
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
+								'<td>' + propDesc + '</td>',
 								'<td>',
-								'	<label><input type="radio" name="' + propName + '"',
+								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.lab_sample"',
 								'	 value="Y" /> Yes</label> &nbsp; ',
-								'	<label><input type="radio" name="' + propName + '"',
+								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.lab_sample"',
 								'	 ng-click="observation.lab_id=\'\'" value="N" /> No</label>',
 								'</td>'
 						]);
 					} else if (propName == 'coliform') {
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
+								'<td>' + propDesc + '</td>',
 								'<td colspan="3">',
-								'	<label><input type="radio" name="' + propName + '"',
+								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.coliform"',
 								'	 value="Present" /> Present</label> &nbsp; ',
-								'	<label><input type="radio" name="' + propName + '"',
+								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
 								'	 ng-model="observation.coliform"',
 								'	 value="Absent" /> Absent</label>',
 								'</td>'
 						]);
 					} else if (propName == 'datetime') {
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
-								'<td style="vertical-align: top" ' + colspan + '>',
+								'<td>' + propDesc + '</td>',
+								'<td ' + colspan + '>',
 								'	<input datepicker class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation.datetime"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
@@ -466,8 +463,8 @@ angular.module('directives', [])
 						]);
 					} else if (propName == 'note') {
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
-								'<td style="vertical-align: top" ' + colspan + '>',
+								'<td>' + propDesc + '</td>',
+								'<td ' + colspan + '>',
 								'	<textarea class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation[\'' + propName + '\']"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
@@ -480,8 +477,8 @@ angular.module('directives', [])
 							directive = 'typeahead-' + propName;
 						}
 						html = html.concat([
-								'<td class="label">' + propDesc + '</td>',
-								'<td style="vertical-align: top" ' + colspan + '>',
+								'<td>' + propDesc + '</td>',
+								'<td ' + colspan + '>',
 								'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
 								'	 ng-model="observation[\'' + propName + '\']"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
@@ -634,7 +631,7 @@ angular.module('directives', [])
 					$el.dialog({
 						title: title || '',
 						width: 650,
-						height: 450,
+						height: 470,
 						zIndex: 99999,
 						buttons: buttons,
 						close: function(event, ui) {
@@ -991,24 +988,5 @@ angular.module('directives', [])
 				}
 			});
 		}
-	}
-])
-
-
-.directive('curaButton', ['$timeout',
-	function($timeout) {
-		return {
-			restrict: 'E',
-			template: [
-					'<button class="cura-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">',
-					'	<span class="ui-button-text"></span>',
-					'</button>'
-			].join(''),
-			replace: true,
-			transclude: true,
-			link: function($scope, $el, $attrs, $controller) {
-				$el.find('span').html($attrs.text);
-			}
-		};
 	}
 ])

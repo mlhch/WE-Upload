@@ -1,26 +1,23 @@
-<map lat="49.25" lng="-58.38" zoom="6"
+<map height="300" lat="49.25" lng="-58.38" zoom="6"
 	 basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-y9ohnort/{z}/{x}/{y}.png"></map>
-<div style="clear: both; height: 15px"></div>
-<div style="float: left; margin-bottom: 10px">
-	<select class="ui-button ui-widget ui-state-default ui-corner-all"
-			style="font-size: 12px; height: 30px; width: 250px; text-align: left; padding: 5px"
-			ng-model="filterOptions.location" ng-options="row.watershed_name for row in locations">
-	</select>
-	<input class="ui-button ui-corner-all ui-state-active" type="text" placeHolder="Filter by Station Name"  style="text-align: left; width: 150px" ng-model="filterOptions.searchText" typeahead-station-name />
-	<input class="ui-button ui-corner-all ui-state-active" type="text"
-	 datepicker ng-model="filterOptions.startDate" defaultDate="-1m"
-	 placeHolder="Start Date"  style="text-align: left; width: 150px" />
-	<input class="ui-button ui-corner-all ui-state-active" type="text"
-	 datepicker ng-model="filterOptions.endDate"
-	 placeHolder="End Date"  style="text-align: left; width: 150px" />
-	<cura-button ng-click="resetFilterOptions(this)" text="Reset"></cura-button>
+<div class="btn-toolbar">
+	<select class="span3" ng-model="filterOption.location"
+	 ng-options="row.watershed_name for row in locations"></select>
+	<input class="span3" type="text" ng-model="filterOption.searchText" typeahead-station-name
+ 	 placeHolder="Filter by Station Name" />
+	<input class="span2" type="datetime" ng-model="filterOption.startDate"
+	 datepicker defaultDate="-1m" placeHolder="Start Date" />
+	<input class="span2" type="datetime" ng-model="filterOption.endDate"
+	 datepicker placeHolder="End Date" />
+	<button class="span2 btn pull-right" ng-click="resetFilterOptions()">Reset</button>
 </div>
-<div class="buttons">
-	<cura-button ng-click="toggleFieldManager()" text="More fields..."></cura-button>
-	<cura-button ng-click="openAddDialog()" text="Add new entry"></cura-button>
-	<cura-button ng-click="exportAsCSV(this)" text="Export as CSV"></cura-button>
-	<cura-button ng-click="importFromCSV(this)" ng-show="config.canImport" text="Import from CSV"></cura-button>
-	<cura-button ng-click="mobileSite()" text="Mobile Site"></cura-button>
+<div class="btn-toolbar pull-right">
+	<button class="btn" ng-click="toggleFieldManager()">More fields...</button>
+	<button class="btn" ng-click="openAddDialog()">Add new entry</button>
+	<button class="btn" ng-click="exportAsCSV(this)">Export as CSV</button>
+	<button class="btn" ng-click="importFromCSV(this)"
+	 ng-show="config.canImport">Import from CSV</button>
+	<button class="btn" ng-click="mobileSite()">Mobile Site</button>
 </div>
 <field-manager></field-manager>
 <tablesorter></tablesorter>
