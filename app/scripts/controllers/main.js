@@ -2,9 +2,9 @@
 
 curaApp.controller('MainCtrl', [
 		'$scope', '$cookieStore', '$timeout',
-		'CuraGeoJSON', 'curaConfig', 'cura', 'browser',
+		'CuraGeoJSON', 'curaConfig', 'cura',
 
-	function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, cura, browser) {
+	function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, cura) {
 		var defaultGroups = [{
 				id: "",
 				watershed_name: " - Select community group - "
