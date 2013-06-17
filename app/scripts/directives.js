@@ -3,17 +3,34 @@
 angular.module('directives', [])
 
 
+.directive('sticky', [
+	function() {
+		return {
+			restrict: 'C',
+			link: function($scope, $el) {
+				angular.element('<div class="ghost"></div>').css({
+					height: $el.height() + 10 + 'px', // 10 is for btn-toolbar's margin-top: 10px
+				}).insertAfter($el);
+
+				$el.css({
+					width: $el.width() + 'px',
+					left: $el.offset().left + 'px',
+				}).affix({
+					offset: {
+						top: $el.offset().top - 10,
+					}
+				})
+			}
+		}
+	}
+])
+
+
 .directive('map', [
 	function() {
 		return {
 			restrict: 'E',
-			template: [
-				'<div>',
-				'	<div style="height: 100%">',
-				'		<div id="map" style="height: 100%"></div>',
-				'	</div>',
-				'</div>'
-			].join(''),
+			template: '<div id="map"></div>',
 			replace: true,
 			link: function($scope, $el, $attrs) {
 				var height = parseInt($attrs.height) || 300;
@@ -34,18 +51,6 @@ angular.module('directives', [])
 				$scope.$on('layerReady', function(event, layer) {
 					layer && map.addLayer(layer);
 				});
-
-				var affixEl = $el.find('#map').parent();
-				affixEl.css({
-					width: $el.width() + 'px',
-					height: height + 'px',
-					left: $el.offset().left + 'px',
-					top: '0px',
-				}).affix({
-					offset: {
-						top: $el.offset().top + height + 100,
-					}
-				})
 			}
 		};
 	}

@@ -1,23 +1,26 @@
 <map height="300" lat="49.25" lng="-58.38" zoom="6"
 	 basemap="http://{s}.tiles.mapbox.com/v3/tesera.map-y9ohnort/{z}/{x}/{y}.png"></map>
-<div class="btn-toolbar">
-	<select class="span3" ng-model="filterOption.location"
+<div class="sticky">
+	<div class="btn-toolbar">
+		<select class="span3" ng-model="filterOption.location"
 	 ng-options="row.watershed_name for row in locations"></select>
-	<input class="span3" type="text" ng-model="filterOption.searchText" typeahead-station-name
+		<input class="span3" type="text" ng-model="filterOption.searchText" typeahead-station-name
  	 placeHolder="Filter by Station Name" />
-	<input class="span2" type="datetime" ng-model="filterOption.startDate"
+		<input class="span2" type="datetime" ng-model="filterOption.startDate"
 	 datepicker defaultDate="-1m" placeHolder="Start Date" />
-	<input class="span2" type="datetime" ng-model="filterOption.endDate"
+		<input class="span2" type="datetime" ng-model="filterOption.endDate"
 	 datepicker placeHolder="End Date" />
-	<button class="span2 btn pull-right" ng-click="resetFilterOptions()">Reset</button>
-</div>
-<div class="btn-toolbar pull-right">
-	<button class="btn" ng-click="toggleFieldManager()">More fields...</button>
-	<button class="btn" ng-click="openAddDialog()">Add new entry</button>
-	<button class="btn" ng-click="exportAsCSV(this)">Export as CSV</button>
-	<button class="btn" ng-click="importFromCSV(this)"
-	 ng-show="config.canImport">Import from CSV</button>
-	<button class="btn" ng-click="mobileSite()">Mobile Site</button>
+		<button class="span2 btn pull-right" ng-click="resetFilterOptions()">Reset</button>
+	</div>
+	<div class="btn-toolbar pull-right">
+		<button class="btn" ng-click="toggleFieldManager()">More fields...</button>
+		<button class="btn" ng-click="openAddDialog()">Add new entry</button>
+		<button class="btn" ng-click="exportAsCSV(this)">Export as CSV</button>
+		<button class="btn" ng-click="importFromCSV(this)"
+		 ng-show="config.canImport">Import from CSV</button>
+		<button class="btn" ng-click="mobileSite()">Mobile Site</button>
+	</div>
+	<div class="clearfix"></div>
 </div>
 <field-manager></field-manager>
 <tablesorter></tablesorter>

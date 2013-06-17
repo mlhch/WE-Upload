@@ -37,6 +37,23 @@ html {
 .btn-toolbar > [class*=span] + [class*=span] {
 	margin-left: 5px;
 }
+.btn-toolbar::after {
+	display: block;
+	clear: both;
+}
+
+
+.sticky {
+	top: 0px;
+	background-color: white;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.affix + .ghost {
+	display: block;
+}
+.affix-top + .ghost {
+	display: none;
+}
 
 
 table.tablesorter thead tr th {
