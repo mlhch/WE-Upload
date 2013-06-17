@@ -61,25 +61,71 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 			fieldsChanged: function(cookieFields, serverFields) {
 				return !_in(cookieFields, serverFields) || !_in(serverFields, cookieFields);
 			},
-			config: function(res, $scope, $cookieStore) {
-				var config = $scope.config = res;
-				var fields = $cookieStore.get('fields');
-				// Detect server side fields configuration changes
-				$scope.fields = this.fieldsChanged(fields, config.fields) ? config.fields : fields;
-				$scope.locations = $scope.locationsPrefix.concat(config.locations);
-			},
 			geoLayer: function(res, $scope) {
-				var geoLayer = $scope.geoLayer = Cura.geoJson(res, {
+				var geoLayer = Cura.geoJson(res, {
 					onFeatureClick: function(options) {
+						console.log('------onFeatureClick------');
 						var $event = options.originalEvent;
-						$scope.highlightLocation(this.feature.properties.location_id, $event);
-						$scope.resetFilterOptions($scope);
-						$scope.filterOptions.locationIds = [];
-						for (var location_id in $scope.highlightedLocations) {
-							$scope.filterOptions.locationIds.push(location_id);
+						if (!$event || !$event.metaKey && !$event.ctrlKey) {
+							geoLayer.unSelectAll();
 						}
+						var layer = this,
+							layers = geoLayer.selectLayer(layer);
+						geoLayer.highlightLayers();
+						geoLayer.focusLayer(layer);
+
+						var locationIds = [];
+						for (var id in layers) {
+							var location_id = layers[id].feature.properties.location_id;
+							if (!locationIds[location_id]) {
+								locationIds.push(location_id);
+								locationIds[location_id] = true;
+							}
+						}
+						$scope.filterLocationIds = locationIds;
+
 						$scope.$apply();
 					}
+				});
+				$scope.$broadcast('layerReady', geoLayer);
+
+				$scope.$on('filterReseted', function(event, filterOptions) {
+					console.log('geoLayer$on: filterReseted');
+					geoLayer.unSelectAll();
+					geoLayer.highlightLayers();
+					geoLayer.fitRange();
+				});
+				$scope.$on('filterOptionChanged', function(event, filterOptions) {
+					console.log('geoLayer$on: filterOptionChanged');
+					geoLayer.doFilter(filterOptions);
+					geoLayer.fitRange();
+				});
+				$scope.$on('observationFocused', function(event, ob, passive) {
+					console.log('geoLayer$on: observationFocused', ob);
+					geoLayer.findLayerByProperties({
+						watershed_name: ob.watershed_name,
+						location_id: ob.location_id,
+					}).forEach(function(layer) {
+						geoLayer.focusLayer(layer);
+					});
+				});
+				$scope.$on('observationHighlighted', function(event, selectedObs) {
+					console.log('geoLayer$on: observationHighlighted', selectedObs);
+					var map = {};
+					geoLayer.unSelectAll(); // this is not expected when click a feature
+					for (var id in selectedObs) {
+						var ob = selectedObs[id];
+						var key = ob.watershed_name + '|' + ob.location_id;
+						if (!map[key]) {
+							geoLayer.findLayerByProperties({
+								watershed_name: ob.watershed_name,
+								location_id: ob.location_id,
+							}).forEach(function(layer) {
+								geoLayer.selectLayer(layer);
+							});
+						}
+					}
+					geoLayer.highlightLayers();
 				});
 			},
 			watchFields: function(value, $scope, $cookieStore) {
@@ -104,24 +150,6 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 				$scope.sortList = sortList;
 			},
 			importFromCSV: importFromCSV,
-			highlightRow: function(obj, $event, $scope) {
-				if (!$event || !$event.metaKey && !$event.ctrlKey) {
-					$scope.highlightedRows = {};
-				} else {
-					$scope.highlightedRows = $scope.highlightedRows || {};
-				}
-				$scope.highlightedRows[obj.id] = true;
-
-				$scope.highlightLocation(obj.location_id, $event);
-			},
-			highlightLocation: function(location_id, $event, $scope) {
-				if (!$event || !$event.metaKey && !$event.ctrlKey) {
-					$scope.highlightedLocations = {};
-				} else {
-					$scope.highlightedLocations = $scope.highlightedLocations || {};
-				}
-				$scope.highlightedLocations[location_id] = true;
-			},
 		}
 	}
 })

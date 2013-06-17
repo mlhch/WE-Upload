@@ -31,15 +31,10 @@ angular.module('directives', [])
 					map.setView([$attrs.lat, $attrs.lng], $attrs.zoom);
 				}
 
-				$scope.$watch('geoLayer', function(value) {
-					if (value) {
-						console.log('adding geoLayer layer');
-						map.addLayer(value);
-						//var bounds = value.getBounds();
-						//bounds.isValid() ? map.fitBounds(bounds) : map.fitWorld();
-					}
+				$scope.$on('layerReady', function(event, layer) {
+					layer && map.addLayer(layer);
 				});
-				
+
 				var affixEl = $el.find('#map').parent();
 				affixEl.css({
 					width: $el.width() + 'px',
@@ -122,8 +117,8 @@ angular.module('directives', [])
 ])
 
 
-.directive('tablesorter', ['$parse',
-	function($parse) {
+.directive('tablesorter', ['$parse', 'Observation',
+	function($parse, Observation) {
 		return {
 			restrict: 'E',
 			template: [
@@ -135,9 +130,9 @@ angular.module('directives', [])
 					'			<th></th>',
 					'		</tr>',
 					'	</thead>',
-					'	<tr tablesorter-row ng-class="highlightedRows[obj.id]&&\'highlight\'||\'\'"',
+					'	<tr tablesorter-row ng-class="highlightClass(obj)"',
 					'	 ng-repeat="obj in observations"',
-					'	 ng-click="highlightRow(obj, $event)">',
+					'	 ng-click="selectRow(obj, $event)">',
 					'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
 					'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj)">Details</button></td>',
 					'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
@@ -146,6 +141,42 @@ angular.module('directives', [])
 			].join(''),
 			replace: true,
 			link: function($scope, $el) {
+				var highlightedRows = {};
+				var selectedRows = {};
+				var focusedRow = null;
+				$scope.selectRow = function(obj, $event) {
+					console.log('------Row clicked------', obj);
+					if (!$event || !$event.metaKey && !$event.ctrlKey) {
+						selectedRows = {};
+						highlightedRows = {};
+					}
+					focusedRow = selectedRows[obj.id] = highlightedRows[obj.id] = obj;
+					$scope.$emit('observationHighlighted', highlightedRows);
+					$scope.$emit('observationFocused', obj);
+				}
+				$scope.highlightClass = function(obj) {
+					if (focusedRow && focusedRow.id == obj.id) {
+						highlightedRows[obj.id] = obj
+						return 'highlighted';
+					} else if (selectedRows[obj.id]) {
+						highlightedRows[obj.id] = obj
+						return 'selected';
+					} else {
+						return '';
+					}
+				}
+				$scope.$on('filterOptionsChanged', function(event, value) {
+					console.log('tablesorter$on: filterOptionsChanged');
+					// use callback way to avoid table rows become 'empty' temporarily
+					Observation.query(value, function(res) {
+						$scope.observations = res;
+					});
+				})
+				$scope.$on('filterReseted', function() {
+					focusedRow = null;
+					selectedRows = {};
+					highlightedRows = {};
+				});
 				$scope.$on('tablesorterEnd', function() {
 					if ($el[0].config) {
 						$el.trigger('update');
@@ -393,8 +424,8 @@ angular.module('directives', [])
 								'<td ' + colspan + '>',
 								'	<input class="field" type="text" name="' + propName + '"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%"',
-								'	 ng-model="observation.lab_id"',
-								'	 ng-disabled="observation.lab_sample==\'N\'" />',
+								'	 ng-model="editingOb.lab_id"',
+								'	 ng-disabled="editingOb.lab_sample==\'N\'" />',
 								'</td>'
 						]);
 					} else if (propName == 'lab_sample') {
@@ -402,11 +433,11 @@ angular.module('directives', [])
 								'<td>' + propDesc + '</td>',
 								'<td>',
 								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="observation.lab_sample"',
+								'	 ng-model="editingOb.lab_sample"',
 								'	 value="Y" /> Yes</label> &nbsp; ',
 								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="observation.lab_sample"',
-								'	 ng-click="observation.lab_id=\'\'" value="N" /> No</label>',
+								'	 ng-model="editingOb.lab_sample"',
+								'	 ng-click="editingOb.lab_id=\'\'" value="N" /> No</label>',
 								'</td>'
 						]);
 					} else if (propName == 'coliform') {
@@ -414,10 +445,10 @@ angular.module('directives', [])
 								'<td>' + propDesc + '</td>',
 								'<td colspan="3">',
 								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="observation.coliform"',
+								'	 ng-model="editingOb.coliform"',
 								'	 value="Present" /> Present</label> &nbsp; ',
 								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="observation.coliform"',
+								'	 ng-model="editingOb.coliform"',
 								'	 value="Absent" /> Absent</label>',
 								'</td>'
 						]);
@@ -426,7 +457,7 @@ angular.module('directives', [])
 								'<td>' + propDesc + '</td>',
 								'<td ' + colspan + '>',
 								'	<input datepicker class="field" type="text" name="' + propName + '"',
-								'	 ng-model="observation.datetime"',
+								'	 ng-model="editingOb.datetime"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 								'</td>'
 						]);
@@ -435,7 +466,7 @@ angular.module('directives', [])
 								'<td>' + propDesc + '</td>',
 								'<td ' + colspan + '>',
 								'	<textarea class="field" type="text" name="' + propName + '"',
-								'	 ng-model="observation[\'' + propName + '\']"',
+								'	 ng-model="editingOb[\'' + propName + '\']"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%"></textarea>',
 								'</td>'
@@ -449,7 +480,7 @@ angular.module('directives', [])
 								'<td>' + propDesc + '</td>',
 								'<td ' + colspan + '>',
 								'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
-								'	 ng-model="observation[\'' + propName + '\']"',
+								'	 ng-model="editingOb[\'' + propName + '\']"',
 								'	 ng-readonly="readOnly[\'' + propName + '\']"',
 								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
 								'</td>'
@@ -505,20 +536,21 @@ angular.module('directives', [])
 					now.minute = now.getMinutes();
 					var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
 					var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
-					var $ob = {};
-					$scope.fields.forEach(function(field) {
-						$ob[field[0]] = '';
-					});
-					$ob.id = 0;
-					$ob.datetime = dt + ' ' + tm;
-					$scope.observation = $ob;
-					openDialog('Add Observation', $ob);
+					$scope.updatingOb = {
+						id: 0,
+					};
+					$scope.editingOb = {
+						id: 0,
+						datetime: dt + ' ' + tm,
+					}
+					openDialog('Add Observation', $scope.editingOb);
 					$form.validate().resetForm();
 				}
 
 				$scope.openEditDialog = function(obj) {
-					$scope.observation = obj;
-					openDialog('Edit Observation', obj);
+					$scope.updatingOb = obj;
+					$scope.editingOb = angular.extend({}, obj);
+					openDialog('Edit Observation', $scope.editingOb);
 
 					var validator = $form.validate();
 					validator.prepareForm();
@@ -622,22 +654,12 @@ angular.module('directives', [])
 
 					if (resp.affectedRows) {
 						if (resp.insertId) {
-							$scope.observation.id = resp.insertId;
+							$scope.updatingOb.id = resp.insertId;
 							Toast.show('Entry ' + resp.insertId + ' added');
 						} else {
 							Toast.show('Entry ' + resp.id + ' updated');
 						}
-
-						var ob = resp.data;
-						var args = {
-							watershed_name: ob.watershed_name,
-							station_name: ob.station_name,
-							location_id: ob.location_id,
-						};
-						$scope.$broadcast('updateLayer', args);
-						$scope.refreshFilter();
-
-						$scope.$broadcast('clearTypeaheads');
+						angular.extend($scope.updatingOb, $scope.editingOb);
 					} else {
 						Toast.show('No changes updated')
 					}
@@ -648,15 +670,7 @@ angular.module('directives', [])
 					if (resp.affectedRows) {
 						$el.dialog('close');
 						Toast.show('Entry ' + resp.id + ' deleted');
-						$scope.$broadcast('clearTypeaheads');
-						$scope.refreshFilter();
-
-						var ob = resp.data;
-						$scope.$broadcast('updateLayer', {
-							watershed_name: ob.watershed_name,
-							station_name: ob.station_name,
-							location_id: ob.location_id,
-						});
+						$scope.updatingOb = null;
 					} else {
 						Toast.show('Data Entry ' + resp.id + ' does not exist');
 					}
@@ -670,7 +684,7 @@ angular.module('directives', [])
 				 * Button to export data as CSV
 				 */
 				$scope.exportAsCSV = function($event) {
-					var obj = angular.extend({}, $scope.AllFilterOptions);
+					var obj = angular.extend({}, $scope.filterOptions);
 					obj.downloadPhoto = 1;
 					if (!jQuery('#downloadPhoto').length) {
 						jQuery([
@@ -787,7 +801,7 @@ angular.module('directives', [])
 					});
 				},
 				updater: function(watershed) {
-					var $ob = $scope.observation;
+					var $ob = $scope.editingOb;
 					var $readOnly = $scope.readOnly;
 					$ob.watershed_name = watershed;
 
@@ -823,7 +837,7 @@ angular.module('directives', [])
 			$el.typeahead({
 				source: function(query, callback) {
 					var $form = $el.closest('form');
-					var $ob = $scope.observation;
+					var $ob = $scope.editingOb;
 					var watershed = $ob && $ob.watershed_name || '';
 					if (_items[watershed]) {
 						return _items[watershed];
@@ -849,7 +863,7 @@ angular.module('directives', [])
 				updater: function(station) {
 					$parse($attrs.ngModel).assign($scope, station);
 
-					var $ob = $scope.observation;
+					var $ob = $scope.editingOb;
 					var $readOnly = $scope.readOnly;
 					$ob && ($ob.station_name = station);
 
@@ -898,7 +912,7 @@ angular.module('directives', [])
 
 			$el.typeahead({
 				source: function(query, callback) {
-					var $ob = $scope.observation;
+					var $ob = $scope.editingOb;
 					var watershed = $ob.watershed_name || '';
 
 					var station = $ob.station_name || '';
@@ -925,10 +939,10 @@ angular.module('directives', [])
 					});
 				},
 				updater: function(location_id) {
-					var $ob = $scope.observation;
+					var $ob = $scope.editingOb;
 					var $readOnly = $scope.readOnly;
 					$ob.location_id = location_id;
-					var watershed = $ob.watershed_name;
+					var watershed = $ob.watershed_name || '';
 
 					$ob.latitude = $ob.longitude = '';
 					$readOnly.latitude = $readOnly.longitude = false;

@@ -2,10 +2,10 @@
 
 curaApp.controller('MainCtrl', [
 		'$scope', '$cookieStore', '$timeout',
-		'CuraGeoJSON', 'curaConfig', 'Observation', 'cura',
+		'CuraGeoJSON', 'curaConfig', 'cura', 'browser',
 
-	function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, Observation, cura) {
-		$scope.locationsPrefix = [{
+	function($scope, $cookieStore, $timeout, CuraGeoJSON, curaConfig, cura, browser) {
+		var defaultGroups = [{
 				id: "",
 				watershed_name: " - Select community group - "
 			}, {
@@ -13,27 +13,27 @@ curaApp.controller('MainCtrl', [
 				watershed_name: "View All"
 			}
 		];
+		var defaultFilterOption = {
+			location: defaultGroups[1],
+			searchText: '',
+			startDate: '',
+			endDate: '',
+		};
+		var defaultFilterOptions = angular.extend({}, defaultFilterOption, {
+			locationIds: []
+		});
+		var setFilterOptions = function(options) {
+			return $scope.filterOptions = angular.extend({}, defaultFilterOptions, options || {});
+		}
+		$scope.filterOption = angular.extend({}, defaultFilterOptions);
 
 
-		$scope.refreshFilter = function() {
-			$scope.AllFilterOptions.forceReset = Date.now();
-		}
-		$scope.highlightRow = function(obj, $event) {
-			cura.highlightRow(obj, $event, $scope);
-		}
-		$scope.highlightLocation = function(location_id, $event) {
-			cura.highlightLocation(location_id, $event, $scope);
-		}
 		$scope.importFromCSV = cura.importFromCSV;
 		$scope.resetFilterOptions = function() {
-			$scope.filterOptions = {
-				location: $scope.locationsPrefix[1], // View All
-				searchText: '',
-				startDate: '',
-				endDate: '',
-				locationIds: [],
-				forceReset: Date.now(), // This makes 'reset' always refresh
-			}
+			console.log('------reset------')
+			$scope.filterOption = angular.extend({}, defaultFilterOption);
+			$scope.filterLocationIds = [];
+			$scope.$broadcast('filterReseted');
 		};
 
 
@@ -43,60 +43,51 @@ curaApp.controller('MainCtrl', [
 		$scope.$watch('sortList', function(value) {
 			value && $cookieStore.put('sortList', value);
 		}, true);
-		$scope.$watch('filterOptions', function(value) {
+		$scope.$watch('filterLocationIds', function(value) {
 			if (value) {
-				$scope.AllFilterOptions = value
-				$scope.geoLayer && $scope.geoLayer.doFilter(value);
+				console.log('main@watch: filterLocationIds', value.slice(0));
+				$scope.$broadcast('filterLocationIdsChanged', value);
+				setFilterOptions({
+					locationIds: value,
+				});
+			}
+		});
+		$scope.$watch('filterOption', function(value) {
+			if (value) {
+				console.log('------filterOption------');
+				$scope.$broadcast('filterOptionChanged', value);
+				setFilterOptions(value);
 			}
 		}, true);
-		$scope.$watch('AllFilterOptions', function(value) {
+		$scope.$watch('filterOptions', function(value) {
 			if (value) {
-				// use callback way to avoid table rows become 'empty' temporarily
-				Observation.query(value, function(res) {
-					$scope.observations = res;
+				console.log('main$watch: filterOptions');
+				$scope.$broadcast('filterOptionsChanged', value);
+			}
+		}, true);
+		$scope.$watch('updatingOb', function(value, oldValue) {
+			if (value && oldValue) {
+				$scope.$broadcast('clearTypeaheads');
+				$scope.filterLocationIds = [value.location_id];
+				$scope.updatingOb = null;
+
+				curaConfig.get(function(res) {
+					cura.config(res, $scope, $cookieStore);
 				});
 			}
 		}, true);
-		$scope.$watch('highlightedLocations', function(value, oldValue) {
-			if (oldValue) {
-				for (var location_id in oldValue) {
-					if (!value[location_id]) {
-						$scope.geoLayer.findLayerByLocationId(location_id).forEach(function(layer) {
-							layer.closePopup();
-							$scope.geoLayer.unHighlight(layer);
-						});
-					}
-				}
-			}
-			if (value) {
-				for (var location_id in value) {
-					if (!oldValue || !oldValue[location_id]) {
-						$scope.geoLayer.findLayerByLocationId(location_id).forEach(function(layer) {
-							layer.openPopup();
-							$scope.geoLayer.highlight(layer);
-						});
-					}
-				}
-			}
-		}, true);
-
-
-		$scope.$on('updateLayer', function($event, props) {
-			CuraGeoJSON.get(props, function(feature) {
-				$scope.geoLayer.updateLayer(props, feature);
-			});
-			curaConfig.get(function(res) {
-				cura.config(res, $scope, $cookieStore);
-			});
-		});
 
 
 		curaConfig.get(function(res) {
-			cura.config(res, $scope, $cookieStore);
+			var config = $scope.config = res;
+			var fields = $cookieStore.get('fields');
+			// Detect server side fields configuration changes
+			$scope.fields = cura.fieldsChanged(fields, config.fields) ? config.fields : fields;
+			$scope.locations = defaultGroups.concat(config.locations);
 		});
 		CuraGeoJSON.query(function(res) {
 			cura.geoLayer(res, $scope);
 		});
-		$scope.resetFilterOptions();
+		setFilterOptions();
 	}
 ]);
