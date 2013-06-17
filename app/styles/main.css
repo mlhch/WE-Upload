@@ -37,24 +37,40 @@ html {
 .btn-toolbar > [class*=span] + [class*=span] {
 	margin-left: 5px;
 }
-table.tablesorter {
-	border-spacing: 1px;
-}
+
+
 table.tablesorter thead tr th {
 	padding-right: 1em;
 }
-table.tablesorter tbody tr.highlight td {
-	background-color: lightblue
+table.tablesorter tbody tr.selected td {
+	background-color: #c4e3f3;
 }
-table.tablesorter thead tr th,.talbesorter tbody tr td {
-	text-align: left;
-	line-height: normal;
+table.tablesorter tbody tr.highlighted td {
+	background-color: #faf2cc;
 }
-table.tablesorter .right {
-	text-align: right;
-	vertical-align: middle;
+table.tablesorter tbody tr:hover td {
+	background-color: #faf2cc;;
 }
 
+.tablesorterPager {
+	background-color: transparent !important;
+}
+.tablesorterPager img {
+	width: 30px;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+.tablesorterPager img.disabled {
+	cursor: default;
+}
+.tablesorterPager input {
+	font-size: 1rem !important;
+	border: 1px solid whitesmoke !important;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+.tablesorterPager select {
+	margin-bottom: 9px;
+}
 
 
 ol.field-manager:before {

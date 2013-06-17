@@ -145,6 +145,36 @@ angular.module('directives', [])
 					'</table>'
 			].join(''),
 			replace: true,
+			link: function($scope, $el) {
+				$scope.$on('tablesorterEnd', function() {
+					if ($el[0].config) {
+						$el.trigger('update');
+						setTimeout(function() {
+							$el.trigger('sorton', [$scope.sortList]);
+						}, 1);
+						return;
+					}
+					var headers = {};
+					// the Action column don't need sortable
+					var cols = $el.find('thead tr th').length;
+					headers[cols - 1] = {
+						sorter: false
+					};
+
+					$el.tablesorter({
+						headers: headers,
+						sortList: $scope.sortList || [],
+						//widthFixed: true,
+						widgets: ['zebra'],
+					}).bind('sortEnd', function() {
+						$scope.sortList = this.config.sortList;
+						$scope.$apply();
+						$el.trigger("applyWidgets");
+					});
+
+					$scope.$broadcast('tablesorterInitialized', $el);
+				});
+			}
 		}
 	}
 ])
@@ -152,7 +182,7 @@ angular.module('directives', [])
 
 .directive('tablesorterRow', [
 	function() {
-		return function(scope, iElement, iAttrs, controller) {
+		return function($scope) {
 			//console.log("row: " + scope.$index);
 		}
 	}
@@ -161,134 +191,73 @@ angular.module('directives', [])
 
 .directive('tablesorterCol', [
 	function() {
-		return {
-			restrict: 'A',
-			link: function(scope, iElement, iAttrs, controller) {
-				//console.log("r" + scope.$parent.$index + ", c" + scope.$index)
-				if (scope.$parent.$last && scope.$last) {
-					var $scope = scope.$parent.$parent;
-					var $tb = jQuery('table.tablesorter');
-
-					if ($tb[0].config) {
-						$tb.trigger('update');
-						setTimeout(function() {
-							$tb.trigger('sorton', [$scope.sortList]);
-						}, 1);
-						return;
-					}
-					var headers = {};
-					// the Action column don't need sortable
-					var cols = $tb.find('thead tr th').length;
-					headers[cols - 1] = {
-						sorter: false
-					};
-
-					$tb.tablesorter({
-						headers: headers,
-						sortList: $scope.sortList || [],
-						//widthFixed: true,
-						widgets: ['zebra'],
-					}).bind('sortEnd', function() {
-						$scope.sortList = this.config.sortList;
-						$scope.$apply();
-						$tb.trigger("applyWidgets");
-					});
-
-					scope.$emit('tablesorterInitialized', $tb);
-				}
+		return function($scope) {
+			//console.log("r" + scope.$parent.$index + ", c" + scope.$index)
+			if ($scope.$parent.$last && $scope.$last) {
+				$scope.$emit('tablesorterEnd');
 			}
 		}
 	}
 ])
 
 
-.directive('tablesorterPagination', ['$cookieStore', '$compile',
+.directive('tablesorterPager', ['$cookieStore', '$compile', 'cura',
 
-	function($cookieStore, $compile) {
+	function($cookieStore, $compile, cura) {
 		return {
-			restrict: 'E',
-			template: [
-					'<div class="tablesorterPager" style="display: block">',
-					'</div>'
-			].join(''),
-			replace: true,
-			transclude: true,
-			link: function(scope, iElement, iAttrs, controller) {
-				scope.$watch('config.pluginUrl', function(value) {
-					if (value) {
-						var url = value + 'vendor/jquery.tablesorter/addons/pager/icons';
-						var html = [
-								'	<form>',
-								'		<img src="' + url + '/first.png" class="first" width="30" />',
-								'		<img src="' + url + '/prev.png" class="prev" width="30" />',
-								'		<input type="text" class="pagedisplay" />',
-								'		<img src="' + url + '/next.png" class="next" width="30" />',
-								'		<img src="' + url + '/last.png" class="last" width="30" />',
-								'		<select class="pagesize">',
-								'			<option selected="selected" value="100">100</option>',
-								'			<option value="50">50</option>',
-								'		</select>',
-								'	</form>'
-						].join('');
-						iElement.append($compile(html)(scope));
-					}
+			restrict: 'C',
+			scope: {
+				group: '@',
+			},
+			link: function($scope, $el, $attrs) {
+				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
+
+				var url = cura.pluginUrl + 'vendor/jquery.tablesorter/addons/pager/icons/';
+				$el.append($compile([
+						'<form ng-show2="config.totalPages <= 1 && $group.id">',
+						'	<img class="first" ng-hide="page<1" src="' + url + 'first.png" />',
+						'	<img class="disabled" ng-show="page<1" src="' + url + 'first-disabled.png" />',
+						'	<img class="prev" ng-hide="page<1" src="' + url + 'prev.png" />',
+						'	<img class="disabled" ng-show="page<1" src="' + url + 'prev-disabled.png" />',
+						'	<input type="text" class="span1 pagedisplay" ng-model="currentPage" />',
+						'	<img class="next" ng-hide="page>=total-1" src="' + url + 'next.png" />',
+						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'next-disabled.png" />',
+						'	<img class="last" ng-hide="page>=total-1" src="' + url + 'last.png" />',
+						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'last-disabled.png" />',
+						'	<select class="span1 pagesize">',
+						'		<option ng-selected="pagesize==100" value="100">100</option>',
+						'		<option ng-selected="pagesize==10" value="10">10</option>',
+						'	</select>',
+						'</form>'
+				].join(''))($scope));
+
+				$scope.$watch('pagesize', function(value) {
+					value && $cookieStore.put('pagesize', value);
 				});
 
-				scope.$watch('pagesize', function(value) {
-					value && $cookieStore.put('pagesize', value);
-				})
-
-				scope.$on('tablesorterInitialized', function(event, $tb) {
-					scope.pagesize = $cookieStore.get('pagesize') || iElement.find('.pagesize').val();
+				$scope.$on('tablesorterInitialized', function(event, $tb) {
+					$scope.$watch('currentPage', function(value) {
+						var m = value && value.match(/(\d+)\/\d+/);
+						if (m) {
+							var table = $tb[0],
+								config = table.config;
+							config.page = Math.max(0, m[1] - 1);
+							setTimeout(function() {
+								config.appender(table, config.rowsCopy);
+							}, 0);
+						}
+					})
 
 					$tb.tablesorterPager({
-						container: iElement,
+						container: $el,
 						positionFixed: false,
-						size: scope.pagesize,
+						size: $scope.pagesize,
 					}).bind('applyWidgets', function() {
-						var config = this.config;
-
-						if (config.totalPages <= 1 && scope.filterOptions.location.id) {
-							iElement.hide();
-							return;
-						} else {
-							iElement.show();
-						}
-
-						if (config.page < 1) {
-							var img = iElement.find(config.cssFirst);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
-							img.attr('src', src);
-
-							var img = iElement.find(config.cssPrev);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
-							img.attr('src', src);
-						} else {
-							var img = iElement.find(config.cssFirst);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
-							img.attr('src', src);
-
-							var img = iElement.find(config.cssPrev);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
-							img.attr('src', src);
-						}
-						if (config.page >= config.totalPages - 1) {
-							var img = iElement.find(config.cssLast);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
-							img.attr('src', src);
-
-							var img = iElement.find(config.cssNext);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1-disabled$2');
-							img.attr('src', src);
-						} else {
-							var img = iElement.find(config.cssLast);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
-							img.attr('src', src);
-
-							var img = iElement.find(config.cssNext);
-							var src = img.attr('src').replace(/(\/[^\/\-]+)(?:-disabled)*(\.png)/, '$1$2');
-							img.attr('src', src);
-						}
+						var c = this.config;
+						$scope.page = c.page;
+						$scope.total = c.totalPages;
+						$scope.pagesize = c.size;
+						$scope.$apply();
 					});
 				});
 			}

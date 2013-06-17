@@ -1,27 +1,25 @@
 div.tablesorterPager {
+	padding: 10px 0 10px 0;
+	background-color: #D6D2C2;
 	text-align: center;
 }
-
-div.tablesorterPager img {
-	width: 30px;
-}
-
 div.tablesorterPager span {
 	padding: 0 5px 0 5px;
 }
-div.tablesorterPager .prev {
+div.tablesorterPager input.prev {
+	width: auto;
 	margin-right: 10px;
 }
-div.tablesorterPager .next {
+div.tablesorterPager input.next {
+	width: auto;
 	margin-left: 10px;
 }
-div.tablesorterPager input.pagedisplay {
-	margin-top: 7px;
-	vertical-align: top;
+div.tablesorterPager input {
+	font-size: 8px;
+	width: 50px;
+	border: 1px solid #330000;
+	text-align: center;
 }
 
-div.tablesorterPager select.pagesize {
-	width: auto;
-	margin-top: 7px;
-	vertical-align: top;
-}
+
+  

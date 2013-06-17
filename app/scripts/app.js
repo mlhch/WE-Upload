@@ -57,6 +57,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 		}
 
 		return {
+			pluginUrl: pluginUrl,
 			fieldsChanged: function(cookieFields, serverFields) {
 				return !_in(cookieFields, serverFields) || !_in(serverFields, cookieFields);
 			},
