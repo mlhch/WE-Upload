@@ -191,6 +191,18 @@ function cura_json_observations() {
 
 	// making root as Array is for ngResource
 	$observations = cura_get_observations ( $request );
+	foreach ($observations as &$row) {
+		$path = cura_photo_path($row->id);
+		if (is_dir($path)) {
+			$row->photos = array();
+			$photos = scandir($path);
+			foreach ($photos as $file) {
+				if ($file[0] != '.' && is_file($path . $file)) {
+					$row->photos[] = $file;
+				}
+			}
+		}
+	}
 
 	if (!empty ( $_REQUEST ['downloadPhoto'] )) {
 		ob_start();

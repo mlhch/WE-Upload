@@ -113,6 +113,7 @@ angular.module('directives', [])
 					'		<tr>',
 					'			<th ng-repeat="field in visibleFields">{{field[2]}}</th>',
 					'			<th style="text-align:center; width:10px">Action</th>',
+					'			<th></th>',
 					'		</tr>',
 					'	</thead>',
 					'	<tr tablesorter-row ng-class="highlightedRows[obj.id]&&\'highlight\'||\'\'"',
@@ -123,6 +124,7 @@ angular.module('directives', [])
 					'			<button type="button" ng-click="openEditDialog(obj)"',
 					'			 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"',
 					'			><span class="ui-button-text" style="padding:3px 1em">Details</span></button></td>',
+					'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
 					'	</tr>',
 					'</table>'
 			].join(''),
