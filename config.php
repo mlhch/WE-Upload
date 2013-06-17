@@ -143,7 +143,7 @@ $cura_fields = array (
 		array (
 				"field" => "temp",
 				"placeHolder" => "0 ~ 30",
-				"description" => "Temp. (⁰C)",
+				"description" => "Water Temp. (⁰C)",
 				"validation" => array (
 						"rules" => array (
 								"number" => true,
