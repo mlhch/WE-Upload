@@ -199,8 +199,8 @@ function cura_json_observations() {
 	$observations = cura_get_observations ( $request );
 	foreach ($observations as &$row) {
 		$path = cura_photo_path($row->id);
+		$row->photos = array();
 		if (is_dir($path)) {
-			$row->photos = array();
 			$photos = scandir($path);
 			foreach ($photos as $file) {
 				if ($file[0] != '.' && is_file($path . $file)) {
