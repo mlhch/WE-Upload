@@ -148,7 +148,7 @@ function cura_get_features() {
 				, b.startDate
 				, b.endDate
 		FROM	(
-			SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
+			SELECT	MAX(id) id
 					, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
 					, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
 			FROM	`" . CURAH2O_TABLE . "`
@@ -158,19 +158,15 @@ function cura_get_features() {
 					watershed_name, location_id
 		) AS b
 		JOIN	`" . CURAH2O_TABLE . "` AS a
-			ON	CONCAT(a.datetime, '#', a.id) = b.datetime_id
+			ON	a.id = b.id
 	";
 	return $wpdb->get_results ( $sql );
 }
 function cura_get_feature($watershed_name, $location_id) {
 	global $wpdb;
-	
+
 	$sql = "
-		SELECT	watershed_name
-				, station_name
-				, location_id
-				, latitude
-				, longitude
+		SELECT	MAX(id) id
 				, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
 				, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
 		FROM	`" . CURAH2O_TABLE . "`
@@ -179,6 +175,19 @@ function cura_get_feature($watershed_name, $location_id) {
 			AND	watershed_name = '" . addslashes($watershed_name) . "'
 			AND	location_id = '" . addslashes($location_id) . "'
 	";
+	$sql = "
+		SELECT	watershed_name
+				, station_name
+				, location_id
+				, latitude
+				, longitude
+				, startDate
+				, endDate
+		FROM	`" . CURAH2O_TABLE . "` AS a
+		JOIN	($sql) t
+			ON	a.id = t.id
+	";
+	
 	return $wpdb->get_row ( $sql );
 }
 function cura_update_layers() {
@@ -445,7 +454,7 @@ function cura_get_observations($options) {
 			AND	" . implode ( "
 			AND	", $sql_filter )) . "
 		ORDER BY
-				a.datetime DESC, a.watershed_name, a.station_name, a.id DESC
+				a.id DESC
 	";
 	$objs = $wpdb->get_results ( $sql );
 	
@@ -614,7 +623,7 @@ function cura_get_typeaheads_of_station($watershed_name) {
 	global $wpdb;
 	
 	$sql = "
-		SELECT	MAX(CONCAT(datetime, '#', id)) datetime_id
+		SELECT	MAX(id) id
 		FROM	`" . CURAH2O_TABLE . "`
 		WHERE	" . ($watershed_name == '' ? '1' : "watershed_name = '" . addslashes ( $watershed_name ) . "'") . "
 		GROUP BY			
@@ -626,11 +635,11 @@ function cura_get_typeaheads_of_station($watershed_name) {
 				, latitude
 				, longitude
 				, datetime
-		FROM	`" . CURAH2O_TABLE . "`
+		FROM	`" . CURAH2O_TABLE . "` AS a
 		JOIN	($sql) t
-			ON	CONCAT(datetime, '#', id) = t.datetime_id
+			ON	a.id = t.id
 		ORDER BY
-				datetime DESC
+				a.id DESC
 	";
 	return $wpdb->get_results ( $sql, ARRAY_A );
 }
