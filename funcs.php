@@ -562,6 +562,26 @@ function cura_update_location($watershed_name) {
 		$wpdb->query ( $sql );
 	}
 }
+function cura_get_typeaheads_of_watershed() {
+	global $wpdb;
+	
+	$sql = "
+		SELECT	MAX(id) id
+		FROM	`" . CURAH2O_TABLE . "`
+		WHERE	1
+		GROUP BY
+				watershed_name
+	";
+	$sql = "
+		SELECT	watershed_name
+		FROM	`" . CURAH2O_TABLE . "` AS a
+		JOIN	($sql) t
+			ON	a.id = t.id
+		ORDER BY
+				a.id DESC
+	";
+	return $wpdb->get_results ( $sql, ARRAY_A );
+}
 function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
 	global $wpdb;
 	

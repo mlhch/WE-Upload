@@ -164,6 +164,12 @@ function cura_json_locations() {
 /*
  * Ajax - typeaheads.json
  */
+function cura_json_typeaheads_watershed_name() {
+	$rows = cura_get_typeaheads_of_watershed ();
+	
+	echo json_encode ( $rows );
+	exit ( 0 );
+}
 function cura_json_typeaheads_station_name() {
 	$watershed = isset ( $_REQUEST ['watershed'] ) ? $_REQUEST ['watershed'] : '';
 	$rows = cura_get_typeaheads_of_station ( $watershed );

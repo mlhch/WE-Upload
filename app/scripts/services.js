@@ -45,6 +45,13 @@ angular.module('services', ['ngResource'])
 				action: 'cura_locations.json',
 			}
 		},
+		typeaheads_watershed_name: {
+			method: 'GET',
+			isArray: true,
+			params: {
+				action: "cura_typeaheads_watershed_name.json"
+			}
+		},
 		typeaheads_station_name: {
 			method: 'GET',
 			isArray: true,

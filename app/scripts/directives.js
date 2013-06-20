@@ -820,12 +820,12 @@ angular.module('directives', [])
 					if (_items.length) {
 						return _items;
 					}
-					curaConfig.locations(function(res) {
+
+					curaConfig.typeaheads_watershed_name(function(res) {
 						for (var i = 0, row; row = res[i++];) {
 							_items.push(row.watershed_name);
 						}
 						callback(_items);
-						return;
 					});
 				},
 				updater: function(watershed) {
