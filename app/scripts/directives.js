@@ -373,6 +373,7 @@ angular.module('directives', [])
 						jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
 					},
 					done: function(e, data) {
+						$scope.ob.photos = $scope.ob.photos || [];
 						$scope.ob.photos.push(new Photo(data.result[0]));
 						$scope.$apply();
 						$el.find('.bar').css('width', '0%');

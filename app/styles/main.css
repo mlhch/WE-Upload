@@ -54,6 +54,9 @@
 }
 
 
+table.tablesorter tr td {
+	font-size: 12px;
+}
 table.tablesorter thead tr th {
 	font-size: 12px;
 	line-height: 1;
