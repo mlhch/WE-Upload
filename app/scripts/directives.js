@@ -216,7 +216,7 @@ angular.module('directives', [])
 					var headers = {};
 					// the Action column don't need sortable
 					var cols = $el.find('thead tr th').length;
-					headers[cols - 1] = {
+					headers[cols - 1] = headers[cols - 2] = {
 						sorter: false
 					};
 
