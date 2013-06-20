@@ -342,15 +342,18 @@ angular.module('directives', [])
 ])
 
 
-.directive('jqueryFileUpload', ['Photo',
-	function(Photo) {
+.directive('jqueryFileUpload', ['$compile', 'Photo',
+	function($compile, Photo) {
 		return {
 			restrict: 'E',
 			scope: {
 				canedit: '@',
 				ob: '=',
 			},
-			template: [
+			template: '<div></div>',
+			replace: true,
+			link: function($scope, $el, $attrs) {
+				var html = [
 					'<div>',
 					'	<input ng-show="canedit" class="field" type="file" multiple>',
 					'	<p ng-repeat="photo in ob.photos" style="padding: 3px; border-bottom: 1px solid #f0f0f0">{{photo.name}}',
@@ -361,28 +364,33 @@ angular.module('directives', [])
 					'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
 					'	</div>',
 					'</div>',
-			].join(''),
-			replace: true,
-			link: function($scope, $el, $attrs) {
-				$el.find('input').fileupload({
-					dataType: 'json',
-					add: function(e, data) {
-						$el.find('.bar').css('width', '0%');
-						data.id = $scope.ob.id;
-						data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action&id=' + data.id;
-						jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
-					},
-					done: function(e, data) {
-						$scope.ob.photos = $scope.ob.photos || [];
-						$scope.ob.photos.push(new Photo(data.result[0]));
-						$scope.$apply();
-						$el.find('.bar').css('width', '0%');
-					},
-					progressall: function(e, data) {
-						var progress = parseInt(data.loaded / data.total * 100, 10);
-						$el.find('.bar').css('width', progress + '%');
-					}
-				});
+				]
+				$scope.$watch('canedit', function(value) {
+					if (value == 'true' || value == 'false') {
+						$el.html('').append($compile(html.join(''))($scope));
+
+						$el.find('input').fileupload({
+							dataType: 'json',
+							add: function(e, data) {
+								$el.find('.bar').css('width', '0%');
+								data.id = $scope.ob.id;
+								data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action&id=' + data.id;
+								jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
+							},
+							done: function(e, data) {
+								$scope.ob.photos = $scope.ob.photos || [];
+								$scope.ob.photos.push(new Photo(data.result[0]));
+								$scope.$apply();
+								$el.find('.bar').css('width', '0%');
+							},
+							progressall: function(e, data) {
+								var progress = parseInt(data.loaded / data.total * 100, 10);
+								$el.find('.bar').css('width', progress + '%');
+							}
+						})
+					}	
+				})
+
 				$scope.removePhoto = function(photo) {
 					new Photo(photo).$remove({
 						id: photo.id,
