@@ -127,6 +127,8 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					}
 					geoLayer.highlightLayers();
 				});
+
+				return geoLayer;
 			},
 			watchFields: function(value, $scope, $cookieStore) {
 				$cookieStore.put('fields', value);

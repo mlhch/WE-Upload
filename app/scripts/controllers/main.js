@@ -86,7 +86,10 @@ curaApp.controller('MainCtrl', [
 			$scope.locations = defaultGroups.concat(config.locations);
 		});
 		CuraGeoJSON.query(function(res) {
-			cura.geoLayer(res, $scope);
+			var geoLayer = cura.geoLayer(res, $scope);
+			$scope.showAllLayers = function() {
+				geoLayer.fitRange();
+			}
 		});
 		setFilterOptions();
 	}
