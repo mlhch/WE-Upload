@@ -142,8 +142,8 @@ angular.module('directives', [])
 ])
 
 
-.directive('tablesorter', ['$parse', 'Observation',
-	function($parse, Observation) {
+.directive('tablesorter', ['$parse', '$cookieStore', 'Observation',
+	function($parse, $cookieStore, Observation) {
 		return {
 			restrict: 'E',
 			template: [
@@ -151,7 +151,7 @@ angular.module('directives', [])
 					'	<thead>',
 					'		<tr>',
 					'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])"></th>',
-					'			<th style="text-align:center; width:10px">Action</th>',
+					'			<th>Action</th>',
 					'			<th></th>',
 					'		</tr>',
 					'	</thead>',
@@ -159,7 +159,7 @@ angular.module('directives', [])
 					'	 ng-repeat="obj in observations"',
 					'	 ng-click="selectRow(obj, $event)">',
 					'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
-					'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj)">Details</button></td>',
+					'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj, $event)">Details</button></td>',
 					'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
 					'	</tr>',
 					'</table>'
@@ -200,17 +200,34 @@ angular.module('directives', [])
 						$scope.observations = res;
 					});
 				})
+				$scope.$watch('sortList', function(value) {
+					if (value) {
+						$el.trigger('sorton', [value]);
+						$cookieStore.put('sortList', value);
+					}
+				}, true)
 				$scope.$on('filterReseted', function() {
 					focusedRow = null;
 					selectedRows = {};
 					highlightedRows = {};
-				});
+					$scope.sortList = [];
+				})
+				$scope.$on('observationAdded', function(event, ob) {
+					console.log('tablesorter$on: observationAdded')
+					selectedRows = {};
+					focusedRow = selectedRows[ob.id] = ob;
+				})
+				$scope.$on('observationUpdated', function(event, ob) {
+					console.log('tablesorter$on: observationUpdated')
+					selectedRows = {};
+					focusedRow = selectedRows[ob.id] = ob;
+				})
 				$scope.$on('tablesorterEnd', function() {
 					if ($el[0].config) {
 						$el.trigger('update');
 						setTimeout(function() {
 							$el.trigger('sorton', [$scope.sortList]);
-						}, 1);
+						}, 0);
 						return;
 					}
 					var headers = {};
@@ -223,12 +240,9 @@ angular.module('directives', [])
 					$el.tablesorter({
 						headers: headers,
 						sortList: $scope.sortList || [],
-						//widthFixed: true,
 						widgets: ['zebra'],
 					}).bind('sortEnd', function() {
 						$scope.sortList = this.config.sortList;
-						$scope.$apply();
-						$el.trigger("applyWidgets");
 					});
 
 					$scope.$broadcast('tablesorterInitialized', $el);
@@ -248,12 +262,15 @@ angular.module('directives', [])
 ])
 
 
-.directive('tablesorterCol', [
-	function() {
+.directive('tablesorterCol', ['$timeout',
+	function($timeout) {
 		return function($scope) {
 			//console.log("r" + scope.$parent.$index + ", c" + scope.$index)
 			if ($scope.$parent.$last && $scope.$last) {
-				$scope.$emit('tablesorterEnd');
+				$timeout(function() {
+					// have to use timeout in order for the last row really rendered
+					$scope.$emit('tablesorterEnd');
+				}, 0);
 			}
 		}
 	}
@@ -311,7 +328,7 @@ angular.module('directives', [])
 						container: $el,
 						positionFixed: false,
 						size: $scope.pagesize,
-					}).bind('applyWidgets', function() {
+					}).bind('sortEnd', function() {
 						var c = this.config;
 						$scope.page = c.page;
 						$scope.total = c.totalPages;
@@ -423,7 +440,7 @@ angular.module('directives', [])
 						['coliform'],
 						['note'],
 					];
-
+				
 				$scope.$watch('fields', function(value) {
 					if (value) {
 						value.forEach(function(field) {
@@ -580,9 +597,7 @@ angular.module('directives', [])
 					now.minute = now.getMinutes();
 					var dt = jQuery.datepicker.formatDate('mm/dd/yy', now);
 					var tm = jQuery.datepicker.formatTime('hh:mm TT', now);
-					$scope.updatingOb = {
-						id: 0,
-					};
+					updatingOb = null;
 					$scope.editingOb = {
 						id: 0,
 						datetime: dt + ' ' + tm,
@@ -591,8 +606,8 @@ angular.module('directives', [])
 					$form.validate().resetForm();
 				}
 
-				$scope.openEditDialog = function(obj) {
-					$scope.updatingOb = obj;
+				$scope.openEditDialog = function(obj, $event) {
+					updatingOb = obj;
 					$scope.editingOb = angular.extend({}, obj);
 					openDialog('Edit Observation', $scope.editingOb);
 
@@ -604,18 +619,19 @@ angular.module('directives', [])
 					$timeout(function() {
 						validator.form();
 					}, 10);
+
+					$event.stopPropagation();
 				};
 
 				function openDialog(title, ob) {
 					var buttons = [];
-					var config = $scope.config;
 
 					for (var key in $scope.readOnly) {
 						$scope.readOnly[key] = false;
 					}
 					$scope.canedit = canEdit || (canAdd && (!ob.photos || !ob.photos.length));
 
-					if (config.canDelete) {
+					if (canDelete) {
 						buttons.push({
 							text: "Delete",
 							style: "padding: 0 2em; font-size: 12px;" + (ob.id ? '' : 'display:none'),
@@ -624,7 +640,7 @@ angular.module('directives', [])
 							}
 						});
 					}
-					if (config.canEdit || (config.canAdd && !ob.id)) {
+					if (canEdit || (canAdd && !ob.id)) {
 						buttons.push({
 							text: "Save",
 							style: "padding: 0 2em; font-size: 12px",
@@ -642,21 +658,20 @@ angular.module('directives', [])
 							}
 						});
 					}
-					if (ob.id && (config.canEdit || config.canAdd)) {
+					if (ob.id && (canEdit || canAdd)) {
 						buttons.push({
 							text: "Save As New",
 							style: "padding: 0 2em; font-size: 12px",
 							click: function() {
-								var newOb = angular.extend({}, ob);
-								newOb.id = 0;
+								ob.id = 0;
 								if ($form.validate().form()) {
 									// Here we use Class.save instead of Instance.$save
 									// because the returned Resource is not at root node
-									Observation.save(newOb, saveSuccess, saveError);
+									Observation.save(ob, saveSuccess, saveError);
 								} else {
 									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
 									if (confirm(msg)) {
-										Observation.save(newOb, saveSuccess, saveError);
+										Observation.save(ob, saveSuccess, saveError);
 									}
 								}
 							}
@@ -671,13 +686,14 @@ angular.module('directives', [])
 					});
 
 					$el.dialog({
+						modal: true,
 						title: title || '',
 						width: 650,
 						height: 470,
 						zIndex: 99999,
 						buttons: buttons,
 						close: function(event, ui) {
-							$scope.observation = null;
+							$scope.editingOb = null;
 						}
 					});
 				}
@@ -695,12 +711,14 @@ angular.module('directives', [])
 
 					if (resp.affectedRows) {
 						if (resp.insertId) {
-							$scope.updatingOb.id = resp.insertId;
 							Toast.show('Entry ' + resp.insertId + ' added');
+							$scope.editingOb.id = resp.insertId;
+							$scope.$broadcast('observationAdded', $scope.editingOb);
 						} else {
 							Toast.show('Entry ' + resp.id + ' updated');
+							$scope.$broadcast('observationUpdated', $scope.editingOb, updatingOb);
+							angular.extend(updatingOb, $scope.editingOb);
 						}
-						angular.extend($scope.updatingOb, $scope.editingOb);
 					} else {
 						Toast.show('No changes updated')
 					}
@@ -709,9 +727,9 @@ angular.module('directives', [])
 
 				function delSuccess(resp) {
 					if (resp.affectedRows) {
-						$el.dialog('close');
 						Toast.show('Entry ' + resp.id + ' deleted');
-						$scope.updatingOb = null;
+						$scope.$broadcast('observationDeleted', $scope.editingOb);
+						$el.dialog('close');
 					} else {
 						Toast.show('Data Entry ' + resp.id + ' does not exist');
 					}

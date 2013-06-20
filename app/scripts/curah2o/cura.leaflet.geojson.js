@@ -63,19 +63,18 @@
 		},
 
 		updateLayer: function(props, feature) {
-			var layers = this.findLayerByProperties(props);
-			layers.forEach(function(layer) {
-				this.removeLayer(layer);
+			this.findLayerByProperties(props).forEach(function(layer) {
+				delete this.allLayers[L.stamp(layer)]
+				this.removeLayer(layer)
 			}, this);
 
 			if (feature.type == 'Feature') {
-				this.addData([feature]);
+				this.addData([feature])
 			}
-			return this.findLayerByProperties(props);
 		},
 
 		doFilter: function(options) {
-			console.log('doFilter:', options);
+			console.log('geoLayer.doFilter:', options);
 			this.clearLayers();
 			this.highlightedLayers = {};
 
@@ -102,7 +101,7 @@
 		fitRange: function() {
 			var bounds = this.getBounds();
 			if (bounds.isValid()) {
-				var zoom = this._map.getBoundsZoom(bounds) - 1;
+				var zoom = this._map.getBoundsZoom(bounds);
 				this._map.setView(L.latLngBounds(bounds).getCenter(), zoom || this._map.getZoom());
 			}
 		},
@@ -132,23 +131,26 @@
 
 		focusedLayer: null,
 		focusLayer: function(layer) {
-			console.log('geoLayer.focusLayer');
+			debug('fn') && console.log('geoLayer.focusLayer');
+			
+			this.selectLayer(layer);
+			this.highlight(layer);
 			this.focusedLayer = layer;
 			layer.openPopup();
 		},
 		selectedLayers: {},
 		unSelectAll: function() {
-			console.log('geoLayer.unSelectAll');
+			debug('fn') && console.log('geoLayer.unSelectAll');
 			this.selectedLayers = {};
 		},
 		selectLayer: function(layer) {
-			console.log('geoLayer.selectLayer', L.stamp(layer));
+			debug('fn') && console.log('geoLayer.selectLayer', layer);
 			this.selectedLayers[L.stamp(layer)] = layer;
 			return this.selectedLayers;
 		},
 		highlightedLayers: {},
 		highlightLayers: function() {
-			console.log('geoLayer.highlightLayers:', this.selectedLayers);
+			debug('fn') && console.log('geoLayer.highlightLayers:', this.selectedLayers);
 			for (var id in this.selectedLayers) {
 				var layer = this.selectedLayers[id];
 				// layer._map means the layer is still on the map
@@ -166,7 +168,7 @@
 			}
 		},
 		highlight: function(layer) {
-			console.log('geoLayer.highlight');
+			debug('fn') && console.log('geoLayer.highlight');
 
 			layer.options.riseOnHover = false;
 			layer._icon.className = layer._icon.className + ' highlighted';
@@ -177,11 +179,11 @@
 			this.highlightedLayers[L.stamp(layer)] = layer;
 		},
 		unHighlight: function(layer) {
-			console.log('geoLayer.unHighlight', L.stamp(layer));
+			debug('fn') && console.log('geoLayer.unHighlight', L.stamp(layer));
 
 			layer.options.riseOnHover = true;
 			if (layer._icon) {
-				layer._icon.className = layer._icon.className.replace(' highlighted', '');
+				layer._icon.className = layer._icon.className.replace(/ highlighted/g, '');
 				layer._resetZIndex();
 				L.DomEvent.on(layer._icon, 'mouseover', layer._bringToFront, layer)
 				L.DomEvent.on(layer._icon, 'mouseout', layer._resetZIndex, layer);

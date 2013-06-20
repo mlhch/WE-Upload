@@ -1,5 +1,14 @@
 'use strict';
 
+
+window.debug = function(level) {
+	switch (level) {
+		case 'fn':
+		return true;
+	}
+	return true;
+}
+
 var pluginUrl = angular.element('script:last')[0].src.replace('app/scripts/app.js', '');
 angular.element('head').append([
 		'<link rel="stylesheet" href="' + pluginUrl + 'vendor/bootstrap/css/bootstrap.css" />',
@@ -20,6 +29,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 		});
 	}
 ])
+
 
 .provider('cura', function() {
 	this.$get = function() {
@@ -89,6 +99,9 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 				});
 				$scope.$broadcast('layerReady', geoLayer);
 
+				$scope.$on('featureReady', function(event, props, feature) {
+					geoLayer.updateLayer(props, feature);
+				})
 				$scope.$on('filterReseted', function(event, filterOptions) {
 					console.log('geoLayer$on: filterReseted');
 					geoLayer.unSelectAll();
@@ -100,7 +113,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					geoLayer.doFilter(filterOptions);
 					geoLayer.fitRange();
 				});
-				$scope.$on('observationFocused', function(event, ob, passive) {
+				$scope.$on('observationFocused', function(event, ob) {
 					console.log('geoLayer$on: observationFocused', ob);
 					geoLayer.findLayerByProperties({
 						watershed_name: ob.watershed_name,
@@ -116,7 +129,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 					for (var id in selectedObs) {
 						var ob = selectedObs[id];
 						var key = ob.watershed_name + '|' + ob.location_id;
-						if (!map[key]) {
+						if (!map[key]) { /// for new ob, it is possible here to find nothing
 							geoLayer.findLayerByProperties({
 								watershed_name: ob.watershed_name,
 								location_id: ob.location_id,
