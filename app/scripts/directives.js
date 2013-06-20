@@ -3,6 +3,13 @@
 angular.module('directives', [])
 
 
+.directive('ngHtml', function() {
+	return function($scope, $el, $attrs) {
+		$scope.$watch($attrs.ngHtml, function(value) {
+			value && $el.html(value);
+		});
+	}
+})
 .directive('sticky', [
 	function() {
 		return {
@@ -131,7 +138,7 @@ angular.module('directives', [])
 					'<table class="tablesorter table table-hover">',
 					'	<thead>',
 					'		<tr>',
-					'			<th ng-repeat="field in visibleFields">{{field[2]}}</th>',
+					'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])"></th>',
 					'			<th style="text-align:center; width:10px">Action</th>',
 					'			<th></th>',
 					'		</tr>',
@@ -150,6 +157,9 @@ angular.module('directives', [])
 				var highlightedRows = {};
 				var selectedRows = {};
 				var focusedRow = null;
+				$scope.break2row = function(field) {
+					return field.replace(/ \(/, '<br />(');
+				}
 				$scope.selectRow = function(obj, $event) {
 					console.log('------Row clicked------', obj);
 					if (!$event || !$event.metaKey && !$event.ctrlKey) {

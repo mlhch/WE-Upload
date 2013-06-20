@@ -57,7 +57,11 @@ html {
 
 
 table.tablesorter thead tr th {
-	padding-right: 1em;
+	font-size: 12px;
+	line-height: 1;
+	white-space: nowrap;
+	padding-right: 1.5em;
+	vertical-align: middle;
 }
 table.tablesorter tbody tr.selected td {
 	background-color: #c4e3f3;
