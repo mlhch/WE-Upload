@@ -204,7 +204,10 @@ function cura_json_observations() {
 			$photos = scandir($path);
 			foreach ($photos as $file) {
 				if ($file[0] != '.' && is_file($path . $file)) {
-					$row->photos[] = $file;
+					$row->photos[] = array(
+						'id' => $row->id,
+						'name' => $file,
+					);
 				}
 			}
 		}

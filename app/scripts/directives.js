@@ -329,11 +329,16 @@ angular.module('directives', [])
 	function(Photo) {
 		return {
 			restrict: 'E',
+			scope: {
+				canedit: '@',
+				ob: '=',
+			},
 			template: [
 					'<div>',
-					'	<input class="field" type="file" multiple>',
-					'	<p ng-repeat="photo in photos" style="padding: 3px; border-bottom: 1px solid #f0f0f0">{{photo.name}}',
+					'	<input ng-show="canedit" class="field" type="file" multiple>',
+					'	<p ng-repeat="photo in ob.photos" style="padding: 3px; border-bottom: 1px solid #f0f0f0">{{photo.name}}',
 					'		<span class="ui-icon ui-icon-closethick"',
+					'		 ng-show="canedit"',
 					'		 ng-click="removePhoto(photo)" style="float: right"></span></p>',
 					'	<div id="progress" style="height: 3px;">',
 					'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
@@ -341,17 +346,17 @@ angular.module('directives', [])
 					'</div>',
 			].join(''),
 			replace: true,
-			link: function($scope, $el) {
+			link: function($scope, $el, $attrs) {
 				$el.find('input').fileupload({
 					dataType: 'json',
 					add: function(e, data) {
 						$el.find('.bar').css('width', '0%');
-						data.id = $scope.observation.id;
+						data.id = $scope.ob.id;
 						data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action&id=' + data.id;
 						jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
 					},
 					done: function(e, data) {
-						$scope.photos.push(new Photo(data.result[0]));
+						$scope.ob.photos.push(new Photo(data.result[0]));
 						$scope.$apply();
 						$el.find('.bar').css('width', '0%');
 					},
@@ -361,12 +366,12 @@ angular.module('directives', [])
 					}
 				});
 				$scope.removePhoto = function(photo) {
-					photo.$remove({
+					new Photo(photo).$remove({
 						id: photo.id,
 						file: photo.name
 					}, function() {
-						$scope.photos.every(function(value, index) {
-							return value != photo ? true : $scope.photos.splice(index, 1) && false;
+						$scope.ob.photos.every(function(value, index) {
+							return value != photo ? true : $scope.ob.photos.splice(index, 1) && false;
 						})
 					})
 				}
@@ -392,6 +397,17 @@ angular.module('directives', [])
 			link: function($scope, $el, iAttrs, controller) {
 				var $form = $el.find('form');
 				$scope.readOnly = {};
+
+				var canEdit, canAdd, canDelete;
+				var updatingOb;
+
+				$scope.$watch('config', function(value) {
+					if (value) {
+						canEdit = value.canEdit;
+						canAdd = value.canAdd;
+						canDelete = value.canDelete;
+					}
+				});
 
 				var lastTr, fields = {}, layout = [
 						['watershed_name', 'datetime'],
@@ -428,7 +444,7 @@ angular.module('directives', [])
 						html.push([
 								'<td>Photo</td>',
 								'<td colspan="3">',
-								'	<jquery-file-upload></jquery-file-upload>',
+								'	<jquery-file-upload canedit="{{canedit}}" ob="editingOb"></jquery-file-upload>',
 								'</td>'
 						].join(''));
 						html.push('</table>');
@@ -597,10 +613,7 @@ angular.module('directives', [])
 					for (var key in $scope.readOnly) {
 						$scope.readOnly[key] = false;
 					}
-
-					$scope.photos = Photo.query({
-						id: ob ? ob.id : 0
-					});
+					$scope.canedit = canEdit || (canAdd && (!ob.photos || !ob.photos.length));
 
 					if (config.canDelete) {
 						buttons.push({

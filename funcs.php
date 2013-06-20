@@ -336,8 +336,17 @@ function cura_get_entry($id) {
 }
 function cura_add_entry($params = array()) {
 	global $wpdb;
+
+	$fields = cura_fields();
+	$map = array();
+	foreach ($fields as $field) {
+		$map[$field[0]] = 1;
+	}
 	
 	foreach ( $params as $k => $v ) {
+		if (empty($map[$k])) {
+			continue;
+		}
 		if (is_null ( $v ) || '' === $v) {
 			$values [] = "`$k` = NULL";
 		} else {
@@ -363,7 +372,17 @@ function cura_update_entry($id, $params) {
 	global $wpdb;
 	
 	$id = intval ( $id );
+	$fields = cura_fields();
+
+	$map = array();
+	foreach ($fields as $field) {
+		$map[$field[0]] = 1;
+	}
+
 	foreach ( $params as $k => $v ) {
+		if (empty($map[$k])) {
+			continue;
+		}
 		if (null === $v || '' === $v) {
 			$values [] = "`$k` = NULL";
 		} else {
