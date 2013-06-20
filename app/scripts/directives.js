@@ -17,26 +17,28 @@ angular.module('directives', [])
 		return {
 			restrict: 'C',
 			link: function($scope, $el) {
-				var $ghost = angular.element('<div class="ghost"></div>').css({
-					height: $el.height() + 10 + 'px', // 10 is for btn-toolbar's margin-top: 10px
-				}).insertAfter($el);
+				var $ghost = angular.element('<div class="ghost"></div>').insertAfter($el);
+				var $detector = angular.element('<div></div>').insertAfter($ghost);
 
 				var wpadminbar = angular.element('#wpadminbar');
 				var barHeight = wpadminbar.length ? wpadminbar.height() : 0;
-				$el.css({
-					width: $el.width() + 'px',
-					left: $el.offset().left + 'px',
-					top: barHeight + 'px',
-				}).affix({
+
+				$ghost.css('height', $el.height() + 10 + 'px') // 10 is for btn-toolbar's margin-top: 10px
+				$el.affix({
 					offset: {
 						top: $el.offset().top - 10 - barHeight,
 					}
 				})
+				setPosition();
+				angular.element($window).bind('resize', setPosition)
 
-				var $widthDetector = angular.element('<div></div>').insertAfter($ghost);
-				angular.element($window).bind('resize', function() {
-					$el.css('width', $widthDetector.width() + 'px')	
-				})
+				function setPosition() {
+					$el.css({
+						width: $detector.width() + 'px',
+						left: $detector.offset().left + 'px',
+						top: barHeight + 'px',
+					})	
+				}
 			}
 		}
 	}
