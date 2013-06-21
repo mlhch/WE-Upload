@@ -225,9 +225,11 @@ angular.module('directives', [])
 				$scope.$on('tablesorterEnd', function() {
 					if ($el[0].config) {
 						$el.trigger('update');
+						// since jquery.tablesorter bind 'update' using setTimeout(..., 1)
+						// here we need at least 1 for Firefox to work
 						setTimeout(function() {
 							$el.trigger('sorton', [$scope.sortList]);
-						}, 0);
+						}, 1);
 						return;
 					}
 					var headers = {};
