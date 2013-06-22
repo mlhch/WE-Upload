@@ -273,24 +273,8 @@ function cura_json_observations() {
 	exit ( 0 );
 }
 
+
 function cura_action_photo() {
-	require('vendor/jquery-file-upload/UploadHandler.php');
-	class Photo extends UploadHandler {
-	    public function get($print_response = true) {
-	        $files = $this->get_file_objects();
-	        foreach ($files as $file) {
-	        	$file->id = $this->options['id'];
-	        }
-	        return $this->generate_response($files, $print_response);
-	    }
-	    public function delete() {
-	    	parent::delete(false);
-	    }
-	    public function post() {
-	    	$result = parent::post(false);
-	    	return $this->generate_response($result[$this->options['param_name']], true);
-	    }
-	}
 	if (!empty($_GET['download'])) {
 		$basepath = cura_photo_path();
 		$files = scandir($basepath, 1);
@@ -337,21 +321,10 @@ function cura_action_photo() {
 	}
 
 	$id = isset($_GET['id']) && intval($_GET['id']) > 0 ? intval($_GET['id']) : 0;
-	new Photo(
-		$options = array(
-			'id' => $id,
-			'upload_dir' => cura_photo_path($id),
-		)
-	);
+	cura_photo_manager($id, true );
 	exit;
 }
 
-function cura_photo_path($id = '') {
-	if ($id === '') {
-		return CURAH2O_PLUGIN_DIR . 'photos/';
-	}
-	return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
-}
 
 /*
  * Ajax - save
@@ -431,17 +404,19 @@ function cura_action_save() {
 /*
  * Ajax - delete
  */
-function cura_action_delete() {
+ function cura_action_delete() {
 	cura_check_capability ( 'cura-delete' );
 	
 	$request = cura_request();
 	$id = intval ( $request->id );
 	
 	$entry = cura_get_entry ( $id );
-	$affectedRows = cura_delete_entry ( $id );
-	cura_update_location ( $entry->watershed_name );
-	
-	cura_update_layers ();
+	if ($affectedRows = cura_delete_entry ( $id )) {
+		$pm = cura_photo_manager( $id );
+		$pm->delete_all();
+		cura_update_location ( $entry->watershed_name );
+		cura_update_layers ();
+	}
 	
 	echo json_encode ( array (
 			'affectedRows' => $affectedRows,

@@ -427,6 +427,74 @@ function cura_delete_entries($watershed_name, $station_name, $location_id, $date
 	$affectedRows = $wpdb->query ( $sql );
 	return $affectedRows;
 }
+function cura_photo_path($id = '') {
+	if ($id === '') {
+		return CURAH2O_PLUGIN_DIR . 'photos/';
+	}
+	return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
+}
+function cura_photo_manager($id, $initialize = false) {
+	require('vendor/jquery-file-upload/UploadHandler.php');
+	class Photo extends UploadHandler {
+	    public function get($print_response = true) {
+	        $files = $this->get_file_objects();
+	        foreach ($files as $file) {
+	        	$file->id = $this->options['id'];
+	        }
+	        return $this->generate_response($files, $print_response);
+	    }
+	    public function delete() {
+	    	parent::delete(false);
+	    	$this->clear_dir();
+	    }
+	    public function delete_all() {
+	    	$files = $this->get_file_objects();
+	    	foreach ($files as $file) {
+	    		$_GET['file'] = $file->name;
+	    		$this->delete();
+	    	}
+	    	$this->clear_dir();
+	    }
+	    public function post() {
+	    	$result = parent::post(false);
+	    	return $this->generate_response($result[$this->options['param_name']], true);
+	    }
+		public function clear_dir($dir) {
+			if (empty($dir)) {
+				$dir = $this->get_upload_path();
+			}
+			if (is_readable($dir)) {
+				$empty = true;
+				$handle = opendir($dir);
+				while (false !== ($entry = readdir($handle))) {
+					if ($entry != "." && $entry != "..") {
+						if (is_dir("$dir$entry")) {
+							if (false === $this->clear_dir("$dir$entry/")) {
+								$empty = false;
+							}
+						} else {
+							$empty = false;
+						}
+					}
+				}
+				closedir($handle);
+				if ($empty === true) {
+					rmdir($dir);
+				}
+				return $empty;
+			} else {
+				return null;
+			}
+        }
+	}
+	return new Photo(
+		$options = array(
+			'id' => $id,
+			'upload_dir' => cura_photo_path($id),
+		),
+		$initialize
+	);
+}
 function cura_get_observations($options) {
 	global $wpdb;
 	
