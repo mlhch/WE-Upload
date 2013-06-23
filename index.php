@@ -28,6 +28,39 @@ define ( 'CURAH2O_TABLE_LOCATION',	'water_quality_location' );
 define ( 'CURAH2O_TABLE_LAYERS',	'water_quality_layers' );
 define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
+wp_schedule_event( strtotime('2013-06-23 10:24:00'), 'daily', 'cura_backup' );
+add_action ('cura_backup', 'cura_backup_export_csv' );
+function cura_backup_export_csv() {
+    include 'apis.php';
+    include 'funcs.php';
+
+    $backup_dir = CURAH2O_PLUGIN_DIR . "backup/";
+    if (!is_dir($backup_dir)) {
+    	mkdir($backup_dir);
+    }
+    
+    $files = scandir($backup_dir);
+    $now = time();
+    foreach ($files as $file) {
+        if (preg_match("/^(\d{4}-\d{2}-\d{2})\.csv$/", $file, $m)) {
+            $time = strtotime($m[1]);
+            if ($time > $now - 3600 * 24 * 7) {
+                // keep
+            } elseif ($time > mktime(0, 0, 0, date('n', $now) - 1, date('j', $now), date('Y', $now))) {
+                if (date('w', $time) != 0) {
+                    unlink($backup_dir . $file);
+                }
+            } else {
+                if (date('w', $time) != 0 || date('j', $time) > 7) {
+                    unlink($backup_dir . $file);
+                }
+            }
+        }
+    }
+    $observations = cura_get_observations();
+    cura_observations_csv($observations, $backup_dir . date('Y-m-d') . ".csv");
+}
+
 include 'config.php';
 
 // //////////////////////////////////////////////////////////

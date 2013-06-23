@@ -197,29 +197,9 @@ function cura_json_observations() {
     }
     if (!empty($_REQUEST['downloadPhoto'])) {
         ob_start();
-        $fp = fopen('php://output', 'w');
-        $headers = array(
-            "id"
-        );
-        $fields = cura_fields();
-        
-        foreach ($fields as $row) {
-            $headers[] = $row[2];
-        }
-        fputcsv($fp, $headers);
-        
-        foreach ($observations as $row) {
-            $array = array(
-                $row->id
-            );
-            
-            foreach ($fields as $field) {
-                $array[] = $row->$field[0];
-            }
-            fputcsv($fp, $array);
-        }
-        fclose($fp);
+        cura_observations_csv($observations, 'php://output');
         $csv = ob_get_clean();
+        
         $zip = new ZipArchive();
         $basepath = cura_photo_path();
         $filename = $basepath . 'tmp.zip';

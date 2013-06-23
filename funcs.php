@@ -516,7 +516,31 @@ function cura_photo_manager($id = 0, $initialize = false) {
         )
     ) , $initialize);
 }
-function cura_get_observations($options) {
+function cura_observations_csv($observations, $ouput) {
+    $fp = fopen($ouput, 'w');
+    $headers = array(
+        "id"
+    );
+    $fields = cura_fields();
+    
+    foreach ($fields as $row) {
+        $headers[] = $row[2];
+    }
+    fputcsv($fp, $headers);
+    
+    foreach ($observations as $row) {
+        $array = array(
+            $row->id
+        );
+        
+        foreach ($fields as $field) {
+            $array[] = $row->$field[0];
+        }
+        fputcsv($fp, $array);
+    }
+    fclose($fp);
+}
+function cura_get_observations($options = null) {
     global $wpdb;
     $sql_filter = array();
     if (!empty($options->location) && intval($options->location->id)) {
