@@ -493,53 +493,53 @@ function cura_service_getdata($request) {
 function cura_demo_servicecall() {
 ?>
 <script type='text/javascript'
-	src='<?php
+    src='<?php
     echo home_url() ?>/wp-includes/js/jquery/jquery.js?ver=1.7.2'></script>
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function($) {
-	$.post('services', null, function(jsonText) {
-		var json = JSON.parse(jsonText);
-		document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
-	})
+    $.post('services', null, function(jsonText) {
+        var json = JSON.parse(jsonText);
+        document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
+    })
 })
 //-->
-	</script>
+    </script>
 <?php
     exit(0);
 }
 function cura_demo_layercall() {
 ?>
 <script type='text/javascript'
-	src='<?php
+    src='<?php
     echo home_url() ?>/wp-includes/js/jquery/jquery.js?ver=1.7.2'></script>
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function($) {
-	$.post('service/1', null, function(jsonText) {
-		var json = JSON.parse(jsonText);
-		document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
-	})
+    $.post('service/1', null, function(jsonText) {
+        var json = JSON.parse(jsonText);
+        document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
+    })
 })
 //-->
-	</script>
+    </script>
 <?php
     exit(0);
 }
 function cura_demo_datacall() {
 ?>
 <script type='text/javascript'
-	src='<?php
+    src='<?php
     echo home_url() ?>/wp-includes/js/jquery/jquery.js?ver=1.7.2'></script>
 <script type="text/javascript">
 <!--
 jQuery(document).ready(function($) {
-	$('button').click(function() {
-		$.post('.', $('textarea').val(), function(jsonText) {
-			var json = JSON.parse(jsonText);
-			document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
-		})
-	})
+    $('button').click(function() {
+        $.post('.', $('textarea').val(), function(jsonText) {
+            var json = JSON.parse(jsonText);
+            document.write('<pre>' + JSON.stringify(json, null, '    ') + '</pre>')
+        })
+    })
 })
 //-->
 </script>
@@ -564,7 +564,7 @@ jQuery(document).ready(function($) {
             "longitude" : -170
         } 
     } 
-	
+    
 }
 </textarea>
 <br />

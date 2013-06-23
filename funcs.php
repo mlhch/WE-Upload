@@ -57,15 +57,15 @@ function cura_validation_secchi_d($value, $ruleParam, $values) {
 function cura_get_services() {
     global $wpdb;
     $sql = "
-		SELECT	DATE_FORMAT(MIN(`begintime`), '%Y-%m-%dT%H:%i:%sZ') `begintime`
-				, DATE_FORMAT(MAX(`endtime`), '%Y-%m-%dT%H:%i:%sZ') `endtime`
-				, MAX(`upper`) `upper`
-				, MAX(`right`) `right`
-				, MIN(`bottom`) `bottom`
-				, MIN(`left`) `left`
-		FROM	`" . CURAH2O_TABLE_LAYERS . "`
-		WHERE	TRUE
-	";
+        SELECT  DATE_FORMAT(MIN(`begintime`), '%Y-%m-%dT%H:%i:%sZ') `begintime`
+                , DATE_FORMAT(MAX(`endtime`), '%Y-%m-%dT%H:%i:%sZ') `endtime`
+                , MAX(`upper`) `upper`
+                , MAX(`right`) `right`
+                , MIN(`bottom`) `bottom`
+                , MIN(`left`) `left`
+        FROM    `" . CURAH2O_TABLE_LAYERS . "`
+        WHERE   TRUE
+    ";
     $obj = $wpdb->get_row($sql);
     $obj->upper = floatval($obj->upper);
     $obj->right = floatval($obj->right);
@@ -77,18 +77,18 @@ function cura_get_services() {
 function cura_get_layers() {
     global $wpdb;
     $sql = "
-		SELECT	`id`
-				, `name`
-				, DATE_FORMAT(`begintime`, '%Y-%m-%dT%H:%i:%sZ') `begintime`
-				, DATE_FORMAT(`endtime`, '%Y-%m-%dT%H:%i:%sZ') `endtime`
-				, `upper`
-				, `right`
-				, `bottom`
-				, `left`
-				, `total`	
-		FROM	`" . CURAH2O_TABLE_LAYERS . "`
-		WHERE	TRUE
-	";
+        SELECT  `id`
+                , `name`
+                , DATE_FORMAT(`begintime`, '%Y-%m-%dT%H:%i:%sZ') `begintime`
+                , DATE_FORMAT(`endtime`, '%Y-%m-%dT%H:%i:%sZ') `endtime`
+                , `upper`
+                , `right`
+                , `bottom`
+                , `left`
+                , `total`   
+        FROM    `" . CURAH2O_TABLE_LAYERS . "`
+        WHERE   TRUE
+    ";
     $objs = $wpdb->get_results($sql);
     
     foreach ($objs as $obj) {
@@ -109,22 +109,22 @@ function cura_get_data($field, $time, $bbox) {
     $bottom = $bbox->bottomleft->latitude;
     $left = $bbox->bottomleft->longitude;
     $sql = "
-		SELECT	a.`datetime`
-				, a.`$field` `value`
-				, a.`latitude` `lat`
-				, a.`longitude` `lon`
-				, a.`station_name`
-				, a.`location_id`
-				, a.`watershed_name`
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		WHERE	`$field` IS NOT NULL
-			AND	`datetime` >= '$begintime'
-			AND	`datetime` <= '$endtime'
-			AND	`latitude` <= '$upper'
-			AND	`latitude` >= '$bottom'
-			AND	`longitude` <= '$right'
-			AND	`longitude` >= '$left'
-	";
+        SELECT  a.`datetime`
+                , a.`$field` `value`
+                , a.`latitude` `lat`
+                , a.`longitude` `lon`
+                , a.`station_name`
+                , a.`location_id`
+                , a.`watershed_name`
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        WHERE   `$field` IS NOT NULL
+            AND `datetime` >= '$begintime'
+            AND `datetime` <= '$endtime'
+            AND `latitude` <= '$upper'
+            AND `latitude` >= '$bottom'
+            AND `longitude` <= '$right'
+            AND `longitude` >= '$left'
+    ";
     $objs = $wpdb->get_results($sql);
     
     foreach ($objs as $obj) {
@@ -138,53 +138,53 @@ function cura_get_data($field, $time, $bbox) {
 function cura_get_features() {
     global $wpdb;
     $sql = "
-		SELECT	a.watershed_name
-				, a.station_name
-				, a.location_id
-				, a.latitude
-				, a.longitude
-				, b.startDate
-				, b.endDate
-		FROM	(
-			SELECT	MAX(id) id
-					, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
-					, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
-			FROM	`" . CURAH2O_TABLE . "`
-			WHERE	`latitude` IS NOT NULL
-				AND	`longitude` IS NOT NULL
-			GROUP BY
-					watershed_name, location_id
-		) AS b
-		JOIN	`" . CURAH2O_TABLE . "` AS a
-			ON	a.id = b.id
-	";
+        SELECT  a.watershed_name
+                , a.station_name
+                , a.location_id
+                , a.latitude
+                , a.longitude
+                , b.startDate
+                , b.endDate
+        FROM    (
+            SELECT  MAX(id) id
+                    , DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
+                    , DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
+            FROM    `" . CURAH2O_TABLE . "`
+            WHERE   `latitude` IS NOT NULL
+                AND `longitude` IS NOT NULL
+            GROUP BY
+                    watershed_name, location_id
+        ) AS b
+        JOIN    `" . CURAH2O_TABLE . "` AS a
+            ON  a.id = b.id
+    ";
     
     return $wpdb->get_results($sql);
 }
 function cura_get_feature($watershed_name, $location_id) {
     global $wpdb;
     $sql = "
-		SELECT	MAX(id) id
-				, DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
-				, DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	`latitude` IS NOT NULL
-			AND	`longitude` IS NOT NULL
-			AND	watershed_name = '" . addslashes($watershed_name) . "'
-			AND	location_id = '" . addslashes($location_id) . "'
-	";
+        SELECT  MAX(id) id
+                , DATE_FORMAT(MIN(datetime), '%m/%d/%Y %h:%i %p') startDate
+                , DATE_FORMAT(MAX(datetime), '%m/%d/%Y %h:%i %p') endDate
+        FROM    `" . CURAH2O_TABLE . "`
+        WHERE   `latitude` IS NOT NULL
+            AND `longitude` IS NOT NULL
+            AND watershed_name = '" . addslashes($watershed_name) . "'
+            AND location_id = '" . addslashes($location_id) . "'
+    ";
     $sql = "
-		SELECT	watershed_name
-				, station_name
-				, location_id
-				, latitude
-				, longitude
-				, startDate
-				, endDate
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		JOIN	($sql) t
-			ON	a.id = t.id
-	";
+        SELECT  watershed_name
+                , station_name
+                , location_id
+                , latitude
+                , longitude
+                , startDate
+                , endDate
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        JOIN    ($sql) t
+            ON  a.id = t.id
+    ";
     
     return $wpdb->get_row($sql);
 }
@@ -211,15 +211,15 @@ function cura_update_layers() {
             continue;
         }
         $sql = "
-			SELECT	MIN(datetime) `begintime`
-					, MAX(datetime) `endtime`
-					, MAX(latitude) `upper`
-					, MAX(longitude) `right`
-					, MIN(latitude) `bottom`
-					, MIN(longitude) `left`
-			FROM	`" . CURAH2O_TABLE . "`
-					WHERE	`$field` IS NOT NULL
-		";
+            SELECT  MIN(datetime) `begintime`
+                    , MAX(datetime) `endtime`
+                    , MAX(latitude) `upper`
+                    , MAX(longitude) `right`
+                    , MIN(latitude) `bottom`
+                    , MIN(longitude) `left`
+            FROM    `" . CURAH2O_TABLE . "`
+                    WHERE   `$field` IS NOT NULL
+        ";
         $row = $wpdb->get_row($sql);
         $values = array();
         
@@ -231,21 +231,21 @@ function cura_update_layers() {
         $layer = cura_get_layer_by_name($field);
         if (!$layer) {
             $sql = "
-				INSERT INTO
-						`" . CURAH2O_TABLE_LAYERS . "`
-				SET		`name` = '" . addslashes($field) . "'" . //
+                INSERT INTO
+                        `" . CURAH2O_TABLE_LAYERS . "`
+                SET     `name` = '" . addslashes($field) . "'" . //
             (empty($values) ? "" : "
-						, " . implode("
-						, ", $values)) . "
-			";
+                        , " . implode("
+                        , ", $values)) . "
+            ";
             $wpdb->query($sql);
         } elseif (!empty($value)) {
             $sql = "
-				UPDATE	`" . CURAH2O_TABLE_LAYERS . "`
-				SET		" . implode("
-						, ", $values) . "
-				WHERE	`name` = '" . addslashes($field) . "'
-			";
+                UPDATE  `" . CURAH2O_TABLE_LAYERS . "`
+                SET     " . implode("
+                        , ", $values) . "
+                WHERE   `name` = '" . addslashes($field) . "'
+            ";
             $wpdb->query($sql);
         }
     }
@@ -253,24 +253,24 @@ function cura_update_layers() {
 function cura_get_layer_by_id($id) {
     global $wpdb;
     $sql = "
-		SELECT	id, name
-				, begintime, endtime
-				, `upper`, `right`, `bottom`, `left`
-		FROM	`" . CURAH2O_TABLE_LAYERS . "`
-		WHERE	id = " . intval($id) . "
-	";
+        SELECT  id, name
+                , begintime, endtime
+                , `upper`, `right`, `bottom`, `left`
+        FROM    `" . CURAH2O_TABLE_LAYERS . "`
+        WHERE   id = " . intval($id) . "
+    ";
     
     return $wpdb->get_row($sql);
 }
 function cura_get_layer_by_name($name) {
     global $wpdb;
     $sql = "
-		SELECT	id, name
-				, begintime, endtime
-				, `upper`, `right`, `bottom`, `left`
-		FROM	`" . CURAH2O_TABLE_LAYERS . "`
-		WHERE	name = '" . addslashes($name) . "'
-	";
+        SELECT  id, name
+                , begintime, endtime
+                , `upper`, `right`, `bottom`, `left`
+        FROM    `" . CURAH2O_TABLE_LAYERS . "`
+        WHERE   name = '" . addslashes($name) . "'
+    ";
     
     return $wpdb->get_row($sql);
 }
@@ -287,20 +287,20 @@ function cura_entry_info($id) {
     global $wpdb;
     $id = intval($id);
     $sql = "
-		SELECT	DATE_FORMAT(MIN(a.datetime), '%m/%d/%Y %h:%i %p') startDate
-				, DATE_FORMAT(MAX(a.datetime), '%m/%d/%Y %h:%i %p') endDate
-		FROM	(
-			SELECT	watershed_name, station_name, location_id
-			FROM	`" . CURAH2O_TABLE . "`
-			WHERE	id = $id
-		) AS b
-		JOIN	`" . CURAH2O_TABLE . "` AS a
-			ON	a.watershed_name = b.watershed_name
-			AND	a.station_name = b.station_name
-			AND	a.location_id = b.location_id
-		GROUP BY
-				a.watershed_name, a.station_name, a.location_id
-	";
+        SELECT  DATE_FORMAT(MIN(a.datetime), '%m/%d/%Y %h:%i %p') startDate
+                , DATE_FORMAT(MAX(a.datetime), '%m/%d/%Y %h:%i %p') endDate
+        FROM    (
+            SELECT  watershed_name, station_name, location_id
+            FROM    `" . CURAH2O_TABLE . "`
+            WHERE   id = $id
+        ) AS b
+        JOIN    `" . CURAH2O_TABLE . "` AS a
+            ON  a.watershed_name = b.watershed_name
+            AND a.station_name = b.station_name
+            AND a.location_id = b.location_id
+        GROUP BY
+                a.watershed_name, a.station_name, a.location_id
+    ";
     
     return $wpdb->get_row($sql);
 }
@@ -318,13 +318,13 @@ function cura_get_entry($id) {
         $fields[] = $row[0];
     }
     $sql = "
-		SELECT	id
-				, `" . implode("`
-				, `", $fields) . "`
-				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	id = $id
-	";
+        SELECT  id
+                , `" . implode("`
+                , `", $fields) . "`
+                , DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
+        FROM    `" . CURAH2O_TABLE . "`
+        WHERE   id = $id
+    ";
     
     return $wpdb->get_row($sql);
 }
@@ -348,8 +348,8 @@ function cura_add_entry($params = array()) {
         }
     }
     $sql = "INSERT INTO `" . CURAH2O_TABLE . "` SET
-	" . implode("
-			, ", $values);
+    " . implode("
+            , ", $values);
     $affectedRows = $wpdb->query($sql);
     $entry = cura_get_entry($wpdb->insert_id);
     $info = cura_entry_info($wpdb->insert_id);
@@ -383,9 +383,9 @@ function cura_update_entry($id, $params) {
         }
     }
     $sql = "UPDATE `" . CURAH2O_TABLE . "` SET
-	" . implode("
-			, ", $values) . "
-			WHERE	id = $id";
+    " . implode("
+            , ", $values) . "
+            WHERE   id = $id";
     $affectedRows = $wpdb->query($sql);
     $entry = cura_get_entry($id);
     
@@ -408,12 +408,12 @@ function cura_delete_entries($watershed_name, $station_name, $location_id, $date
     $id = intval($id);
     $datetime = date('Y-m-d H:i:s', strtotime($datetime));
     $sql = "
-		DELETE FROM
-				`" . CURAH2O_TABLE . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
-			AND	station_name = '" . addslashes($station_name) . "'
-			AND	location_id = '" . addslashes($location_id) . "'
-			AND	datetime = '$datetime'";
+        DELETE FROM
+                `" . CURAH2O_TABLE . "`
+        WHERE   watershed_name = '" . addslashes($watershed_name) . "'
+            AND station_name = '" . addslashes($station_name) . "'
+            AND location_id = '" . addslashes($location_id) . "'
+            AND datetime = '$datetime'";
     $affectedRows = $wpdb->query($sql);
     
     return $affectedRows;
@@ -509,11 +509,11 @@ function cura_photo_manager($id = 0, $initialize = false) {
         'upload_dir' => cura_photo_path($id) ,
         'upload_url' => cura_photo_url($id) ,
         'image_versions' => array(
-                'thumbnail' => array(
-                    'max_width' => 120,
-                    'max_height' => 120
-                )
+            'thumbnail' => array(
+                'max_width' => 120,
+                'max_height' => 120
             )
+        )
     ) , $initialize);
 }
 function cura_get_observations($options) {
@@ -549,20 +549,20 @@ function cura_get_observations($options) {
         $fields[] = $row[0];
     }
     $sql = "
-		SELECT	a.id
-				, a.`" . implode("`
-				, a.`", $fields) . "`
-				, DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		JOIN
-				`" . CURAH2O_TABLE_LOCATION . "` AS b
-			ON	a.watershed_name = b.watershed_name
-		WHERE	1" . (empty($sql_filter) ? "" : "
-			AND	" . implode("
-			AND	", $sql_filter)) . "
-		ORDER BY
-				a.id DESC
-	";
+        SELECT  a.id
+                , a.`" . implode("`
+                , a.`", $fields) . "`
+                , DATE_FORMAT(datetime, '%m/%d/%Y %h:%i %p') datetime
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        JOIN
+                `" . CURAH2O_TABLE_LOCATION . "` AS b
+            ON  a.watershed_name = b.watershed_name
+        WHERE   1" . (empty($sql_filter) ? "" : "
+            AND " . implode("
+            AND ", $sql_filter)) . "
+        ORDER BY
+                a.id DESC
+    ";
     $objs = $wpdb->get_results($sql);
     
     foreach ($objs as $obj) {
@@ -579,12 +579,12 @@ function cura_get_observations($options) {
 function cura_get_location($id) {
     global $wpdb;
     $sql = "
-		SELECT	id, watershed_name, count
-		FROM	`" . CURAH2O_TABLE_LOCATION . "`
-		WHERE	id = " . intval($id) . "
-		ORDER BY
-				watershed_name
-	";
+        SELECT  id, watershed_name, count
+        FROM    `" . CURAH2O_TABLE_LOCATION . "`
+        WHERE   id = " . intval($id) . "
+        ORDER BY
+                watershed_name
+    ";
     $row = $wpdb->get_row($sql);
     if ($row) {
         $row->id = intval($row->id);
@@ -596,12 +596,12 @@ function cura_get_location($id) {
 function cura_get_locations() {
     global $wpdb;
     $sql = "
-		SELECT	id, watershed_name, count
-		FROM	`" . CURAH2O_TABLE_LOCATION . "`
-		WHERE	1
-		ORDER BY
-				watershed_name
-	";
+        SELECT  id, watershed_name, count
+        FROM    `" . CURAH2O_TABLE_LOCATION . "`
+        WHERE   1
+        ORDER BY
+                watershed_name
+    ";
     $rows = $wpdb->get_results($sql, ARRAY_A);
     
     foreach ($rows as & $row) {
@@ -616,128 +616,128 @@ function cura_update_locations() {
     $sql = "TRUNCATE TABLE `" . CURAH2O_TABLE_LOCATION . "`";
     $wpdb->query($sql);
     $sql = "
-		INSERT INTO
-			`" . CURAH2O_TABLE_LOCATION . "` (
-				watershed_name,
-				count
-			)
-		SELECT	a.watershed_name, count(*)
-		FROM	`" . CURAH2O_TABLE . "` a
-		LEFT JOIN
-				`" . CURAH2O_TABLE_LOCATION . "` b
-			ON	a.watershed_name = b.watershed_name
-		WHERE	b.id IS NULL
-		GROUP BY
-				a.watershed_name
-	";
+        INSERT INTO
+            `" . CURAH2O_TABLE_LOCATION . "` (
+                watershed_name,
+                count
+            )
+        SELECT  a.watershed_name, count(*)
+        FROM    `" . CURAH2O_TABLE . "` a
+        LEFT JOIN
+                `" . CURAH2O_TABLE_LOCATION . "` b
+            ON  a.watershed_name = b.watershed_name
+        WHERE   b.id IS NULL
+        GROUP BY
+                a.watershed_name
+    ";
     $wpdb->query($sql);
 }
 function cura_update_location($watershed_name) {
     global $wpdb;
     $sql = "
-		SELECT	watershed_name
-		FROM	`" . CURAH2O_TABLE_LOCATION . "`
-		WHERE	watershed_name = '" . addslashes($watershed_name) . "'
-		LIMIT	1
-	";
+        SELECT  watershed_name
+        FROM    `" . CURAH2O_TABLE_LOCATION . "`
+        WHERE   watershed_name = '" . addslashes($watershed_name) . "'
+        LIMIT   1
+    ";
     $row = $wpdb->get_row($sql, ARRAY_A);
     if ($row) {
         $sql = "
-			SELECT	count(*)
-			FROM	`" . CURAH2O_TABLE . "`
-			WHERE	watershed_name = '" . addslashes($watershed_name) . "'
-		";
+            SELECT  count(*)
+            FROM    `" . CURAH2O_TABLE . "`
+            WHERE   watershed_name = '" . addslashes($watershed_name) . "'
+        ";
         $count = $wpdb->get_var($sql);
         $sql = "
-			UPDATE	`" . CURAH2O_TABLE_LOCATION . "`
-			SET		count = $count
-			WHERE	watershed_name = '" . addslashes($watershed_name) . "'
-			LIMIT	1
-		";
+            UPDATE  `" . CURAH2O_TABLE_LOCATION . "`
+            SET     count = $count
+            WHERE   watershed_name = '" . addslashes($watershed_name) . "'
+            LIMIT   1
+        ";
         $wpdb->query($sql);
         $sql = "
-			DELETE FROM
-					`" . CURAH2O_TABLE_LOCATION . "`
-			WHERE	count = 0
-		";
+            DELETE FROM
+                    `" . CURAH2O_TABLE_LOCATION . "`
+            WHERE   count = 0
+        ";
         $wpdb->query($sql);
     } else {
         $sql = "
-			INSERT INTO
-			`" . CURAH2O_TABLE_LOCATION . "`
-			SET		count = 1
-			, watershed_name = '" . addslashes($watershed_name) . "'
-		";
+            INSERT INTO
+            `" . CURAH2O_TABLE_LOCATION . "`
+            SET     count = 1
+            , watershed_name = '" . addslashes($watershed_name) . "'
+        ";
         $wpdb->query($sql);
     }
 }
 function cura_get_typeaheads_of_watershed() {
     global $wpdb;
     $sql = "
-		SELECT	MAX(id) id
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	1
-		GROUP BY
-				watershed_name
-	";
+        SELECT  MAX(id) id
+        FROM    `" . CURAH2O_TABLE . "`
+        WHERE   1
+        GROUP BY
+                watershed_name
+    ";
     $sql = "
-		SELECT	watershed_name
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		JOIN	($sql) t
-			ON	a.id = t.id
-		ORDER BY
-				a.id DESC
-	";
+        SELECT  watershed_name
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        JOIN    ($sql) t
+            ON  a.id = t.id
+        ORDER BY
+                a.id DESC
+    ";
     
     return $wpdb->get_results($sql, ARRAY_A);
 }
 function cura_get_typeaheads_of_locationid($watershed_name, $station_name) {
     global $wpdb;
     $sql = "
-		SELECT	MAX(id) id
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	1" . ($watershed_name == '' ? '' : "
-			AND	watershed_name = '" . addslashes($watershed_name) . "'") . ($station_name == '' ? '' : "
-			AND	station_name = '" . addslashes($station_name) . "'") . "
-		GROUP BY
-				location_id
-	";
+        SELECT  MAX(id) id
+        FROM    `" . CURAH2O_TABLE . "`
+        WHERE   1" . ($watershed_name == '' ? '' : "
+            AND watershed_name = '" . addslashes($watershed_name) . "'") . ($station_name == '' ? '' : "
+            AND station_name = '" . addslashes($station_name) . "'") . "
+        GROUP BY
+                location_id
+    ";
     $sql = "
-		SELECT	location_id
-				, station_name
-				, latitude
-				, longitude
-				, datetime
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		JOIN	($sql) t
-			ON	a.id = t.id
-		ORDER BY
-				a.id DESC
-	";
+        SELECT  location_id
+                , station_name
+                , latitude
+                , longitude
+                , datetime
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        JOIN    ($sql) t
+            ON  a.id = t.id
+        ORDER BY
+                a.id DESC
+    ";
     
     return $wpdb->get_results($sql, ARRAY_A);
 }
 function cura_get_typeaheads_of_station($watershed_name) {
     global $wpdb;
     $sql = "
-		SELECT	MAX(id) id
-		FROM	`" . CURAH2O_TABLE . "`
-		WHERE	" . ($watershed_name == '' ? '1' : "watershed_name = '" . addslashes($watershed_name) . "'") . "
-		GROUP BY			
-				location_id, station_name
-	";
+        SELECT  MAX(id) id
+        FROM    `" . CURAH2O_TABLE . "`
+        WHERE   " . ($watershed_name == '' ? '1' : "watershed_name = '" . addslashes($watershed_name) . "'") . "
+        GROUP BY            
+                location_id, station_name
+    ";
     $sql = "
-		SELECT	station_name
-				, location_id
-				, latitude
-				, longitude
-				, datetime
-		FROM	`" . CURAH2O_TABLE . "` AS a
-		JOIN	($sql) t
-			ON	a.id = t.id
-		ORDER BY
-				a.id DESC
-	";
+        SELECT  station_name
+                , location_id
+                , latitude
+                , longitude
+                , datetime
+        FROM    `" . CURAH2O_TABLE . "` AS a
+        JOIN    ($sql) t
+            ON  a.id = t.id
+        ORDER BY
+                a.id DESC
+    ";
     
     return $wpdb->get_results($sql, ARRAY_A);
 }
