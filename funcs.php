@@ -426,10 +426,25 @@ function cura_photo_path($id = '') {
     
     return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
 }
-function cura_photo_manager($id, $initialize = false) {
+function cura_photo_url($id = '') {
+    if ($id === '') {
+        
+        return CURAH2O_PLUGIN_URL . 'photos/';
+    }
+    
+    return CURAH2O_PLUGIN_URL . 'photos/' . implode('/', str_split($id)) . '/';
+}
+function cura_photo_manager($id = 0, $initialize = false) {
     require ('vendor/jquery-file-upload/UploadHandler.php');
     
     class Photo extends UploadHandler {
+        public function setId($id) {
+            $this->options = array_merge($this->options, array(
+                'id' => $id,
+                'upload_dir' => cura_photo_path($id) ,
+                'upload_url' => cura_photo_url($id) ,
+            ));
+        }
         public function get($print_response = true) {
             $files = $this->get_file_objects();
             
@@ -492,6 +507,13 @@ function cura_photo_manager($id, $initialize = false) {
     return new Photo($options = array(
         'id' => $id,
         'upload_dir' => cura_photo_path($id) ,
+        'upload_url' => cura_photo_url($id) ,
+        'image_versions' => array(
+                'thumbnail' => array(
+                    'max_width' => 120,
+                    'max_height' => 120
+                )
+            )
     ) , $initialize);
 }
 function cura_get_observations($options) {

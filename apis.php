@@ -189,22 +189,11 @@ function cura_json_observations() {
     }
     // making root as Array is for ngResource
     $observations = cura_get_observations($request);
+    $pm = cura_photo_manager();
     
     foreach ($observations as & $row) {
-        $path = cura_photo_path($row->id);
-        $row->photos = array();
-        if (is_dir($path)) {
-            $photos = scandir($path);
-            
-            foreach ($photos as $file) {
-                if ($file[0] != '.' && is_file($path . $file)) {
-                    $row->photos[] = array(
-                        'id' => $row->id,
-                        'name' => $file,
-                    );
-                }
-            }
-        }
+        $pm->setId($row->id);
+        $row->photos = $pm->get(false);
     }
     if (!empty($_REQUEST['downloadPhoto'])) {
         ob_start();

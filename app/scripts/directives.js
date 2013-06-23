@@ -358,10 +358,16 @@ angular.module('directives', [])
 				var html = [
 					'<div>',
 					'	<input ng-show="canedit" class="field" type="file" multiple>',
-					'	<p ng-repeat="photo in ob.photos" style="padding: 3px; border-bottom: 1px solid #f0f0f0">{{photo.name}}',
-					'		<span class="ui-icon ui-icon-closethick"',
-					'		 ng-show="canedit"',
-					'		 ng-click="removePhoto(photo)" style="float: right"></span></p>',
+					'	<table>',
+					'		<tr ng-repeat="photo in ob.photos">',
+					'			<td><a target="_blank" href="{{photo.url}}"><img ng-src="{{photo.thumbnail_url}}" /></a></td>',
+					'			<td>{{photo.name}}</td>',
+					'			<td><i class="close icon-remove"',
+					'			 ng-show="canedit"',
+					'			 ng-click="removePhoto(photo)"></i>',
+					'			</td>',
+					'		</tr>',
+					'	</table>',
 					'	<div id="progress" style="height: 3px;">',
 					'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
 					'	</div>',
@@ -611,6 +617,7 @@ angular.module('directives', [])
 					$scope.editingOb = {
 						id: 0,
 						datetime: dt + ' ' + tm,
+						photos: Photo.query(),
 					}
 					openDialog('Add Observation', $scope.editingOb);
 					$form.validate().resetForm();
