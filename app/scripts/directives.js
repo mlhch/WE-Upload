@@ -288,8 +288,6 @@ angular.module('directives', [])
 				group: '@',
 			},
 			link: function($scope, $el, $attrs) {
-				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
-
 				var url = cura.pluginUrl + 'vendor/jquery.tablesorter/addons/pager/icons/';
 				$el.append($compile([
 						'<form ng-show2="config.totalPages <= 1 && $group.id">',
@@ -309,6 +307,7 @@ angular.module('directives', [])
 						'</form>'
 				].join(''))($scope));
 
+				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
 				$scope.$watch('pagesize', function(value) {
 					value && $cookieStore.put('pagesize', value);
 				});
