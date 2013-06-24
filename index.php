@@ -28,9 +28,11 @@ define ( 'CURAH2O_TABLE_LOCATION',	'water_quality_location' );
 define ( 'CURAH2O_TABLE_LAYERS',	'water_quality_layers' );
 define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
-wp_schedule_event( strtotime('2013-06-23 10:24:00'), 'daily', 'cura_backup' );
-add_action ('cura_backup', 'cura_backup_export_csv' );
-function cura_backup_export_csv() {
+if ( !wp_next_scheduled('cura_backup') ) {
+	wp_schedule_event( time(), 'daily', 'cura_backup' );
+}
+add_action ('cura_backup', 'cura_backup' );
+function cura_backup() {
     include 'apis.php';
     include 'funcs.php';
 
@@ -38,7 +40,7 @@ function cura_backup_export_csv() {
     if (!is_dir($backup_dir)) {
     	mkdir($backup_dir);
     }
-    
+
     $files = scandir($backup_dir);
     $now = time();
     foreach ($files as $file) {
