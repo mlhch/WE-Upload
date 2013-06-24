@@ -4,9 +4,9 @@
 window.debug = function(level) {
 	switch (level) {
 		case 'fn':
-		return true;
+		return false;
 	}
-	return true;
+	return false;
 }
 
 var pluginUrl = angular.element('script:last')[0].src.replace('app/scripts/app.js', '');

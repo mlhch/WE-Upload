@@ -92,16 +92,8 @@ curaApp.controller('MainCtrl', [
 					$scope.filterLocationIds[newOb.location_id] = true
 					$scope.filterLocationIds.push(newOb.location_id)
 				}
-			} else if (newOb.watershed_name != $scope.filterOption.location.watershed_name) {
-				if ($scope.locations.every(function(value) {
-					return value.watershed_name != newOb.watershed_name || ($scope.filterOption.location = value) && false;
-				})) {
-					if (!$scope.filterLocationIds[newOb.location_id]) {
-						$scope.filterLocationIds[newOb.location_id] = true
-						$scope.filterLocationIds.push(newOb.location_id)
-					}
-				}
 			}
+			$scope.filterOptions.forceReset = Date.now();
 
 			curaConfig.get(config);
 			var props = {

@@ -30,6 +30,8 @@ define ( 'CURAH2O_COOKIE_NAME', 'water-quality' );
 
 if ( !wp_next_scheduled('cura_backup') ) {
 	wp_schedule_event( time(), 'daily', 'cura_backup' );
+} else {
+	//wp_clear_scheduled_hook('cura_backup');
 }
 add_action ('cura_backup', 'cura_backup' );
 function cura_backup() {
