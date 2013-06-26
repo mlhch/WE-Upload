@@ -378,6 +378,7 @@ angular.module('directives', [])
 
 						$el.find('input').fileupload({
 							dataType: 'json',
+							maxChunkSize: 1024 * 1024,
 							add: function(e, data) {
 								$el.find('.bar').css('width', '0%');
 								data.id = $scope.ob.id;
