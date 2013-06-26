@@ -33,4 +33,7 @@ RewriteRule ^(.*)$ index.php [L]</pre>
     <li>Make sure <wordpress_root>/wp-content/uploads exits and writable</li>
     <li>Make sure the owner of file <wordpress_root>/wp-admin/includes/update.php the same as the owner of the httpd process, this is to avoid the requirement of ftp access information. For example, if the Apache User/Group configured in httpd.conf is _www/_www, then simply use chown -R _www:_www <wordpress_root></p></li>
     <li>Make sure the directory <wordpress_root>/wp-content/plugins writable and <wordpress_root>/wp-content/upgrade writable if it is existing</li>
+    <li>Currently the uploaded photo file size is limited by 'upload_max_filesize' in php.ini, so we need to ask the server administrator for support, 5M is required</li>
+    <li>A filename of water-quality.zip to be uploaded and install is preferred</li>
+    <li>Need php-gd library enabled to generate photo thumbnail</li>
 </ol>
