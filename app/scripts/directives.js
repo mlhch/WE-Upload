@@ -289,9 +289,9 @@ angular.module('directives', [])
 				group: '@',
 			},
 			link: function($scope, $el, $attrs) {
-				var url = cura.pluginUrl + 'vendor/jquery.tablesorter/addons/pager/icons/';
+				var url = cura.pluginUrl + '../vendor/jquery.tablesorter/addons/pager/icons/';
 				$el.append($compile([
-						'<form ng-show2="config.totalPages <= 1 && $group.id">',
+						'<form ng-show="total>1">',
 						'	<img class="first" ng-hide="page<1" src="' + url + 'first.png" />',
 						'	<img class="disabled" ng-show="page<1" src="' + url + 'first-disabled.png" />',
 						'	<img class="prev" ng-hide="page<1" src="' + url + 'prev.png" />',
