@@ -31,6 +31,7 @@ angular.module('directives', [])
 				})
 				setPosition();
 				angular.element($window).bind('resize', setPosition)
+				$scope.$on('tablesorterEnd', setPosition)
 
 				function setPosition() {
 					$el.css({
@@ -329,7 +330,7 @@ angular.module('directives', [])
 						container: $el,
 						positionFixed: false,
 						size: $scope.pagesize,
-					}).bind('sortEnd', function() {
+					}).bind('applyWidgets sortEnd', function() {
 						var c = this.config;
 						$scope.page = c.page;
 						$scope.total = c.totalPages;
