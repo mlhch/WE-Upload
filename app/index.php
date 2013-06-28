@@ -19,11 +19,12 @@
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.iframe-transport.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-file-upload/jquery.fileupload.js"></script>
 
+ 	<script src="<?php echo $url?>vendor/jquery-ui-timepicker-addon.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-validation/jquery.validate.js"></script>
 	<script src="<?php echo $url?>vendor/jquery-validation/additional-methods.js"></script>
-	<script src="<?php echo $url?>app/scripts/vendor/ucsv.js"></script>
 	<script src="<?php echo $url?>vendor/jquery.tablesorter/jquery.tablesorter.js"></script>
 	<script src="<?php echo $url?>vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.js"></script>
+	<script src="<?php echo $url?>vendor/ucsv.js"></script>
 
 	<script src="<?php echo $url?>app/scripts/vendor/leaflet.js"></script>
 	<script src="<?php echo $url?>app/scripts/vendor/leaflet.markercluster.js"></script>

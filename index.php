@@ -244,7 +244,7 @@ function cura_main_js_and_css() {
 	 * jQuery UI Datepicker and Timepicker
 	 */
 	wp_enqueue_script ( 'jquery-ui-datepicker' );
-	$src = CURAH2O_PLUGIN_URL . 'lib/jquery-ui-timepicker-addon.js';
+	$src = CURAH2O_PLUGIN_URL . 'vendor/jquery-ui-timepicker-addon.js';
 	wp_register_script ( 'jquery-ui-timepicker', $src, array (
 			'jquery-ui-datepicker',
 			'jquery-ui-slider' 
