@@ -10,11 +10,11 @@ window.debug = function(level) {
 }
 
 var pluginUrl = angular.element('script:last')[0].src.replace('app/scripts/app.js', '');
-angular.element('head').append([
+document.write([
 		'<link rel="stylesheet" href="' + pluginUrl + 'vendor/bootstrap/css/bootstrap.css" />',
 		//'<link rel="stylesheet" href="' + pluginUrl + 'vendor/bootstrap/css/bootstrap-responsive.css" />',
 		'<link rel="stylesheet" href="' + pluginUrl + 'app/styles/main.css" />'
-]);
+].join(''));
 
 var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource', 'ngCookies'])
 	.config(['$routeProvider',

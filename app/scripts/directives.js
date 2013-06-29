@@ -38,7 +38,7 @@ angular.module('directives', [])
 						width: $detector.width() + 'px',
 						left: $detector.offset().left + 'px',
 						top: barHeight + 'px',
-					})	
+					})
 				}
 			}
 		}
@@ -289,6 +289,8 @@ angular.module('directives', [])
 				group: '@',
 			},
 			link: function($scope, $el, $attrs) {
+				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
+
 				var url = cura.pluginUrl + 'vendor/jquery.tablesorter/addons/pager/icons/';
 				$el.append($compile([
 						'<form ng-show2="config.totalPages <= 1 && $group.id">',
@@ -308,9 +310,13 @@ angular.module('directives', [])
 						'</form>'
 				].join(''))($scope));
 
-				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
 				$scope.$watch('pagesize', function(value) {
-					value && $cookieStore.put('pagesize', value);
+					if (value) {
+						$cookieStore.put('pagesize', value)
+						/// this is a trick. it works well without this line on local,
+						/// but it is neccessary on server. not sure why yet
+						$el.find('.pagesize').val(value);
+					}
 				});
 
 				$scope.$on('tablesorterInitialized', function(event, $tb) {
@@ -356,22 +362,22 @@ angular.module('directives', [])
 			replace: true,
 			link: function($scope, $el, $attrs) {
 				var html = [
-					'<div>',
-					'	<input ng-show="canedit" class="field" type="file" multiple>',
-					'	<table>',
-					'		<tr ng-repeat="photo in ob.photos">',
-					'			<td><a target="_blank" href="{{photo.url}}"><img ng-src="{{photo.thumbnail_url}}" /></a></td>',
-					'			<td>{{photo.name}}</td>',
-					'			<td><i class="close icon-remove"',
-					'			 ng-show="canedit"',
-					'			 ng-click="removePhoto(photo)"></i>',
-					'			</td>',
-					'		</tr>',
-					'	</table>',
-					'	<div id="progress" style="height: 3px;">',
-					'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
-					'	</div>',
-					'</div>',
+						'<div>',
+						'	<input ng-show="canedit" class="field" type="file" multiple>',
+						'	<table>',
+						'		<tr ng-repeat="photo in ob.photos">',
+						'			<td><a target="_blank" href="{{photo.url}}"><img ng-src="{{photo.thumbnail_url}}" /></a></td>',
+						'			<td>{{photo.name}}</td>',
+						'			<td><i class="close icon-remove"',
+						'			 ng-show="canedit"',
+						'			 ng-click="removePhoto(photo)"></i>',
+						'			</td>',
+						'		</tr>',
+						'	</table>',
+						'	<div id="progress" style="height: 3px;">',
+						'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
+						'	</div>',
+						'</div>',
 				]
 				$scope.$watch('canedit', function(value) {
 					if (value == 'true' || value == 'false') {
@@ -396,7 +402,7 @@ angular.module('directives', [])
 								$el.find('.bar').css('width', progress + '%');
 							}
 						})
-					}	
+					}
 				})
 
 				$scope.removePhoto = function(photo) {
@@ -457,7 +463,7 @@ angular.module('directives', [])
 						['coliform'],
 						['note'],
 					];
-				
+
 				$scope.$watch('fields', function(value) {
 					if (value) {
 						value.forEach(function(field) {
