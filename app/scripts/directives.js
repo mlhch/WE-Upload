@@ -289,8 +289,6 @@ angular.module('directives', [])
 				group: '@',
 			},
 			link: function($scope, $el, $attrs) {
-				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
-
 				var url = cura.pluginUrl + '../vendor/jquery.tablesorter/addons/pager/icons/';
 				$el.append($compile([
 						'<form ng-show="total>1">',
@@ -304,19 +302,16 @@ angular.module('directives', [])
 						'	<img class="last" ng-hide="page>=total-1" src="' + url + 'last.png" />',
 						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'last-disabled.png" />',
 						'	<select class="span1 pagesize">',
-						'		<option ng-selected="pagesize==100" value="100">100</option>',
+						'		<option ng-selected="pagesize==100" value="100" selected="selected">100</option>',
 						'		<option ng-selected="pagesize==10" value="10">10</option>',
 						'	</select>',
 						'</form>'
 				].join(''))($scope));
 
+				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
+
 				$scope.$watch('pagesize', function(value) {
-					if (value) {
-						$cookieStore.put('pagesize', value)
-						/// this is a trick. it works well without this line on local,
-						/// but it is neccessary on server. not sure why yet
-						$el.find('.pagesize').val(value);
-					}
+					value && $cookieStore.put('pagesize', value)
 				});
 
 				$scope.$on('tablesorterInitialized', function(event, $tb) {
