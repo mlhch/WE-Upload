@@ -92,11 +92,22 @@ module.exports = function( grunt ) {
         undef: true,
         boss: true,
         eqnull: true,
-        browser: true
+        browser: true,
+        '-W033': true,//Missing semicolon. my test way
+        globals: {
+          angular: true,
+          jQuery: true,
+          console: true,
+          curaApp: true,
+        }
       },
-      globals: {
-        angular: true
-      }
+      ignore_warning: {
+        options: {
+          '-W033': true,//Missing semicolon. Official way, not work
+        },
+      },
+      beforeconcat: ['app/scripts/app.js', 'app/scripts/controllers/main.js'],
+      afterconcat: ['dist/output.js']
     },
 
     // Build configuration
@@ -117,8 +128,15 @@ module.exports = function( grunt ) {
     // during the copy process.
 
     // concat css/**/*.css files, inline @import, output a single minified css
-    css: {
-      'styles/main.css': ['styles/**/*.css']
+    cssmin: {
+      minify: {
+        src: ['app/styles/application.css'],
+        dest: 'app/styles/application.css',
+      },
+      wpminify: {
+        src: ['app/styles/water-quality.css'],
+        dest: 'app/styles/water-quality.css',
+      }
     },
 
     // renames JS/CSS to prepend a hash of their contents for easier
@@ -163,8 +181,120 @@ module.exports = function( grunt ) {
       optimize: 'none',
       baseUrl: './scripts',
       wrap: true
+    },
+    concat: {
+      options: {
+        stripBanners: true
+      },
+      js: {
+        options: {
+          separator: ';'
+        },
+        src: [
+          'vendor/jquery.js',
+          'vendor/jquery-ui/jquery.ui.core.js',
+          'vendor/jquery-ui/jquery.ui.widget.js',
+          'vendor/jquery-ui/jquery.ui.position.js',
+          'vendor/jquery-ui/jquery.ui.button.js',
+          'vendor/jquery-ui/jquery.ui.mouse.js',
+          'vendor/jquery-ui/jquery.ui.draggable.js',
+          'vendor/jquery-ui/jquery.ui.dialog.js',
+          'vendor/jquery-ui/jquery.ui.mouse.js',
+          'vendor/jquery-ui/jquery.ui.sortable.js',
+          'vendor/jquery-ui/jquery.ui.datepicker.js',
+          'vendor/jquery-ui-timepicker-addon.js',
+          'vendor/jquery-validation/jquery.validate.js',
+          'vendor/jquery-validation/additional-methods.js',
+          'vendor/jquery.tablesorter/jquery.tablesorter.js',
+          'vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.js',
+          'vendor/jquery-file-upload/jquery.iframe-transport.js',
+          'vendor/jquery-file-upload/jquery.fileupload.js',
+          'vendor/ucsv.js',
+          'vendor/bootstrap/js/bootstrap-typeahead-2.1.0-customized.js',
+          'vendor/bootstrap/js/bootstrap-affix.js',
+          'app/scripts/vendor/leaflet.js',
+          'app/scripts/curah2o/cura.leaflet.js',
+          'app/scripts/curah2o/cura.leaflet.geojson.js',
+          'app/scripts/vendor/angular.js',
+          'app/scripts/vendor/angular-cookies.js',
+          'app/scripts/vendor/angular-resource.js',
+          'app/scripts/services.js',
+          'app/scripts/directives.js',
+        ],
+        dest: 'app/scripts/application.js'
+      },
+      wpjs: {
+        options: {
+          separator: ';'
+        },
+        src: [
+          'vendor/jquery-ui-timepicker-addon.js',
+          'vendor/jquery-validation/jquery.validate.js',
+          'vendor/jquery-validation/additional-methods.js',
+          'vendor/jquery.tablesorter/jquery.tablesorter.js',
+          'vendor/jquery.tablesorter/addons/pager/jquery.tablesorter.pager.js',
+          'vendor/jquery-file-upload/jquery.iframe-transport.js',
+          'vendor/jquery-file-upload/jquery.fileupload.js',
+          'vendor/ucsv.js',
+          'vendor/bootstrap/js/bootstrap-typeahead-2.1.0-customized.js',
+          'vendor/bootstrap/js/bootstrap-affix.js',
+          'app/scripts/vendor/leaflet.js',
+          'app/scripts/curah2o/cura.leaflet.js',
+          'app/scripts/curah2o/cura.leaflet.geojson.js',
+          'app/scripts/vendor/angular.js',
+          'app/scripts/vendor/angular-cookies.js',
+          'app/scripts/vendor/angular-resource.js',
+          'app/scripts/services.js',
+          'app/scripts/directives.js',
+        ],
+        dest: 'app/scripts/water-quality.js'
+      },
+      css: {
+        options: {
+          separator: '\n',
+        },
+        src: [
+          'app/styles/jquery-ui.css',
+          'app/styles/leaflet.awesome-markers.css',
+          'app/styles/MarkerCluster.Default.css',
+          'app/styles/MarkerCluster.css',
+          'app/styles/font-awesome.min.css',
+          'app/styles/leaflet.css',
+        ],
+        dest: 'app/styles/application.css'
+      },
+      wpcss: {
+        options: {
+          separator: '\n',
+        },
+        src: [
+          'app/styles/leaflet.css',
+          'app/styles/leaflet.awesome-markers.css',
+          'app/styles/MarkerCluster.Default.css',
+          'app/styles/MarkerCluster.css',
+          'app/styles/font-awesome.min.css',
+        ],
+        dest: 'app/styles/water-quality.css'
+      }
+    },
+    uglify: {
+      js: {
+        files: {
+          'app/scripts/application.js': ['app/scripts/application.js']
+        }
+      },
+      wpjs: {
+        files: {
+          'app/scripts/water-quality.js': ['app/scripts/water-quality.js']
+        }
+      }
     }
   });
+
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
   // Alias the `test` task to run `testacular` instead
   grunt.registerTask('test', 'run the testacular test driver', function () {
@@ -174,4 +304,7 @@ module.exports = function( grunt ) {
       done(err);
     });
   });
+
+  grunt.registerTask('wp', ['concat:wpcss', 'cssmin:wpminify', 'concat:wpjs', 'uglify:wpjs']);
+  grunt.registerTask('default', ['concat:css', 'cssmin:minify', 'concat:js', 'uglify:js']);
 };
