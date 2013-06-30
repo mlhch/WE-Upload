@@ -191,22 +191,6 @@ if (is_admin ()) {
 }
 function cura_main_js_and_css() {
 	/*
-	 * wp_deregister_script('jquery'); $src = CURAH2O_PLUGIN_URL .
-	 * 'debug/jquery-1.7.2.js'; wp_register_script('jquery', $src);
-	 * wp_enqueue_script('jquery');
-	 */
-	
-	// main js source
-	/* to be history
-	$src = CURAH2O_PLUGIN_URL . 'water-quality.js';
-	wp_register_script ( 'water-quality', $src, array (
-			'jquery',
-			'jquery-ui-sortable' 
-	) );
-	wp_enqueue_script ( 'water-quality' );
-	*/
-	
-	/*
 	 * jquery.tablesorter.css support
 	 */	
 	$src = CURAH2O_PLUGIN_URL . 'vendor/jquery.tablesorter/themes/blue/style.css';
@@ -232,9 +216,6 @@ function cura_main_js_and_css() {
 	wp_register_style ( 'jquery-ui', $src );
 	wp_enqueue_style ( 'jquery-ui' );
 
-	$src = CURAH2O_PLUGIN_URL . 'app/styles/jquery.ui.redmond.css';
-	wp_register_style ( 'jquery-ui-theme', $src );
-	wp_enqueue_style ( 'jquery-ui-theme' );
 	
 	/*
 	 * jQuery UI Dialog
@@ -255,6 +236,7 @@ function cura_main_js_and_css() {
 	/**
 	 * CuraH2O Phase 2
 	 */
-	include "style.php";
-	cura_phase2_js_and_css();
+	$src = CURAH2O_PLUGIN_URL . 'app/styles/water-quality.css';
+	wp_register_style('cura-app-style', $src);
+	wp_enqueue_style('cura-app-style');
 }
