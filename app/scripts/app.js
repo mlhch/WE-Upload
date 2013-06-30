@@ -10,7 +10,7 @@ window.debug = function(level) {
 }
 
 var pluginUrl = angular.element('script:last')[0].src.replace('scripts/app.js', '');
-document.write([
+angular.element('head').append([
 		'<link rel="stylesheet" href="' + pluginUrl + '../vendor/bootstrap/css/bootstrap.css" />',
 		//'<link rel="stylesheet" href="' + pluginUrl + '../vendor/bootstrap/css/bootstrap-responsive.css" />',
 		'<link rel="stylesheet" href="' + pluginUrl + 'styles/main.css" />'
