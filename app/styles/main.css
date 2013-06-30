@@ -94,10 +94,13 @@ table.tablesorter tbody tr td:nth-last-child(2) {
 
 .tablesorterPager {
 	background-color: transparent !important;
+	padding: 0 !important;
+}
+.tablesorterPager form {
+	margin: 0;
 }
 .tablesorterPager img {
 	width: 30px;
-	margin-bottom: 10px;
 	cursor: pointer;
 }
 .tablesorterPager img.disabled {
@@ -107,9 +110,10 @@ table.tablesorter tbody tr td:nth-last-child(2) {
 	font-size: 1rem !important;
 	border: 1px solid whitesmoke !important;
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+	margin-bottom: 0;
 }
 .tablesorterPager select {
-	margin-bottom: 9px;
+	margin-bottom: 0;
 }
 
 
