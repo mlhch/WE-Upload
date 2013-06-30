@@ -106,7 +106,7 @@ $.widget = function( name, base, prototype ) {
 		// TODO: remove support for widgetEventPrefix
 		// always use the name + a colon as the prefix, e.g., draggable:start
 		// don't prefix for widgets that aren't DOM-based
-		widgetEventPrefix: existingConstructor ? (basePrototype.widgetEventPrefix || name) : name
+		widgetEventPrefix: existingConstructor ? basePrototype.widgetEventPrefix : name
 	}, proxiedPrototype, {
 		constructor: constructor,
 		namespace: namespace,
@@ -178,10 +178,6 @@ $.widget.bridge = function( name, object ) {
 			this.each(function() {
 				var methodValue,
 					instance = $.data( this, fullName );
-				if ( options === "instance" ) {
-					returnValue = instance;
-					return false;
-				}
 				if ( !instance ) {
 					return $.error( "cannot call methods on " + name + " prior to initialization; " +
 						"attempted to call method '" + options + "'" );
@@ -349,7 +345,8 @@ $.Widget.prototype = {
 
 		if ( key === "disabled" ) {
 			this.widget()
-				.toggleClass( this.widgetFullName + "-disabled", !!value );
+				.toggleClass( this.widgetFullName + "-disabled ui-state-disabled", !!value )
+				.attr( "aria-disabled", value );
 			this.hoverable.removeClass( "ui-state-hover" );
 			this.focusable.removeClass( "ui-state-focus" );
 		}

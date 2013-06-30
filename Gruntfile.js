@@ -197,6 +197,7 @@ module.exports = function( grunt ) {
           'vendor/jquery-ui/jquery.ui.position.js',
           'vendor/jquery-ui/jquery.ui.button.js',
           'vendor/jquery-ui/jquery.ui.mouse.js',
+          'vendor/jquery-ui/jquery.ui.slider.js',
           'vendor/jquery-ui/jquery.ui.draggable.js',
           'vendor/jquery-ui/jquery.ui.dialog.js',
           'vendor/jquery-ui/jquery.ui.mouse.js',

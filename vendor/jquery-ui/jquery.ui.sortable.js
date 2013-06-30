@@ -15,8 +15,10 @@
  */
 (function( $, undefined ) {
 
+/*jshint loopfunc: true */
+
 function isOverAxis( x, reference, size ) {
-	return ( x >= reference ) && ( x < ( reference + size ) );
+	return ( x > reference ) && ( x < ( reference + size ) );
 }
 
 function isFloating(item) {
@@ -98,6 +100,17 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		return this;
+	},
+
+	_setOption: function(key, value){
+		if ( key === "disabled" ) {
+			this.options[ key ] = value;
+
+			this.widget().toggleClass( "ui-sortable-disabled", !!value );
+		} else {
+			// Don't call widget base _setOption for disable as it adds ui-state-disabled class
+			$.Widget.prototype._setOption.apply(this, arguments);
+		}
 	},
 
 	_mouseCapture: function(event, overrideHandle) {
@@ -627,11 +640,10 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 		queries.push([$.isFunction(this.options.items) ? this.options.items.call(this.element, null, { options: this.options, item: this.currentItem }) : $(this.options.items, this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"), this]);
 
-		function addItems() {
-			items.push( this );
-		}
 		for (i = queries.length - 1; i >= 0; i--){
-			queries[i][0].each( addItems );
+			queries[i][0].each(function() {
+				items.push(this);
+			});
 		}
 
 		return $(items);
@@ -1189,17 +1201,12 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 
 		//Post events to containers
-		function delayEvent( type, instance, container ) {
-			return function( event ) {
-				container._trigger( type, event, instance._uiHash( instance ) );
-			};
-		}
 		for (i = this.containers.length - 1; i >= 0; i--){
-			if (!noPropagation) {
-				delayedTriggers.push( delayEvent( "deactivate", this, this.containers[ i ] ) );
+			if(!noPropagation) {
+				delayedTriggers.push((function(c) { return function(event) { c._trigger("deactivate", event, this._uiHash(this)); };  }).call(this, this.containers[i]));
 			}
 			if(this.containers[i].containerCache.over) {
-				delayedTriggers.push( delayEvent( "out", this, this.containers[ i ] ) );
+				delayedTriggers.push((function(c) { return function(event) { c._trigger("out", event, this._uiHash(this)); };  }).call(this, this.containers[i]));
 				this.containers[i].containerCache.over = 0;
 			}
 		}
