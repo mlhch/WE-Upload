@@ -302,13 +302,18 @@ angular.module('directives', [])
 						'	<img class="last" ng-hide="page>=total-1" src="' + url + 'last.png" />',
 						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'last-disabled.png" />',
 						'	<select class="span1 pagesize">',
-						'		<option ng-selected="pagesize==100" value="100" selected="selected">100</option>',
-						'		<option ng-selected="pagesize==10" value="10">10</option>',
+						'		<option value="100" selected="selected">100</option>',
+						'		<option value="10">10</option>',
 						'	</select>',
 						'</form>'
 				].join(''))($scope));
 
-				$scope.pagesize = parseInt($cookieStore.get('pagesize')) || $el.find('.pagesize').val();
+				var pagesize = parseInt($cookieStore.get('pagesize'));
+				if (!isNaN(pagesize)) {
+					$el.find('.pagesize').val(pagesize);
+				} else {
+					pagesize = $el.find('.pagesize').val();
+				}
 
 				$scope.$watch('pagesize', function(value) {
 					value && $cookieStore.put('pagesize', value)
@@ -330,7 +335,7 @@ angular.module('directives', [])
 					$tb.tablesorterPager({
 						container: $el,
 						positionFixed: false,
-						size: $scope.pagesize,
+						size: pagesize,
 					}).bind('applyWidgets sortEnd', function() {
 						var c = this.config;
 						$scope.page = c.page;
