@@ -101,7 +101,7 @@
 		fitRange: function() {
 			var bounds = this.getBounds();
 			if (bounds.isValid()) {
-				var zoom = Math.min(8, this._map.getBoundsZoom(bounds));
+				var zoom = Math.min(this.options.minZoom, this._map.getBoundsZoom(bounds));
 				this._map.setView(L.latLngBounds(bounds).getCenter(), zoom || this._map.getZoom());
 			}
 		},
