@@ -73,7 +73,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 			},
 			geoLayer: function(res, $scope) {
 				var geoLayer = Cura.geoJson(res, {
-					minZoom: 14,
+					minZoom: 8,
 					onFeatureClick: function(options) {
 						console.log('------onFeatureClick------');
 						var $event = options.originalEvent;
