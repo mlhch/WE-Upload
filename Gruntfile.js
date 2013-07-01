@@ -306,7 +306,9 @@ module.exports = function( grunt ) {
     });
   });
 
+  grunt.registerTask('debug', ['concat:css', 'concat:js']);
+  grunt.registerTask('wpdebug', ['concat:wpcss', 'concat:wpjs']);
+  
   grunt.registerTask('wp', ['concat:wpcss', 'cssmin:wpminify', 'concat:wpjs', 'uglify:wpjs']);
   grunt.registerTask('default', ['concat:css', 'cssmin:minify', 'concat:js', 'uglify:js']);
-  grunt.registerTask('debug', ['concat:css', 'concat:js']);
 };
