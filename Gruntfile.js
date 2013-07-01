@@ -308,4 +308,5 @@ module.exports = function( grunt ) {
 
   grunt.registerTask('wp', ['concat:wpcss', 'cssmin:wpminify', 'concat:wpjs', 'uglify:wpjs']);
   grunt.registerTask('default', ['concat:css', 'cssmin:minify', 'concat:js', 'uglify:js']);
+  grunt.registerTask('debug', ['concat:css', 'concat:js']);
 };
