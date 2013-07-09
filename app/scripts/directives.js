@@ -352,8 +352,8 @@ angular.module('directives', [])
 ])
 
 
-.directive('jqueryFileUpload', ['$compile', 'Photo',
-	function($compile, Photo) {
+.directive('jqueryFileUpload', ['$compile', '$cookieStore', 'Photo',
+	function($compile, $cookieStore, Photo) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -381,6 +381,9 @@ angular.module('directives', [])
 						'	</div>',
 						'</div>',
 				]
+
+				$cookieStore.get('guest') || $cookieStore.put('guest', Date.now())
+
 				$scope.$watch('canedit', function(value) {
 					if (value == 'true' || value == 'false') {
 						$el.html('').append($compile(html.join(''))($scope));
@@ -391,7 +394,8 @@ angular.module('directives', [])
 							add: function(e, data) {
 								$el.find('.bar').css('width', '0%');
 								data.id = $scope.ob.id;
-								data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action&id=' + data.id;
+								data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action'
+									+ '&id=' + data.id + '&guest=' + $cookieStore.get('guest')
 								jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
 							},
 							done: function(e, data) {

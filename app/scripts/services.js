@@ -115,8 +115,10 @@ angular.module('services', ['ngResource'])
 }])
 
 
-	.factory('Photo', ['$resource', function($resource) {
-	return $resource('/wp-admin/admin-ajax.php', {}, {
+	.factory('Photo', ['$resource', '$cookieStore', function($resource, $cookieStore) {
+	return $resource('/wp-admin/admin-ajax.php', {
+		guest: $cookieStore.get('guest'),
+	}, {
 		query: {
 			method: 'GET',
 			isArray: true,

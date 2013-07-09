@@ -243,51 +243,14 @@ function cura_json_observations() {
     exit(0);
 }
 function cura_action_photo() {
-    if (!empty($_GET['download'])) {
-        $basepath = cura_photo_path();
-        $files = scandir($basepath, 1);
-        $zip = new ZipArchive();
-        $filename = $basepath . 'tmp.zip';
-        if (file_exists($filename)) {
-            unlink($filename);
-        }
-        if ($zip->open($filename, ZipArchive::CREATE) !== true) {
-            echo 'Create zip file error';
-            exit;
-        }
-        
-        while (!empty($files)) {
-            $file = array_pop($files);
-            if ($file[0] == '.') {
-                continue;
-            }
-            if (is_dir($basepath . $file)) {
-                //echo "dir: $file<br />";
-                $_files = scandir($basepath . $file, 1);
-                
-                foreach ($_files as $_file) {
-                    if ($_file[0] == '.' || $_file == 'thumbnail') {
-                        continue;
-                    }
-                    $files[] = $file . '/' . $_file;
-                }
-            } elseif (is_file($basepath . $file)) {
-                //echo "file: $file<br />";
-                $zip->addFile($basepath . $file, 'photos/' . str_replace('/', '', $file));
-            } else {
-                //echo "???: $file<br />";
-                
-            }
-        }
-        $zip->close();
-        header("Content-Type: application/zip");
-        header("Content-disposition: attachment; filename=photos.zip");
-        header("Content-Length: " . filesize($filename));
-        readfile($filename);
-        exit;
+    if (isset($_GET['id']) && intval($_GET['id']) > 0) {
+        $path = intval($_GET['id']);
+    } elseif ($uid = get_current_user_id()) {
+        $path = "user-$uid";
+    } else {
+        $path = "guest-" . (isset($_GET['guest']) ? $_GET['guest'] : 0);
     }
-    $id = isset($_GET['id']) && intval($_GET['id']) > 0 ? intval($_GET['id']) : 0;
-    cura_photo_manager($id, true);
+    cura_photo_manager($path, true);
     exit;
 }
 /*
@@ -295,19 +258,6 @@ function cura_action_photo() {
 */
 function cura_action_save() {
     $params = (array)cura_request();
-    /*include 'lib/Validator.class.php';
-       $asOption = cura_validation_options ();
-       $oValidator = new Validator ( $asOption );
-       $oValidator->addMethod ( "pattern", "cura_validation_pattern" );
-       $oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
-       $oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
-       $errors = $oValidator->validate ( $params );
-       if ( false && ! empty ( $errors )) {
-       echo json_encode ( array (
-       'error' => $errors 
-       ) );
-       exit ();
-       }*/
     if (empty($params['datetime'])) {
         $params['datetime'] = date('Y-m-d H:i:s');
     } else {

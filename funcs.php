@@ -418,21 +418,27 @@ function cura_delete_entries($watershed_name, $station_name, $location_id, $date
     
     return $affectedRows;
 }
-function cura_photo_path($id = '') {
-    if ($id === '') {
+function cura_photo_path($path = '') {
+    if ($path === '') {
         
         return CURAH2O_PLUGIN_DIR . 'photos/';
+    } elseif (preg_match('/^(user|guest)-\d+/', $path)) {
+
+        return CURAH2O_PLUGIN_DIR . "photos/$path/";
     }
     
-    return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($id)) . '/';
+    return CURAH2O_PLUGIN_DIR . 'photos/' . implode('/', str_split($path)) . '/';
 }
-function cura_photo_url($id = '') {
-    if ($id === '') {
+function cura_photo_url($path = '') {
+    if ($path === '') {
         
         return CURAH2O_PLUGIN_URL . 'photos/';
+    } elseif (preg_match('/^(user|guest)-\d+/', $path)) {
+
+        return CURAH2O_PLUGIN_URL . "photos/$path/";
     }
     
-    return CURAH2O_PLUGIN_URL . 'photos/' . implode('/', str_split($id)) . '/';
+    return CURAH2O_PLUGIN_URL . 'photos/' . implode('/', str_split($path)) . '/';
 }
 function cura_photo_manager($id = 0, $initialize = false) {
     require ('vendor/jquery-file-upload/UploadHandler.php');
