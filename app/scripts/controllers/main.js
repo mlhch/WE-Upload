@@ -24,7 +24,7 @@ curaApp.controller('MainCtrl', [
 		});
 		var setFilterOptions = function(options) {
 			$scope.filterOptions = $scope.filterOptions || {};
-			angular.extend($scope.filterOptions, defaultFilterOptions, options || {});
+			angular.extend($scope.filterOptions, options || {});
 		}
 		var config = function(res) {
 			var config = $scope.config = res;
@@ -60,7 +60,6 @@ curaApp.controller('MainCtrl', [
 		$scope.$watch('filterLocationIds', function(value) {
 			if (value) {
 				console.log('main@watch: filterLocationIds', value);
-				value.length && ($scope.filterOption.location = $scope.locations[0]);
 				setFilterOptions({
 					locationIds: value,
 				});
