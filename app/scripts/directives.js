@@ -16,17 +16,19 @@ angular.module('directives', [])
 	function($window) {
 		return {
 			restrict: 'C',
-			link: function($scope, $el) {
+			link: function($scope, $el, $attr) {
 				var $ghost = angular.element('<div class="ghost"></div>').insertAfter($el);
 				var $detector = angular.element('<div></div>').insertAfter($ghost);
 
-				var wpadminbar = angular.element('#wpadminbar');
-				var barHeight = wpadminbar.length ? wpadminbar.height() : 0;
+				var topOffset = 0
+				$attr.topOffset && angular.element($attr.topOffset).each(function(i, el) {
+					topOffset += angular.element(el).height()
+				})
 
 				$ghost.css('height', $el.height() + 10 + 'px') // 10 is for btn-toolbar's margin-top: 10px
 				$el.affix({
 					offset: {
-						top: $el.offset().top - 10 - barHeight,
+						top: $el.offset().top - 10 - topOffset,
 					}
 				})
 				setPosition();
@@ -37,7 +39,7 @@ angular.module('directives', [])
 					$el.css({
 						width: $detector.width() + 'px',
 						left: $detector.offset().left + 'px',
-						top: barHeight + 'px',
+						top: topOffset + 'px',
 					})
 				}
 			}
