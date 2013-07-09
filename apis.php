@@ -199,7 +199,6 @@ function cura_json_observations() {
         ob_start();
         cura_observations_csv($observations, 'php://output');
         $csv = ob_get_clean();
-        
         $zip = new ZipArchive();
         $basepath = cura_photo_path();
         $filename = $basepath . 'tmp.zip';
@@ -210,7 +209,13 @@ function cura_json_observations() {
             echo 'Create zip file error';
             exit;
         }
-        $zip->addFromString('water-quality.csv', $csv);
+        if ($request->locationIds) {
+            $surfix = "selected-stations";
+        } else {
+            $surfix = preg_replace('/\s/', '-', strtolower($request->location->watershed_name));
+        }
+        $dlname = "water-quality-$surfix";
+        $zip->addFromString("$dlname.csv", $csv);
         
         foreach ($observations as $row) {
             $dir = cura_photo_path($row->id);
@@ -230,7 +235,7 @@ function cura_json_observations() {
         $zip->close();
         header("Content-Type:application/csv;charset=utf-8");
         header('Content-Description: File Transfer');
-        header("content-Disposition: attachment; filename=water-quality.zip");
+        header("content-Disposition: attachment; filename=$dlname.zip");
         readfile($filename);
     } else {
         echo json_encode($observations);
@@ -291,18 +296,18 @@ function cura_action_photo() {
 function cura_action_save() {
     $params = (array)cura_request();
     /*include 'lib/Validator.class.php';
-    $asOption = cura_validation_options ();
-    $oValidator = new Validator ( $asOption );
-    $oValidator->addMethod ( "pattern", "cura_validation_pattern" );
-    $oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
-    $oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
-    $errors = $oValidator->validate ( $params );
-    if ( false && ! empty ( $errors )) {
-    echo json_encode ( array (
-    'error' => $errors 
-    ) );
-    exit ();
-    }*/
+       $asOption = cura_validation_options ();
+       $oValidator = new Validator ( $asOption );
+       $oValidator->addMethod ( "pattern", "cura_validation_pattern" );
+       $oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
+       $oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
+       $errors = $oValidator->validate ( $params );
+       if ( false && ! empty ( $errors )) {
+       echo json_encode ( array (
+       'error' => $errors 
+       ) );
+       exit ();
+       }*/
     if (empty($params['datetime'])) {
         $params['datetime'] = date('Y-m-d H:i:s');
     } else {
