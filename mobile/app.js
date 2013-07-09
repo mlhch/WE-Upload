@@ -381,6 +381,8 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				}
 			}
 			
+			var button = this;
+			button.disabled = true;
 			$.ajax({
 				url: getQuery('/save.action'),
 				type: "POST",
@@ -388,6 +390,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 				contentType: "json",
 				data: JSON.stringify(params),
 				success: function(data, status) {
+					button.disabled = false;
 					if (status == 'success') {
 						var result = data;
 						if (result.error) {
