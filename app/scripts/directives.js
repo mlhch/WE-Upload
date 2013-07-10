@@ -22,7 +22,9 @@ angular.module('directives', [])
 
 				var topOffset = 0
 				$attr.topOffset && angular.element($attr.topOffset).each(function(i, el) {
-					topOffset += angular.element(el).height()
+					if (angular.element(el).css('position') == 'fixed') {
+						topOffset += angular.element(el).height()
+					}
 				})
 
 				$ghost.css('height', $el.height() + 10 + 'px') // 10 is for btn-toolbar's margin-top: 10px
