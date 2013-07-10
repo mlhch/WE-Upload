@@ -53,7 +53,7 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 						'<iframe id="quiet"></iframe>'
 				].join('')).hide().appendTo(document.body);
 				window.curaCallback = function() {
-					$scope.refreshFilter();
+					$scope.filterOptions.forceReset = Date.now();
 					$scope.$apply();
 				}
 			}
