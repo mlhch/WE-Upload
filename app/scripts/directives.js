@@ -20,30 +20,29 @@ angular.module('directives', [])
 				var $ghost = angular.element('<div class="ghost"></div>').insertAfter($el);
 				var $detector = angular.element('<div></div>').insertAfter($ghost);
 
-				var topOffset = 0
-				$attr.topOffset && angular.element($attr.topOffset).each(function(i, el) {
-					if (angular.element(el).css('position') == 'fixed') {
-						topOffset += angular.element(el).height()
-					}
-				})
-
 				$ghost.css('height', $el.height() + 10 + 'px') // 10 is for btn-toolbar's margin-top: 10px
-				$el.affix({
-					offset: {
-						top: $el.offset().top - 10 - topOffset,
-					}
-				})
-				setPosition();
 				angular.element($window).bind('resize', setPosition)
 				$scope.$on('tablesorterEnd', setPosition)
 
 				function setPosition() {
+					var topOffset = 0
+					$attr.topOffset && angular.element($attr.topOffset).each(function(i, el) {
+						topOffset += angular.element(el).height()
+					})
+
+					$el.affix({
+						offset: {
+							top: $el.offset().top - 10 - topOffset,
+						}
+					})
+
 					$el.css({
 						width: $detector.width() + 'px',
 						left: $detector.offset().left + 'px',
 						top: topOffset + 'px',
 					})
 				}
+				setPosition();
 			}
 		}
 	}
@@ -396,8 +395,7 @@ angular.module('directives', [])
 							add: function(e, data) {
 								$el.find('.bar').css('width', '0%');
 								data.id = $scope.ob.id;
-								data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action'
-									+ '&id=' + data.id + '&guest=' + $cookieStore.get('guest')
+								data.url = '/wp-admin/admin-ajax.php?action=cura_photo.action' + '&id=' + data.id + '&guest=' + $cookieStore.get('guest')
 								jQuery.blueimp.fileupload.prototype.options.add.call(this, e, data);
 							},
 							done: function(e, data) {
