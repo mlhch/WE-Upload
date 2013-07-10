@@ -196,47 +196,59 @@ function cura_json_observations() {
         $row->photos = $pm->get(false);
     }
     if (!empty($_REQUEST['downloadPhoto'])) {
-        ob_start();
-        cura_observations_csv($observations, 'php://output');
-        $csv = ob_get_clean();
-        $zip = new ZipArchive();
-        $basepath = cura_photo_path();
-        $filename = $basepath . 'tmp.zip';
-        if (file_exists($filename)) {
-            unlink($filename);
-        }
-        if ($zip->open($filename, ZipArchive::CREATE) !== true) {
-            echo 'Create zip file error';
-            exit;
-        }
         if ($request->locationIds) {
             $surfix = "selected-stations";
         } else {
             $surfix = preg_replace('/\s/', '-', strtolower($request->location->watershed_name));
         }
         $dlname = "water-quality-$surfix";
-        $zip->addFromString("$dlname.csv", $csv);
-        
-        foreach ($observations as $row) {
-            $dir = cura_photo_path($row->id);
-            if (is_dir($dir)) {
-                $files = scandir($dir, 1);
-                
-                foreach ($files as $file) {
-                    if ($file[0] != '.' && is_file($dir . $file)) {
-                        $type = preg_replace('/^.*\./', '', $file);
-                        $datetime = date('Y-m-d_H.i', strtotime($row->datetime));
-                        $zip->addFile("$dir$file", "photos/{$row->id}_$datetime.$type");
-                        break;
+        $filename = cura_photo_path() . 'tmp.zip';
+        ob_start();
+        cura_observations_csv($observations, 'php://output');
+        $csv = ob_get_clean();
+        if (!file_exists($filename)) {
+            $zip = new ZipArchive();
+            if ($zip->open($filename, ZipArchive::CREATE) !== true) {
+                echo 'Create zip file error';
+                exit;
+            }
+            $zip->addFromString("$dlname.csv", $csv);
+            
+            foreach ($observations as $row) {
+                $dir = cura_photo_path($row->id);
+                if (is_dir($dir)) {
+                    $files = scandir($dir, 1);
+                    
+                    foreach ($files as $file) {
+                        if ($file[0] != '.' && is_file($dir . $file)) {
+                            $type = preg_replace('/^.*\./', '', $file);
+                            $datetime = date('Y-m-d_H.i', strtotime($row->datetime));
+                            $zip->addFile("$dir$file", "photos/{$row->id}_$datetime.$type");
+                            break;
+                        }
                     }
                 }
             }
+            $zip->close();
         }
-        $zip->close();
-        header("Content-Type:application/csv;charset=utf-8");
+        header("Content-Type: application/x-zip-compressed; charset=utf-8");
         header('Content-Description: File Transfer');
         header("content-Disposition: attachment; filename=$dlname.zip");
-        readfile($filename);
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filename));
+        set_time_limit(0);
+        $fp = @fopen($filename, "rb");
+        
+        while (!feof($fp)) {
+            print (@fread($fp, 1024 * 8));
+            ob_flush();
+            flush();
+        }
+        fclose($fp);
+        unlink($filename);
     } else {
         echo json_encode($observations);
     }
