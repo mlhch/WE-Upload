@@ -90,7 +90,7 @@ if (preg_match ( '~(/m)?/water-quality/(.*)~', $_SERVER ['REQUEST_URI'], $m )) {
 		$request = $m [2];
 		$phpInput = file_get_contents ( 'php://input' );
 	}
-} elseif (preg_match ( '~^/wp-admin/admin-ajax.php\?action=cura_(.*?)(&|$)~', $_SERVER ['REQUEST_URI'], $m )) {
+} elseif (preg_match ( '~^/wp-admin/admin-ajax.php~', $_SERVER ['REQUEST_URI'], $m ) && preg_match('~^cura_(.*?)$~', $_REQUEST ['action'], $m)) {
 	$plugin_activated = true;
 	$request = $m [1];
 	$isMobile = $request == 'mobile';

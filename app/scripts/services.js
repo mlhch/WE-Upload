@@ -127,9 +127,10 @@ angular.module('services', ['ngResource'])
 			}
 		},
 		remove: {
-			method: 'DELETE',
+			method: 'POST',
 			params: {
 				action: 'cura_photo.action',
+				_method: 'DELETE',
 				id: '@id',
 				file: '@name',
 			}

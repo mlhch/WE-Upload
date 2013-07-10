@@ -440,7 +440,7 @@ function cura_photo_url($path = '') {
     
     return CURAH2O_PLUGIN_URL . 'photos/' . implode('/', str_split($path)) . '/';
 }
-function cura_photo_manager($id = 0, $initialize = false) {
+function cura_photo_manager($id = 0, $path = '', $initialize = false) {
     require ('vendor/jquery-file-upload/UploadHandler.php');
     
     class Photo extends UploadHandler {
@@ -459,6 +459,9 @@ function cura_photo_manager($id = 0, $initialize = false) {
             }
             
             return $this->generate_response($files, $print_response);
+        }
+        public function set_additional_file_properties($file) {
+            $file->id = $this->options['id'];
         }
         public function delete() {
             parent::delete(false);
@@ -512,8 +515,8 @@ function cura_photo_manager($id = 0, $initialize = false) {
     
     return new Photo($options = array(
         'id' => $id,
-        'upload_dir' => cura_photo_path($id) ,
-        'upload_url' => cura_photo_url($id) ,
+        'upload_dir' => cura_photo_path($path) ,
+        'upload_url' => cura_photo_url($path) ,
         'image_versions' => array(
             'thumbnail' => array(
                 'max_width' => 120,

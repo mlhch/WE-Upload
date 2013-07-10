@@ -243,14 +243,15 @@ function cura_json_observations() {
     exit(0);
 }
 function cura_action_photo() {
+    $id = 0;
     if (isset($_GET['id']) && intval($_GET['id']) > 0) {
-        $path = intval($_GET['id']);
+        $path = $id = intval($_GET['id']);
     } elseif ($uid = get_current_user_id()) {
         $path = "user-$uid";
     } else {
         $path = "guest-" . (isset($_GET['guest']) ? $_GET['guest'] : 0);
     }
-    cura_photo_manager($path, true);
+    cura_photo_manager($id, $path, true);
     exit;
 }
 /*
