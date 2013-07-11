@@ -191,9 +191,9 @@ function cura_json_observations() {
     $observations = cura_get_observations($request);
     $pm = cura_photo_manager();
     
-    foreach ($observations as & $row) {
+    foreach ($observations as & $_row) {
         $pm->setId($row->id);
-        $row->photos = $pm->get(false);
+        $_row->photos = $pm->get(false);
     }
     if (!empty($_REQUEST['downloadPhoto'])) {
         if ($request->locationIds) {
