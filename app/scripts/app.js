@@ -88,9 +88,10 @@ var curaApp = angular.module('curaApp', ['services', 'directives', 'ngResource',
 						var locationIds = [];
 						for (var id in layers) {
 							var location_id = layers[id].feature.properties.location_id;
-							if (!locationIds[location_id]) {
-								locationIds.push(location_id);
-								locationIds[location_id] = true;
+							var watershed_name = layers[id].feature.properties.watershed_name
+							if (!locationIds[location_id + '#' + watershed_name]) {
+								locationIds.push([location_id, watershed_name]);
+								locationIds[location_id + '#' + watershed_name] = true;
 							}
 						}
 						$scope.filterLocationIds = locationIds;

@@ -569,8 +569,8 @@ function cura_get_observations($options = null) {
     if (!empty($options->locationIds)) {
         $or = array();
         
-        foreach ($options->locationIds as $location_id) {
-            $or[] = "a.location_id = '" . addslashes($location_id) . "'";
+        foreach ($options->locationIds as $row) {
+            $or[] = "(a.location_id = '" . addslashes($row[0]) . "' AND a.watershed_name = '" . addslashes($row[1]) . "')";
         }
         $sql_filter[] = "(" . implode(" OR ", $or) . ")";
     }

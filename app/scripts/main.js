@@ -112,7 +112,7 @@ curaApp.controller('MainCtrl', [
 
 			$scope.$broadcast('clearTypeaheads');
 			if ($scope.filterOptions.locationIds.length) {
-				$scope.filterOptions.locationIds.push(newOb.location_id);
+				$scope.filterOptions.locationIds.push([newOb.location_id, newOb.watershed_name]);
 			}
 			$scope.filterOptions.forceReset = Date.now();
 
