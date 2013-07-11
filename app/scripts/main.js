@@ -65,9 +65,12 @@ curaApp.controller('MainCtrl', [
 				});
 			}
 		}, true);
-		$scope.$watch('filterOption', function(value) {
+		$scope.$watch('filterOption', function(value, oldValue) {
 			if (value) {
 				console.log('main$watch: filterOption', value)
+				if (oldValue && value.location.id != oldValue.location.id) {
+					value.locationIds = []
+				}
 				if (value.location.id !== '') {
 					setFilterOptions(value);
 					$scope.$broadcast('filterOptionChanged', value);
