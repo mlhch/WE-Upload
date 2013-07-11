@@ -197,7 +197,11 @@ function cura_json_observations() {
     }
     if (!empty($_REQUEST['downloadPhoto'])) {
         if ($request->locationIds) {
-            $surfix = "selected-stations";
+            $surfix = array();
+            foreach ($request->locationIds as $row) {
+                $surfix[] = "$row[1]($row[0])";
+            }
+            $surfix = count($surfix) > 1 ? 'multiple-selected' : $surfix[0];
         } else {
             $surfix = preg_replace('/\s/', '-', strtolower($request->location->watershed_name));
         }
