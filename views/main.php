@@ -16,7 +16,7 @@
 
 	<script src="<?php echo $url?>app/scripts/water-quality.js"></script>
 	<script src="<?php echo $url?>app/scripts/app.js"></script>
-	<script src="<?php echo $url?>app/scripts/controllers/main.js"></script>
+	<script src="<?php echo $url?>app/scripts/main.js"></script>
 	<!-- endbuild -->
 </div>
 <!-- CuraH2O Phase2 end-->
