@@ -9,7 +9,7 @@ window.debug = function(level) {
 	return false;
 }
 
-var pluginUrl = angular.element('script:last')[0].src.replace('scripts/app.js', '');
+var pluginUrl = angular.element('script:last')[0].src.replace(/scripts\/app\.js.*$/, '');
 angular.element('head').append([
 		'<link rel="stylesheet" href="' + pluginUrl + '../vendor/bootstrap/css/bootstrap.css" />',
 		//'<link rel="stylesheet" href="' + pluginUrl + '../vendor/bootstrap/css/bootstrap-responsive.css" />',
