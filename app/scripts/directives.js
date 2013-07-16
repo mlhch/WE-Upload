@@ -971,8 +971,8 @@ angular.module('directives', [])
 						$ob.longitude = row.longitude;
 						$scope.$apply();
 
-						$readOnly.latitude = row.latitude !== null && validator.check($form.find('input[name=latitude]')[0]);
-						$readOnly.longitude = row.longitude !== null && validator.check($form.find('input[name=longitude]')[0]);
+						row.latitude !== null && validator.check($form.find('input[name=latitude]')[0]);
+						row.longitude !== null && validator.check($form.find('input[name=longitude]')[0]);
 
 						validator.showErrors();
 					} else {
