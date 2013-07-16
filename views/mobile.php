@@ -11,7 +11,7 @@ $jq_src = $wp_scripts->base_url . $wp_scripts->registered ['jquery']->src;
 /*
  *
  */
-function cura_form_field($name, $pos = 'left', $type = 'number') {
+function cura_form_field($name, $pos = 'left', $type = 'text') {
 	static $fields = null;
 	if (!$fields) {
 		$rows = cura_fields ();
