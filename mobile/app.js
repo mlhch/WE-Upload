@@ -293,10 +293,10 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					el = form.find( "input[name=location_id]" ).val(row.location_id);
 					
 					el = form.find( "input[name=latitude]" ).val(row.latitude);
-					el.attr('readOnly', row.latitude !== null && validator.check(el[0]));
+					row.latitude !== null && validator.check(el[0])
 					
 					el = form.find( "input[name=longitude]" ).val(row.longitude);
-					el.attr('readOnly', row.longitude !== null && validator.check(el[0]));
+					row.longitude !== null && validator.check(el[0])
 					
 					validator.showErrors();
 				}

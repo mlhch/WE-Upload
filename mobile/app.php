@@ -9,7 +9,7 @@
 <link rel="stylesheet"
 	href="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.min.css" />
 <link rel='stylesheet'
-	href="<?php echo $base_url?>/lib/bootstrap/typeahead.css" />
+	href="<?php echo $base_url?>/../vendor/bootstrap/css/typeahead.css" />
 <style>
 /* App custom styles */
 #details .field {
@@ -84,7 +84,7 @@ form label.error {
 <script type="text/javascript"
 	src="<?php echo $base_url?>/lib/jqm-datebox-1.1.0/jqm-datebox-1.1.0.mode.datebox.min.js"></script>
 <script type='text/javascript'
-	src="<?php echo $base_url?>/lib/bootstrap/typeahead.js"></script>
+	src="<?php echo $base_url?>/../vendor/bootstrap/js/bootstrap-typeahead-2.1.0-customized.js"></script>
 <script type='text/javascript'
 	src="<?php echo $base_url?>/../vendor/jquery-validation/jquery.validate.js"></script>
 <script type='text/javascript'
@@ -101,7 +101,7 @@ for (var i in cura_validation_options.rules) {
 }
 var observationFields = <?php echo json_encode( cura_fields() )?>;
 </script>
-<script src="<?php echo $base_url?>/app.js"></script>
+<script src="<?php echo $base_url?>/app.js?<?php echo CURAH2O_VERSION?>"></script>
 </head>
 
 <body>
