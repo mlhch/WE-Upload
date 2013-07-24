@@ -246,7 +246,6 @@ module.exports = function( grunt ) {
           'app/scripts/vendor/angular-cookies.js',
           'app/scripts/vendor/angular-resource.js',
           'app/scripts/services.js',
-          'app/scripts/directives.js',
         ],
         dest: 'app/scripts/water-quality.js'
       },
