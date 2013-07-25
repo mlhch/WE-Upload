@@ -154,7 +154,7 @@ angular.module('directives', [])
 					'<table class="tablesorter table table-hover">',
 					'	<thead>',
 					'		<tr>',
-					'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])"></th>',
+					'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])" ng-class="field[0]"></th>',
 					'			<th>Action</th>',
 					'			<th></th>',
 					'		</tr>',
