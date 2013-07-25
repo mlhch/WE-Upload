@@ -53,6 +53,12 @@
 	display: none;
 }
 
+.progress {
+	height: 2px;
+	margin-bottom: 0;
+	background: none;
+}
+
 
 table.tablesorter tr td {
 	font-size: 12px;

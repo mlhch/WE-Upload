@@ -775,16 +775,24 @@ angular.module('directives', [])
 				$scope.exportAsCSV = function($event) {
 					var obj = angular.extend({}, $scope.filterOptions);
 					obj.downloadPhoto = 1;
-					if (!jQuery('#downloadPhoto').length) {
+					if (!jQuery('#cura-download').length) {
 						jQuery([
-								'<form id="downloadPhoto" method="post"',
+								'<form id="cura-download" method="post"',
 								' action="/wp-admin/admin-ajax.php?action=cura_observations.json">',
-								'	<input type="hidden" name="downloadPhoto" />',
-								'</form>'
+								'	<input type="hidden" name="filterOptions" />',
+								'	<input type="hidden" name="step" />',
+								'	<input type="hidden" name="totalSize" />',
+								'</form>',
+								'<iframe name="cura-zip"></iframe>',
+								'<iframe name="cura-progress"></iframe>'
 						].join('')).appendTo(jQuery('body'));
 					}
-					jQuery('#downloadPhoto input').val(JSON.stringify(obj));
-					jQuery('#downloadPhoto').submit();
+					$form = jQuery('#cura-download');
+					$form.attr('target', 'cura-zip');
+					$form.find('input[name=step]').val('confirm');
+					$form.find('input[name=totalSize]').val('');
+					$form.find('input[name=filterOptions]').val(JSON.stringify(obj));
+					$form.submit();
 				}
 			}
 		}

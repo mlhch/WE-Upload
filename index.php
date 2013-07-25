@@ -16,7 +16,7 @@ Author URI: malhch@gmail.com
 // //////// constants and variables
 // //////////////////////////////////////////////////////////
 defined( 'WP_DEBUG' ) or exit(0);
-define ( 'CURAH2O_VERSION', '1.1.3' );
+define ( 'CURAH2O_VERSION', '1.1.4' );
 // use this way to avoid symlink bug if this plugin is linked into plugins directory
 if (strpos(__FILE__, '/wp-content/plugins/') !== false) {
 	define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );
@@ -64,6 +64,10 @@ function cura_backup() {
     }
     $observations = cura_get_observations();
     cura_observations_csv($observations, $backup_dir . date('Y-m-d') . ".csv");
+}
+add_action ('cura_delete_zipfile', 'cura_delete_zipfile', 1 );
+function cura_delete_zipfile($filename) {
+    unlink($filename);
 }
 
 include 'config.php';
