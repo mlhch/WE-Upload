@@ -791,11 +791,13 @@ angular.module('directives', [])
 				'		<p class="lead">{{dlOptions.dlname}}.zip</p>',
 				'		<dl class="dl-horizontal">',
 				'			<dt><label class="checkbox">',
-				'				<input type="checkbox" ng-model="dlOptions.entries" ng-checked="dlOptions.entries" />Observation entries',
+				'				<input type="checkbox" ng-model="dlOptions.entries"',
+				'				 ng-checked="dlOptions.entries && csv_size != 0" ng-disabled="csv_size == 0" />Observation entries',
 				'			</label></dt>',
 				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
 				'			<dt><label class="checkbox">',
-				'				<input type="checkbox" ng-model="dlOptions.photos" ng-checked="dlOptions.photos" />Observation photos',
+				'				<input type="checkbox" ng-model="dlOptions.photos"',
+				'				 ng-checked="dlOptions.photos && photos_size != 0" ng-disabled="photos_size == 0" />Observation photos',
 				'			</label></dt>',
 				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
 				'		</dl>',
@@ -837,11 +839,10 @@ angular.module('directives', [])
 				});
 
 				$scope.$watch(function() {
-					return $dlOptions.dlname && ($dlOptions.entries || $dlOptions.photos);
+					$scope.totalsize = ($dlOptions.photos ? $scope.photos_size : 0) + ($dlOptions.entries ? $scope.csv_size : 0);
+					return $dlOptions.dlname && $scope.totalsize;
 				}, function(value) {
-					if (value != undefined) {
-						$el.closest('.ui-dialog').find('button:first').attr('disabled', !value);
-					}
+					value != undefined && $el.closest('.ui-dialog').find('button:first').attr('disabled', !value);
 				});
 
 				// style="width: {{percent}}%" don't work for IE10
@@ -852,7 +853,7 @@ angular.module('directives', [])
 				/**
 				 * Button to export data as CSV
 				 */
-				$scope.exportAsCSV = function() {
+				$scope.$parent.exportAsCSV = function() {
 					$scope.percent = 0;
 					$scope.lastsize = null;
 					$dlOptions.dlname = '';
@@ -860,7 +861,7 @@ angular.module('directives', [])
 					$el.dialog('open');
 					$el.closest('.ui-dialog').find('button').blur();
 
-					angular.extend($dlOptions, $scope.filterOptions);
+					angular.extend($dlOptions, $scope.$parent.filterOptions);
 					Export.info($dlOptions, function(res) {
 						console.log('export info', res);
 						$dlOptions.dlname = res.dlname;
@@ -875,7 +876,6 @@ angular.module('directives', [])
 
 				function checkZipOrStart() {
 					$scope.percent = 0;
-					$scope.totalsize = ($dlOptions.photos ? $scope.photos_size : 0) + ($dlOptions.entries ? $scope.csv_size : 0);
 					console.log('checkZipAndStart', $scope.csv_size, $scope.photos_size, $scope.totalsize);
 					Export.start($dlOptions, function(res) {
 						console.log('checkZipAndStart', res);
