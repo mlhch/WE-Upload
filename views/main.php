@@ -15,6 +15,7 @@
 	<div ng-view></div>
 
 	<script src="<?php echo $url?>app/scripts/water-quality.js?<?php echo CURAH2O_VERSION?>"></script>
+	<script src="<?php echo $url?>app/scripts/services.js?<?php echo CURAH2O_VERSION?>"></script>
 	<script src="<?php echo $url?>app/scripts/directives.js?<?php echo CURAH2O_VERSION?>"></script>
 	<script src="<?php echo $url?>app/scripts/app.js?<?php echo CURAH2O_VERSION?>"></script>
 	<script src="<?php echo $url?>app/scripts/main.js?<?php echo CURAH2O_VERSION?>"></script>

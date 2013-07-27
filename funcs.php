@@ -423,7 +423,7 @@ function cura_photo_path($path = '') {
         
         return CURAH2O_PLUGIN_DIR . 'photos/';
     } elseif (preg_match('/^(user|guest)-\d+/', $path)) {
-
+        
         return CURAH2O_PLUGIN_DIR . "photos/$path/";
     }
     
@@ -434,7 +434,7 @@ function cura_photo_url($path = '') {
         
         return CURAH2O_PLUGIN_URL . 'photos/';
     } elseif (preg_match('/^(user|guest)-\d+/', $path)) {
-
+        
         return CURAH2O_PLUGIN_URL . "photos/$path/";
     }
     
@@ -525,7 +525,13 @@ function cura_photo_manager($id = 0, $path = '', $initialize = false) {
         )
     ) , $initialize);
 }
-function cura_observations_csv($observations, $ouput) {
+function cura_observations_csv($observations, $ouput = false) {
+    $return = false;
+    if ($ouput === false) {
+        $return = true;
+        $ouput = 'php://output';
+        ob_start();
+    }
     $fp = fopen($ouput, 'w');
     $headers = array(
         "id"
@@ -548,6 +554,10 @@ function cura_observations_csv($observations, $ouput) {
         fputcsv($fp, $array);
     }
     fclose($fp);
+    if ($return) {
+        
+        return ob_get_clean();
+    }
 }
 function cura_get_observations($options = null) {
     global $wpdb;

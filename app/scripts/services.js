@@ -153,3 +153,33 @@ angular.module('services', ['ngResource'])
 		}
 	}
 }])
+
+
+	.factory('Export', ['$resource', function($resource) {
+	return $resource('/wp-admin/admin-ajax.php', {}, {
+		info: {
+			method: 'POST',
+			params: {
+				action: 'cura_export.json',
+			}
+		},
+		start: {
+			method: 'POST',
+			params: {
+				action: 'cura_export.action',
+			}
+		},
+		progress: {
+			method: 'POST',
+			params: {
+				action: 'cura_progress.json',
+			}
+		},
+		download: {
+			method: 'GET',
+			params: {
+				action: 'cura_download.action',
+			}
+		}
+	});
+}])

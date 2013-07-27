@@ -111,14 +111,14 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<ol class="field-manager">',
-					'	<li ng-repeat="field in fields" ng-click="field[4]=!field[4]">',
-					'		{{field[2]}}',
-					'		<input type="checkbox" value="{{field[0]}}"',
-					'		 ng-checked="field[4]" ng-model="field[4]"',
-					'		 ng-click="$event.stopPropagation()" />',
-					'	</li>',
-					'</ol>'
+				'<ol class="field-manager">',
+				'	<li ng-repeat="field in fields" ng-click="field[4]=!field[4]">',
+				'		{{field[2]}}',
+				'		<input type="checkbox" value="{{field[0]}}"',
+				'		 ng-checked="field[4]" ng-model="field[4]"',
+				'		 ng-click="$event.stopPropagation()" />',
+				'	</li>',
+				'</ol>'
 			].join(''),
 			replace: true,
 			transclude: true,
@@ -151,22 +151,22 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<table class="tablesorter table table-hover">',
-					'	<thead>',
-					'		<tr>',
-					'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])" ng-class="field[0]"></th>',
-					'			<th>Action</th>',
-					'			<th></th>',
-					'		</tr>',
-					'	</thead>',
-					'	<tr tablesorter-row ng-class="highlightClass(obj)"',
-					'	 ng-repeat="obj in observations"',
-					'	 ng-click="selectRow(obj, $event)">',
-					'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
-					'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj, $event)">Details</button></td>',
-					'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
-					'	</tr>',
-					'</table>'
+				'<table class="tablesorter table table-hover">',
+				'	<thead>',
+				'		<tr>',
+				'			<th ng-repeat="field in visibleFields" ng-html="break2row(field[2])" ng-class="field[0]"></th>',
+				'			<th>Action</th>',
+				'			<th></th>',
+				'		</tr>',
+				'	</thead>',
+				'	<tr tablesorter-row ng-class="highlightClass(obj)"',
+				'	 ng-repeat="obj in observations"',
+				'	 ng-click="selectRow(obj, $event)">',
+				'		<td tablesorter-col ng-repeat="field in visibleFields">{{obj[field[0]]}}</td>',
+				'		<td><button class="btn btn-mini" ng-click="openEditDialog(obj, $event)">Details</button></td>',
+				'		<td><i class="icon-picture" ng-show="obj.photos.length"></i></td>',
+				'	</tr>',
+				'</table>'
 			].join(''),
 			replace: true,
 			link: function($scope, $el) {
@@ -294,21 +294,21 @@ angular.module('directives', [])
 			link: function($scope, $el, $attrs) {
 				var url = cura.pluginUrl + '../vendor/jquery.tablesorter/addons/pager/icons/';
 				$el.append($compile([
-						'<form>',
-						'	<img class="first" ng-hide="page<1" src="' + url + 'first.png" />',
-						'	<img class="disabled" ng-show="page<1" src="' + url + 'first-disabled.png" />',
-						'	<img class="prev" ng-hide="page<1" src="' + url + 'prev.png" />',
-						'	<img class="disabled" ng-show="page<1" src="' + url + 'prev-disabled.png" />',
-						'	<input type="text" class="span1 pagedisplay" ng-model="currentPage" />',
-						'	<img class="next" ng-hide="page>=total-1" src="' + url + 'next.png" />',
-						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'next-disabled.png" />',
-						'	<img class="last" ng-hide="page>=total-1" src="' + url + 'last.png" />',
-						'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'last-disabled.png" />',
-						'	<select class="span1 pagesize">',
-						'		<option value="100" selected="selected">100</option>',
-						'		<option value="10">10</option>',
-						'	</select>',
-						'</form>'
+					'<form>',
+					'	<img class="first" ng-hide="page<1" src="' + url + 'first.png" />',
+					'	<img class="disabled" ng-show="page<1" src="' + url + 'first-disabled.png" />',
+					'	<img class="prev" ng-hide="page<1" src="' + url + 'prev.png" />',
+					'	<img class="disabled" ng-show="page<1" src="' + url + 'prev-disabled.png" />',
+					'	<input type="text" class="span1 pagedisplay" ng-model="currentPage" />',
+					'	<img class="next" ng-hide="page>=total-1" src="' + url + 'next.png" />',
+					'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'next-disabled.png" />',
+					'	<img class="last" ng-hide="page>=total-1" src="' + url + 'last.png" />',
+					'	<img class="disabled" ng-show="page>=total-1" src="' + url + 'last-disabled.png" />',
+					'	<select class="span1 pagesize">',
+					'		<option value="100" selected="selected">100</option>',
+					'		<option value="10">10</option>',
+					'	</select>',
+					'</form>'
 				].join(''))($scope));
 
 				var pagesize = parseInt($cookieStore.get('pagesize'));
@@ -365,22 +365,22 @@ angular.module('directives', [])
 			replace: true,
 			link: function($scope, $el, $attrs) {
 				var html = [
-						'<div>',
-						'	<input ng-show="canedit" class="field" type="file" multiple>',
-						'	<table>',
-						'		<tr ng-repeat="photo in ob.photos">',
-						'			<td><a target="_blank" href="{{photo.url}}"><img ng-src="{{photo.thumbnail_url}}" /></a></td>',
-						'			<td>{{photo.name}}</td>',
-						'			<td><i class="close icon-remove"',
-						'			 ng-show="canedit"',
-						'			 ng-click="removePhoto(photo)"></i>',
-						'			</td>',
-						'		</tr>',
-						'	</table>',
-						'	<div id="progress" style="height: 3px;">',
-						'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
-						'	</div>',
-						'</div>',
+					'<div>',
+					'	<input ng-show="canedit" class="field" type="file" multiple>',
+					'	<table>',
+					'		<tr ng-repeat="photo in ob.photos">',
+					'			<td><a target="_blank" href="{{photo.url}}"><img ng-src="{{photo.thumbnail_url}}" /></a></td>',
+					'			<td>{{photo.name}}</td>',
+					'			<td><i class="close icon-remove"',
+					'			 ng-show="canedit"',
+					'			 ng-click="removePhoto(photo)"></i>',
+					'			</td>',
+					'		</tr>',
+					'	</table>',
+					'	<div id="progress" style="height: 3px;">',
+					'		<div class="bar" style="background-color:green;height:100%;width:0%"></div>',
+					'	</div>',
+					'</div>',
 				]
 
 				$cookieStore.get('guest') || $cookieStore.put('guest', Date.now())
@@ -433,10 +433,10 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<div class="cura-dlg hide">',
-					'	<a href="#" style="position: absolute; left: -10000px">.</a>',
-					'	<form method="post"></form>',
-					'</div>'
+				'<div class="cura-dlg hide">',
+				'	<a href="#" style="position: absolute; left: -10000px">.</a>',
+				'	<form method="post"></form>',
+				'</div>'
 			].join(''),
 			replace: true,
 			transclude: true,
@@ -488,10 +488,10 @@ angular.module('directives', [])
 							html.push('</tr>');
 						});
 						html.push([
-								'<td>Photo</td>',
-								'<td colspan="3">',
-								'	<jquery-file-upload canedit="{{canedit}}" ob="editingOb"></jquery-file-upload>',
-								'</td>'
+							'<td>Photo</td>',
+							'<td colspan="3">',
+							'	<jquery-file-upload canedit="{{canedit}}" ob="editingOb"></jquery-file-upload>',
+							'</td>'
 						].join(''));
 						html.push('</table>');
 
@@ -510,56 +510,56 @@ angular.module('directives', [])
 					// input[name] is needed by validation
 					if (propName == 'lab_id') {
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td ' + colspan + '>',
-								'	<input class="field" type="text" name="' + propName + '"',
-								'	 placeHolder="' + placeHolder + '" style="width: 100%"',
-								'	 ng-model="editingOb.lab_id"',
-								'	 ng-disabled="editingOb.lab_sample==\'N\'" />',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td ' + colspan + '>',
+							'	<input class="field" type="text" name="' + propName + '"',
+							'	 placeHolder="' + placeHolder + '" style="width: 100%"',
+							'	 ng-model="editingOb.lab_id"',
+							'	 ng-disabled="editingOb.lab_sample==\'N\'" />',
+							'</td>'
 						]);
 					} else if (propName == 'lab_sample') {
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td>',
-								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="editingOb.lab_sample"',
-								'	 value="Y" /> Yes</label> &nbsp; ',
-								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="editingOb.lab_sample"',
-								'	 ng-click="editingOb.lab_id=\'\'" value="N" /> No</label>',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td>',
+							'	<label class="radio inline"><input type="radio" name="' + propName + '"',
+							'	 ng-model="editingOb.lab_sample"',
+							'	 value="Y" /> Yes</label> &nbsp; ',
+							'	<label class="radio inline"><input type="radio" name="' + propName + '"',
+							'	 ng-model="editingOb.lab_sample"',
+							'	 ng-click="editingOb.lab_id=\'\'" value="N" /> No</label>',
+							'</td>'
 						]);
 					} else if (propName == 'coliform') {
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td colspan="3">',
-								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="editingOb.coliform"',
-								'	 value="Present" /> Present</label> &nbsp; ',
-								'	<label class="radio inline"><input type="radio" name="' + propName + '"',
-								'	 ng-model="editingOb.coliform"',
-								'	 value="Absent" /> Absent</label>',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td colspan="3">',
+							'	<label class="radio inline"><input type="radio" name="' + propName + '"',
+							'	 ng-model="editingOb.coliform"',
+							'	 value="Present" /> Present</label> &nbsp; ',
+							'	<label class="radio inline"><input type="radio" name="' + propName + '"',
+							'	 ng-model="editingOb.coliform"',
+							'	 value="Absent" /> Absent</label>',
+							'</td>'
 						]);
 					} else if (propName == 'datetime') {
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td ' + colspan + '>',
-								'	<input datepicker class="field" type="text" name="' + propName + '"',
-								'	 ng-model="editingOb.datetime"',
-								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td ' + colspan + '>',
+							'	<input datepicker class="field" type="text" name="' + propName + '"',
+							'	 ng-model="editingOb.datetime"',
+							'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
+							'</td>'
 						]);
 					} else if (propName == 'note') {
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td ' + colspan + '>',
-								'	<textarea class="field" type="text" name="' + propName + '"',
-								'	 ng-model="editingOb[\'' + propName + '\']"',
-								'	 ng-readonly="readOnly[\'' + propName + '\']"',
-								'	 placeHolder="' + placeHolder + '" style="width: 100%"></textarea>',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td ' + colspan + '>',
+							'	<textarea class="field" type="text" name="' + propName + '"',
+							'	 ng-model="editingOb[\'' + propName + '\']"',
+							'	 ng-readonly="readOnly[\'' + propName + '\']"',
+							'	 placeHolder="' + placeHolder + '" style="width: 100%"></textarea>',
+							'</td>'
 						]);
 					} else {
 						var directive = '';
@@ -567,13 +567,13 @@ angular.module('directives', [])
 							directive = 'typeahead-' + propName;
 						}
 						html = html.concat([
-								'<td>' + propDesc + '</td>',
-								'<td ' + colspan + '>',
-								'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
-								'	 ng-model="editingOb[\'' + propName + '\']"',
-								'	 ng-readonly="readOnly[\'' + propName + '\']"',
-								'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
-								'</td>'
+							'<td>' + propDesc + '</td>',
+							'<td ' + colspan + '>',
+							'	<input ' + directive + ' class="field" type="text" name="' + propName + '"',
+							'	 ng-model="editingOb[\'' + propName + '\']"',
+							'	 ng-readonly="readOnly[\'' + propName + '\']"',
+							'	 placeHolder="' + placeHolder + '" style="width: 100%" />',
+							'</td>'
 						]);
 					}
 					return html.join('');
@@ -768,31 +768,141 @@ angular.module('directives', [])
 				function saveError() {
 					Toast.show('Sorry, the server encountered an error');
 				}
+			}
+		}
+	}
+])
+
+
+.directive('export', ['$timeout', 'Export', 'Toast',
+
+	function($timeout, Export, Toast) {
+		return {
+			restrict: 'E',
+			scope: {
+				filterOptions: '@',
+			},
+			template: [
+				'<div>',
+				'	<form ng-show="dlOptions.dlname != \'\'" method="post"',
+				'	 action="/wp-admin/admin-ajax.php?action=cura_download.action">',
+				'		<input type="hidden" name="dlname" value="{{dlOptions.dlname}}" />',
+				'		<input type="hidden" name="ziphash" value="{{ziphash}}" />',
+				'		<p class="lead">{{dlOptions.dlname}}.zip</p>',
+				'		<dl class="dl-horizontal">',
+				'			<dt><label class="checkbox">',
+				'				<input type="checkbox" ng-model="dlOptions.entries" ng-checked="dlOptions.entries" />Observation entries',
+				'			</label></dt>',
+				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
+				'			<dt><label class="checkbox">',
+				'				<input type="checkbox" ng-model="dlOptions.photos" ng-checked="dlOptions.photos" />Observation photos',
+				'			</label></dt>',
+				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
+				'		</dl>',
+				'		<div class="progress" ng-show="lastsize != null"><div class="bar"></div></div>',
+				'	</form>',
+				'</div>'
+			].join(''),
+			replace: true,
+			transclude: true,
+			link: function($scope, $el) {
+				$scope.percent = 0;
+				$scope.lastsize = null;
+				var $dlOptions = $scope.dlOptions = {
+					entries: true,
+					photos: true,
+					dlname: '',
+				};
+
+				$el.dialog({
+					autoOpen: false,
+					modal: true,
+					title: 'Export As CSV',
+					width: 400,
+					height: 300,
+					zIndex: 99999,
+					buttons: [{
+						text: "Download",
+						click: checkZipOrStart
+					}, {
+						text: "Close",
+						click: function() {
+							$el.dialog('close');
+						}
+					}],
+				});
+				$el.closest('.ui-dialog').find('button').attr('class', 'btn').css({
+					fontSize: '12px',
+					minWidth: '100px',
+				});
+
+				$scope.$watch(function() {
+					return $dlOptions.dlname && ($dlOptions.entries || $dlOptions.photos);
+				}, function(value) {
+					if (value != undefined) {
+						$el.closest('.ui-dialog').find('button:first').attr('disabled', !value);
+					}
+				});
+
+				// style="width: {{percent}}%" don't work for IE10
+				$scope.$watch('percent', function(value) {
+					value != undefined && $el.find('.progress .bar').css('width', value + '%');
+				});
 
 				/**
 				 * Button to export data as CSV
 				 */
-				$scope.exportAsCSV = function($event) {
-					var obj = angular.extend({}, $scope.filterOptions);
-					obj.downloadPhoto = 1;
-					if (!jQuery('#cura-download').length) {
-						jQuery([
-								'<form id="cura-download" method="post"',
-								' action="/wp-admin/admin-ajax.php?action=cura_observations.json">',
-								'	<input type="hidden" name="filterOptions" />',
-								'	<input type="hidden" name="step" />',
-								'	<input type="hidden" name="totalSize" />',
-								'</form>',
-								'<iframe name="cura-zip"></iframe>',
-								'<iframe name="cura-progress"></iframe>'
-						].join('')).appendTo(jQuery('body'));
-					}
-					$form = jQuery('#cura-download');
-					$form.attr('target', 'cura-zip');
-					$form.find('input[name=step]').val('confirm');
-					$form.find('input[name=totalSize]').val('');
-					$form.find('input[name=filterOptions]').val(JSON.stringify(obj));
-					$form.submit();
+				$scope.exportAsCSV = function() {
+					$scope.percent = 0;
+					$scope.lastsize = null;
+					$dlOptions.dlname = '';
+					$scope.ziphash = '';
+					$el.dialog('open');
+					$el.closest('.ui-dialog').find('button').blur();
+
+					angular.extend($dlOptions, $scope.filterOptions);
+					Export.info($dlOptions, function(res) {
+						console.log('export info', res);
+						$dlOptions.dlname = res.dlname;
+						$scope.csv_entries = res.csv_entries;
+						$scope.csv_size = res.csv_size;
+						$scope.csv_size_kb = Math.round(res.csv_size / 1024 * 100) / 100 + 'Kb';
+						$scope.photos_number = res.photos_number;
+						$scope.photos_size = res.photos_size;
+						$scope.photos_size_mb = Math.round(res.photos_size / 1024 / 1024 * 100) / 100 + 'Mb';
+					});
+				}
+
+				function checkZipOrStart() {
+					$scope.percent = 0;
+					$scope.totalsize = ($dlOptions.photos ? $scope.photos_size : 0) + ($dlOptions.entries ? $scope.csv_size : 0);
+					console.log('checkZipAndStart', $scope.csv_size, $scope.photos_size, $scope.totalsize);
+					Export.start($dlOptions, function(res) {
+						console.log('checkZipAndStart', res);
+						res.status == 'error' ? Toast.show(res.error) : ($scope.ziphash = res.ziphash);
+					});
+					$timeout(checkProgress, 100);
+				}
+
+				function checkProgress() {
+					Export.progress($dlOptions, function(value) {
+						$scope.percent = $scope.lastsize == null ? 0 : Math.round(100 * $scope.lastsize / $scope.totalsize);
+						console.log('checkProgress', $scope.lastsize, value.zipsize, $scope.percent);
+						if ($scope.lastsize == null || value.zipsize != $scope.lastsize) {
+							$scope.lastsize = value.zipsize;
+							$timeout(checkProgress, 500);
+						} else {
+							if ($scope.ziphash) {
+								$scope.percent = 100;
+								console.log('ziphash ok', $scope.ziphash);
+								$timeout(function() {
+									$el.find('form').submit();
+								}, 500);
+							} else {
+								Toast.show('Failed to get ziphash');
+							}
+						}
+					});
 				}
 			}
 		}
@@ -805,18 +915,18 @@ angular.module('directives', [])
 		return {
 			restrict: 'E',
 			template: [
-					'<div class="tooltip_description" title="Mobile site available!" style="display: none">',
-					'	<p>',
-					'		<span>Looks like you are on a mobile device. </span>Would you like to be redirected to the site optimized for mobile devices?',
-					'	</p>',
-					'	<p style="margin: 10px; text-align: left">',
-					'		<label><input type="checkbox" /> Remember my choice on this device</label>',
-					'	</p>',
-					'	<p style="margin-bottom: 0px; text-align: center">',
-					'		<button ng-click="gotoMobile()" style="padding: 3px 20px; margin: 10px 20px">Yes</button>',
-					'		<button ng-click="notgoMobile()" style="padding: 3px 20px; margin: 10px 20px">No</button>',
-					'	</p>',
-					'</div>'
+				'<div class="tooltip_description" title="Mobile site available!" style="display: none">',
+				'	<p>',
+				'		<span>Looks like you are on a mobile device. </span>Would you like to be redirected to the site optimized for mobile devices?',
+				'	</p>',
+				'	<p style="margin: 10px; text-align: left">',
+				'		<label><input type="checkbox" /> Remember my choice on this device</label>',
+				'	</p>',
+				'	<p style="margin-bottom: 0px; text-align: center">',
+				'		<button ng-click="gotoMobile()" style="padding: 3px 20px; margin: 10px 20px">Yes</button>',
+				'		<button ng-click="notgoMobile()" style="padding: 3px 20px; margin: 10px 20px">No</button>',
+				'	</p>',
+				'</div>'
 			].join(''),
 			replace: true,
 			transclude: true,

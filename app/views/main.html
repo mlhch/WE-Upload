@@ -17,15 +17,15 @@
 	<div class="btn-toolbar pull-right">
 		<button class="btn" ng-click="toggleFieldManager()">More fields...</button>
 		<button class="btn" ng-click="openAddDialog()">Add new entry</button>
-		<button class="btn" ng-click="exportAsCSV(this)" id="btn-export">Export as CSV</button>
+		<button class="btn" ng-click="exportAsCSV()">Export as CSV</button>
 		<button class="btn" ng-click="importFromCSV(this)"
 		 ng-show="config.canImport">Import from CSV</button>
 		<button class="btn" ng-click="mobileSite()">Mobile Site</button>
 	</div>
 	<div class="clearfix"></div>
-	<div class="progress"><div class="bar"></div></div>
 </div>
 <field-manager></field-manager>
 <tablesorter></tablesorter>
 <dialog></dialog>
 <mobiletip></mobiletip>
+<export filterOptions="filterOptions"></export>
