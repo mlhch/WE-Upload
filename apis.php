@@ -196,21 +196,28 @@ function cura_json_observations() {
 }
 function cura_json_export() {
     $request = cura_request();
+    $ziphash = md5(serialize($request));
     /**
      * statistic photo number and total size
      */
     $observations = cura_get_observations($request);
+    /**
+     * csv entries number and zipped size
+     */
     $csv_entries = count($observations);
     $zip = new ZipArchive();
-    $filename = cura_photo_path() . md5(microtime(true)) . '.zip';
-    if ($zip->open($filename, ZipArchive::CREATE) !== true) {
+    $tmpname = cura_photo_path() . '.' . $ziphash . '.zip';
+    if ($zip->open($tmpname, ZipArchive::CREATE) !== true) {
         $csv_size = 0;
     } else {
-        $zip->addFromString($filename, cura_observations_csv($observations));
+        $zip->addFromString($tmpname, cura_observations_csv($observations));
         $zip->close();
-        $csv_size = filesize($filename);
-        unlink($filename);
+        $csv_size = filesize($tmpname);
+        unlink($tmpname);
     }
+    /**
+     * photos number and size
+     */
     $photos_number = 0;
     $photos_size = 0;
     
@@ -229,20 +236,11 @@ function cura_json_export() {
         }
     }
     /**
-     * figure out a meaningful zip name
+     * zip_status and zip_size
      */
-    if ($request->locationIds) {
-        $surfix = array();
-        
-        foreach ($request->locationIds as $row) {
-            $surfix[] = "$row[1]($row[0])";
-        }
-        $surfix = count($surfix) > 1 ? 'multiple-selected' : $surfix[0];
-    } else {
-        $surfix = preg_replace('/\s/', '-', strtolower($request->location->watershed_name));
-    }
-    $dlname = "water-quality-$surfix";
-    echo json_encode(compact('csv_entries', 'csv_size', 'photos_number', 'photos_size', 'dlname'));
+    extract(cura_zip_status($ziphash . '.zip'));
+    //
+    echo json_encode(compact('ziphash', 'zip_status', 'zip_time', 'zip_size', 'csv_entries', 'csv_size', 'photos_number', 'photos_size'));
     exit;
 }
 function cura_action_export() {
@@ -304,11 +302,10 @@ function cura_action_export() {
                 }
             }
             $zip->close();
-            $hook = 'cura_delete_zipfile';
-            $args = array(
+            $delay = cura_cfg_zip_delay($request->refresh);
+            wp_schedule_single_event(time() + $delay, 'cura_delete_zipfile', array(
                 $zippath . $zipname
-            );
-            wp_schedule_single_event(time() + 300, $hook, $args);
+            ));
         }
     }
     echo json_encode(compact('status', 'error', 'ziphash'));
@@ -316,24 +313,8 @@ function cura_action_export() {
 }
 function cura_json_progress() {
     $request = cura_request();
-    $zippath = cura_photo_path();
     $zipname = md5(serialize($request)) . '.zip';
-    $zipsize = 0;
-    if (file_exists($zippath . $zipname)) {
-        $zipsize = filesize($zippath . $zipname);
-    } else {
-        $files = scandir($zippath);
-        
-        foreach ($files as $file) {
-            if (strpos($file, $zipname) === 0) {
-                $zipsize = filesize($zippath . $file);
-                break;
-            }
-        }
-    }
-    echo json_encode(array(
-        'zipsize' => $zipsize
-    ));
+    echo json_encode(cura_zip_status($zipname));
     exit;
 }
 function cura_action_download() {
@@ -362,14 +343,14 @@ function cura_action_download() {
         flush();
     }
     fclose($fp);
-    $hook = 'cura_delete_zipfile';
-    $args = array(
-        $filename
-    );
     if ($timestamp = wp_next_scheduled($hook)) {
-        wp_unschedule_event($timestamp, $hook, $args);
+        wp_unschedule_event($timestamp, 'cura_delete_zipfile', $args = array(
+            $filename
+        ));
     }
-    wp_schedule_single_event(time() + 300, $hook, $args);
+    wp_schedule_single_event(time() + cura_cfg_zip_delay() , 'cura_delete_zipfile', $args = array(
+        $filename
+    ));
     exit(0);
 }
 function cura_action_photo() {

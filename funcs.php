@@ -525,6 +525,31 @@ function cura_photo_manager($id = 0, $path = '', $initialize = false) {
         )
     ) , $initialize);
 }
+function cura_zip_status($zipname) {
+    $zippath = cura_photo_path();
+    $zip_status = 'nozip';
+    $zip_size = 0;
+    $zip_time = '';
+    if (file_exists($zippath . $zipname)) {
+        $zip_status = 'zipped';
+        $zip_size = filesize($zippath . $zipname);
+        $zip_time = filectime($zippath . $zipname);
+    } else {
+        $files = scandir($zippath);
+        
+        foreach ($files as $file) {
+            if (strpos($file, $zipname) === 0) {
+                $zip_status = 'zipping';
+                $zip_size = filesize($zippath . $file);
+                $zip_time = fileatime($zippath . $file);
+                break;
+            }
+        }
+    }
+    $zip_time = date('m/d/Y H:i a', $zip_time);
+    
+    return compact('zip_status', 'zip_size', 'zip_time');
+}
 function cura_observations_csv($observations, $ouput = false) {
     $return = false;
     if ($ouput === false) {
