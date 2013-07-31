@@ -774,6 +774,18 @@ angular.module('directives', [])
 ])
 
 
+.directive('loading', function() {
+	return function($scope, $el, $attrs) {
+		var t2 = $el.html();
+		var t1 = t2.replace(/\.+$/, '');
+		setInterval(function() {
+			var t = $el.html();
+			$el.html(t == t2 ? t1 : t + '.');
+		}, 500);
+	}
+})
+
+
 .directive('export', ['$timeout', 'Export', 'Toast', 'cura',
 
 	function($timeout, Export, Toast, cura) {
@@ -783,30 +795,34 @@ angular.module('directives', [])
 				filterOptions: '@',
 			},
 			template: [
-				'<div ng-show="ready">',
-				'	<h4 class="text-center">{{dlOptions.dlname}}.zip</h4>',
-				'	<dl class="dl-horizontal">',
-				'		<dt><label class="checkbox">',
-				'			<input type="checkbox" ng-model="dlOptions.entries"',
-				'			 ng-checked="dlOptions.entries && csv_size != 0"',
-				'			 ng-disabled="csv_size == 0 || (percent > 0 && percent < 100)" />Observation entries',
-				'		</label></dt>',
-				'		<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
-				'		<dt><label class="checkbox">',
-				'			<input type="checkbox" ng-model="dlOptions.photos"',
-				'			 ng-checked="dlOptions.photos && photos_size != 0"',
-				'			 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100)" />Observation photos',
-				'		</label></dt>',
-				'		<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
-				'	</dl>',
-				'	<p>Zip progress: {{percent}}% ',
-				'		<label class="checkbox pull-right"><input type="checkbox"',
-				'		 ng-model="refresh"',
-				'		 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
-				'	</p>',
-				'	<div class="progress" style="margin-bottom: 0"><div class="bar">',
-				'		<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
-				'	</div></div>',
+				'<div class="hide">',
+				'	<div ng-hide="ready" loading class="lead text-center" style="padding: 70px 0 0">Loading...</div>',
+				'	<div ng-show="ready">',
+				'		<h4 class="text-center">{{dlOptions.dlname}}.zip</h4>',
+				'		<dl class="dl-horizontal">',
+				'			<dt><label class="checkbox">',
+				'				<input type="checkbox" ng-model="dlOptions.entries"',
+				'				 ng-checked="dlOptions.entries && csv_size != 0"',
+				'				 ng-disabled="csv_size == 0 || (percent > 0 && percent < 100)" />Observation entries',
+				'			</label></dt>',
+				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
+				'			<dt><label class="checkbox">',
+				'					<input type="checkbox" ng-model="dlOptions.photos"',
+				'				 ng-checked="dlOptions.photos && photos_size != 0"',
+				'				 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100)" />Observation photos',
+				'			</label></dt>',
+				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
+				'		</dl>',
+				'		<p>Zip progress: {{percent}}% ',
+				'			<label class="checkbox pull-right"><input type="checkbox"',
+				'			 ng-model="refresh"',
+				'			 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
+				'		</p>',
+				'		<div class="progress" style="margin-bottom: 0"><div class="bar">',
+				'			<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
+				'		</div></div>',
+				'		<small class="muted">Please be patient while we compile your requested export, as this process can take several minutes.</small>',
+				'	</div>',
 				'</div>'
 			].join(''),
 			replace: true,
@@ -827,8 +843,8 @@ angular.module('directives', [])
 					autoOpen: false,
 					modal: true,
 					title: 'Export As CSV',
-					width: 500,
-					height: 310,
+					width: 550,
+					height: 340,
 					zIndex: 99999,
 					buttons: [{
 						text: "Download",
@@ -949,6 +965,7 @@ angular.module('directives', [])
 						if ($scope.lastsize != null && $scope.lastsize == value.zip_size) {
 							$scope.percent = 100;
 							$scope.lastsize = $scope.totalsize;
+							$scope.zip_time = value.zip_time;
 							console.log('zipping ok');
 							if (download) {
 								Export.delay({

@@ -531,12 +531,12 @@ function cura_zip_status($ziphash, $zipname) {
     $zippath = cura_photo_path() . $ziphash . '/';
     $zip_status = 'nozip';
     $zip_size = 0;
-    $zip_time = '';
+    $zip_time = 0;
     if (file_exists($zippath . $zipname)) {
         $zip_status = 'zipped';
         $zip_size = filesize($zippath . $zipname);
         $zip_time = filectime($zippath . $zipname);
-    } else {
+    } else if (is_dir($zippath)) {
         $files = scandir($zippath);
         
         foreach ($files as $file) {
