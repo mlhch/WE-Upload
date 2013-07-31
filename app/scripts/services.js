@@ -175,7 +175,7 @@ angular.module('services', ['ngResource'])
 				action: 'cura_progress.json',
 			}
 		},
-		download: {
+		delay: {
 			method: 'GET',
 			params: {
 				action: 'cura_download.action',

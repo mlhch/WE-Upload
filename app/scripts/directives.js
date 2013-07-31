@@ -774,44 +774,39 @@ angular.module('directives', [])
 ])
 
 
-.directive('export', ['$timeout', 'Export', 'Toast',
+.directive('export', ['$timeout', 'Export', 'Toast', 'cura',
 
-	function($timeout, Export, Toast) {
+	function($timeout, Export, Toast, cura) {
 		return {
 			restrict: 'E',
 			scope: {
 				filterOptions: '@',
 			},
 			template: [
-				'<div>',
-				'	<form ng-show="ready" method="post" style="margin-bottom: 0"',
-				'	 action="/wp-admin/admin-ajax.php?action=cura_download.action">',
-				'		<input type="hidden" name="dlname" value="{{dlOptions.dlname}}" />',
-				'		<input type="hidden" name="ziphash" value="{{ziphash}}" />',
-				'		<h4 class="text-center">{{dlOptions.dlname}}.zip</h4>',
-				'		<dl class="dl-horizontal">',
-				'			<dt><label class="checkbox">',
-				'				<input type="checkbox" ng-model="dlOptions.entries"',
-				'				 ng-checked="dlOptions.entries && csv_size != 0"',
-				'				 ng-disabled="csv_size == 0 || (percent > 0 && percent < 100)" />Observation entries',
-				'			</label></dt>',
-				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
-				'			<dt><label class="checkbox">',
-				'				<input type="checkbox" ng-model="dlOptions.photos"',
-				'				 ng-checked="dlOptions.photos && photos_size != 0"',
-				'				 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100)" />Observation photos',
-				'			</label></dt>',
-				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
-				'		</dl>',
-				'		<p>Zip progress: {{percent}}% ',
-				'			<label class="checkbox pull-right"><input type="checkbox"',
-				'			 ng-model="refresh"',
-				'			 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
-				'		</p>',
-				'		<div class="progress" style="margin-bottom: 0"><div class="bar">',
-				'			<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
-				'		</div></div>',
-				'	</form>',
+				'<div ng-show="ready">',
+				'	<h4 class="text-center">{{dlOptions.dlname}}.zip</h4>',
+				'	<dl class="dl-horizontal">',
+				'		<dt><label class="checkbox">',
+				'			<input type="checkbox" ng-model="dlOptions.entries"',
+				'			 ng-checked="dlOptions.entries && csv_size != 0"',
+				'			 ng-disabled="csv_size == 0 || (percent > 0 && percent < 100)" />Observation entries',
+				'		</label></dt>',
+				'		<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
+				'		<dt><label class="checkbox">',
+				'			<input type="checkbox" ng-model="dlOptions.photos"',
+				'			 ng-checked="dlOptions.photos && photos_size != 0"',
+				'			 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100)" />Observation photos',
+				'		</label></dt>',
+				'		<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
+				'	</dl>',
+				'	<p>Zip progress: {{percent}}% ',
+				'		<label class="checkbox pull-right"><input type="checkbox"',
+				'		 ng-model="refresh"',
+				'		 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
+				'	</p>',
+				'	<div class="progress" style="margin-bottom: 0"><div class="bar">',
+				'		<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
+				'	</div></div>',
 				'</div>'
 			].join(''),
 			replace: true,
@@ -865,7 +860,13 @@ angular.module('directives', [])
 
 				// style="width: {{percent}}%" don't work for IE10
 				$scope.$watch('percent', function(value) {
-					value != undefined && $el.find('.progress .bar').css('width', value + '%');
+					if (value != undefined) {
+						value == 0 && $el.find('.progress').hide();
+						$el.find('.progress .bar').css('width', value + '%');
+						$timeout(function() {
+							value == 0 && $el.find('.progress').show();
+						}, 0);
+					}
 				});
 
 				$scope.$watch('refresh', function(value) {
@@ -950,8 +951,12 @@ angular.module('directives', [])
 							$scope.lastsize = $scope.totalsize;
 							console.log('zipping ok');
 							if (download) {
+								Export.delay({
+									ziphash: $scope.ziphash,
+									dlname: $dlOptions.dlname,
+								});
 								$timeout(function() { // let user have chance to see the 100% progress
-									$el.find('form').submit();
+									location.href = cura.pluginUrl + '../photos/' + $scope.ziphash + '/' + $dlOptions.dlname + '.zip';
 								}, 500);
 							}
 						} else {

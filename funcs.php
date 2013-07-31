@@ -525,8 +525,10 @@ function cura_photo_manager($id = 0, $path = '', $initialize = false) {
         )
     ) , $initialize);
 }
-function cura_zip_status($zipname) {
-    $zippath = cura_photo_path();
+function cura_zip_status($ziphash, $zipname) {
+    $ziphash = basename($ziphash);
+    $zipname = basename($zipname);
+    $zippath = cura_photo_path() . $ziphash . '/';
     $zip_status = 'nozip';
     $zip_size = 0;
     $zip_time = '';

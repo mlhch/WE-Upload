@@ -206,7 +206,7 @@ function cura_json_export() {
      */
     $csv_entries = count($observations);
     $zip = new ZipArchive();
-    $tmpname = cura_photo_path() . '.' . $ziphash . '.zip';
+    $tmpname = cura_photo_path() . $ziphash . '.zip';
     if ($zip->open($tmpname, ZipArchive::CREATE) !== true) {
         $csv_size = 0;
     } else {
@@ -238,7 +238,7 @@ function cura_json_export() {
     /**
      * zip_status and zip_size
      */
-    extract(cura_zip_status($ziphash . '.zip'));
+    extract(cura_zip_status($ziphash, $request->dlname . '.zip'));
     //
     echo json_encode(compact('ziphash', 'zip_status', 'zip_time', 'zip_size', 'csv_entries', 'csv_size', 'photos_number', 'photos_size'));
     exit;
@@ -253,23 +253,27 @@ function cura_action_export() {
         $error = 'missing dlname';
     }
     $ziphash = md5(serialize($request));
-    $zipname = $ziphash . '.zip';
+    $zipname = $request->dlname . '.zip';
     /**
      * Check if somebody else has started a zipping
      */
     if (empty($status)) {
-        $zippath = cura_photo_path();
-        $files = scandir($zippath);
-        
-        foreach ($files as $file) {
-            if (strpos($file, $zipname) === 0) {
-                if ($file == $zipname) {
-                    $status = 'zipready';
-                } else {
-                    $status = 'zipping';
+        $zippath = cura_photo_path() . $ziphash . '/';
+        if (is_dir($zippath)) {
+            $files = scandir($zippath);
+            
+            foreach ($files as $file) {
+                if (strpos($file, $zipname) === 0) {
+                    if ($file == $zipname) {
+                        $status = 'zipready';
+                    } else {
+                        $status = 'zipping';
+                    }
+                    break;
                 }
-                break;
             }
+        } else {
+            mkdir($zippath);
         }
     }
     if (empty($status)) {
@@ -313,8 +317,9 @@ function cura_action_export() {
 }
 function cura_json_progress() {
     $request = cura_request();
-    $zipname = md5(serialize($request)) . '.zip';
-    echo json_encode(cura_zip_status($zipname));
+    $ziphash = md5(serialize($request));
+    $zipname = $request->dlname . '.zip';
+    echo json_encode(cura_zip_status($ziphash, $zipname));
     exit;
 }
 function cura_action_download() {
@@ -325,24 +330,25 @@ function cura_action_download() {
         die('No parameter $ziphash given');
     }
     $dlname = strval($_REQUEST['dlname']) . '.zip';
-    $filename = cura_photo_path() . preg_replace('~\W~', '', strval($_REQUEST['ziphash'])) . '.zip';
-    header("Content-Type: application/x-zip-compressed; charset=utf-8");
-    header('Content-Description: File Transfer');
-    header("content-Disposition: attachment; filename=$dlname");
-    header('Content-Transfer-Encoding: binary');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($filename));
-    set_time_limit(0);
-    $fp = @fopen($filename, "rb");
-    
-    while (!feof($fp)) {
-        print (@fread($fp, 1024 * 8));
-        ob_flush();
-        flush();
-    }
-    fclose($fp);
+    $filename = cura_photo_path() . basename($_REQUEST['ziphash']) . '/' . basename($_REQUEST['dlname']) . '.zip';
+    /**
+     header("Content-Type: application/x-zip-compressed; charset=utf-8");
+     header('Content-Description: File Transfer');
+     header("content-Disposition: attachment; filename=$dlname");
+     header('Content-Transfer-Encoding: binary');
+     header('Expires: 0');
+     header('Cache-Control: must-revalidate');
+     header('Pragma: public');
+     header('Content-Length: ' . filesize($filename));
+     set_time_limit(0);
+     $fp = @fopen($filename, "rb");
+     while (!feof($fp)) {
+     print (@fread($fp, 1024 * 8));
+     ob_flush();
+     flush();
+     }
+     fclose($fp);
+     */
     if ($timestamp = wp_next_scheduled($hook)) {
         wp_unschedule_event($timestamp, 'cura_delete_zipfile', $args = array(
             $filename
