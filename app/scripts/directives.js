@@ -815,8 +815,8 @@ angular.module('directives', [])
 				'		</dl>',
 				'		<p>Compile progress: {{percent}}% ',
 				'			<label class="checkbox pull-right"><input type="checkbox"',
-				'			 ng-model="refresh"',
-				'			 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
+				'			 ng-model="refresh" ng-checked="zip_status == \'nozip\'"',
+				'			 ng-disabled="zip_status == \'nozip\' || (percent > 0 && percent < 100)" />Compile a fresh export</label>',
 				'		</p>',
 				'		<div class="progress" style="margin-bottom: 0"><div class="bar">',
 				'			<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
@@ -925,6 +925,7 @@ angular.module('directives', [])
 						$scope.photos_size = res.photos_size;
 						$scope.photos_size_mb = Math.round(res.photos_size / 1024 / 1024 * 100) / 100 + 'Mb';
 						$scope.zip_time = res.zip_time;
+						$scope.zip_status = res.zip_status;
 						if (res.zip_status == 'nozip') {
 							$scope.percent = 0;
 						} else if (res.zip_status == 'zipping') {

@@ -548,7 +548,7 @@ function cura_zip_status($ziphash, $zipname) {
             }
         }
     }
-    $zip_time = date('m/d/Y H:i a', $zip_time);
+    $zip_time = date('m/d/Y H:i e', $zip_time);
     
     return compact('zip_status', 'zip_size', 'zip_time');
 }
