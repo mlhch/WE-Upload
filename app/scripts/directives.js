@@ -801,19 +801,19 @@ angular.module('directives', [])
 				'		<h4 class="text-center">{{dlOptions.dlname}}.zip</h4>',
 				'		<dl class="dl-horizontal">',
 				'			<dt><label class="checkbox">',
-				'				<input type="checkbox" ng-model="dlOptions.entries"',
+				'				<input type="checkbox" ng-model="dlOptions.entries" ng-click="getZipInfo()"',
 				'				 ng-checked="dlOptions.entries && csv_size != 0"',
 				'				 ng-disabled="csv_size == 0 || (percent > 0 && percent < 100)" />Observation entries',
 				'			</label></dt>',
 				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
 				'			<dt><label class="checkbox">',
-				'					<input type="checkbox" ng-model="dlOptions.photos"',
+				'					<input type="checkbox" ng-model="dlOptions.photos" ng-click="getZipInfo()"',
 				'				 ng-checked="dlOptions.photos && photos_size != 0"',
 				'				 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100)" />Observation photos',
 				'			</label></dt>',
 				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})</dd>',
 				'		</dl>',
-				'		<p>Zip progress: {{percent}}% ',
+				'		<p>Compile progress: {{percent}}% ',
 				'			<label class="checkbox pull-right"><input type="checkbox"',
 				'			 ng-model="refresh"',
 				'			 ng-disabled="percent > 0 && percent < 100" />Force a fresh export</label>',
@@ -821,7 +821,7 @@ angular.module('directives', [])
 				'		<div class="progress" style="margin-bottom: 0"><div class="bar">',
 				'			<span ng-show="percent == 100">Compiled at {{zip_time}}</span>',
 				'		</div></div>',
-				'		<small class="muted">Please be patient while we compile your requested export, as this process can take several minutes.</small>',
+				'		<small ng-show="percent != 100" class="muted">Please be patient while we compile your requested export, as this process can take several minutes.</small>',
 				'	</div>',
 				'</div>'
 			].join(''),
@@ -829,8 +829,8 @@ angular.module('directives', [])
 			transclude: true,
 			link: function($scope, $el) {
 				$scope.ready = false;
+				$scope.refresh = null;
 				$scope.percent = 0;
-				$scope.lastsize = null;
 				var $dlOptions = $scope.dlOptions = {
 					entries: true,
 					photos: true,
@@ -857,9 +857,10 @@ angular.module('directives', [])
 					}],
 					close: function() {
 						$scope.ready = false;
+						$scope.refresh = false;
 						$dlOptions.dlname = '';
+						$dlOptions.refresh = false;
 						$scope.$apply();
-						download = false;
 					}
 				});
 				$el.closest('.ui-dialog').find('button').attr('class', 'btn').css({
@@ -886,37 +887,15 @@ angular.module('directives', [])
 				});
 
 				$scope.$watch('refresh', function(value) {
-					if (value) {
-						$dlOptions.refresh = Date.now();
-					} else {
+					if (value === true) {
+						$dlOptions.refresh = true;
+						$scope.percent = 0;
+					}
+					if (value === false && $scope.ready) {
 						$dlOptions.refresh = false;
+						$scope.getZipInfo();
 					}
 				});
-
-				$scope.$watch('dlOptions', function(value) {
-					if (value && value.dlname) {
-						($scope.percent == 100) && ($scope.percent = 0);
-						Export.info($dlOptions, function(res) {
-							console.log('export info', res);
-							$scope.ready = true;
-							$scope.ziphash = res.ziphash;
-							$scope.csv_entries = res.csv_entries;
-							$scope.csv_size = res.csv_size;
-							$scope.csv_size_kb = Math.round(res.csv_size / 1024 * 100) / 100 + 'Kb';
-							$scope.photos_number = res.photos_number;
-							$scope.photos_size = res.photos_size;
-							$scope.photos_size_mb = Math.round(res.photos_size / 1024 / 1024 * 100) / 100 + 'Mb';
-							$scope.zip_time = res.zip_time;
-							if (res.zip_status == 'nozip') {
-								$scope.percent = 0;
-							} else if (res.zip_status == 'zipping') {
-								checkProgress();
-							} else if (res.zip_status == 'zipped') {
-								$scope.percent = 100; // enable download butotn
-							}
-						});
-					}
-				}, true);
 
 				/**
 				 * Button to export data as CSV
@@ -924,10 +903,36 @@ angular.module('directives', [])
 				$scope.$parent.exportAsCSV = function() {
 					angular.extend($dlOptions, $scope.$parent.filterOptions);
 					delete $dlOptions.forceReset;
-					$dlOptions.dlname = getZipName($dlOptions); // trigger the watched function
+					$scope.getZipInfo();
 
 					$el.dialog('open');
 					$el.closest('.ui-dialog').find('button').blur();
+				}
+
+				$scope.getZipInfo = function() {
+					$dlOptions.dlname = getZipName($dlOptions);
+					// give the existing 100% a chance to show the animation
+					($scope.percent == 100) && ($scope.percent = 0);
+
+					Export.info($dlOptions, function(res) {
+						console.log('export info', res);
+						$scope.ready = true;
+						$scope.ziphash = res.ziphash;
+						$scope.csv_entries = res.csv_entries;
+						$scope.csv_size = res.csv_size;
+						$scope.csv_size_kb = Math.round(res.csv_size / 1024 * 100) / 100 + 'Kb';
+						$scope.photos_number = res.photos_number;
+						$scope.photos_size = res.photos_size;
+						$scope.photos_size_mb = Math.round(res.photos_size / 1024 / 1024 * 100) / 100 + 'Mb';
+						$scope.zip_time = res.zip_time;
+						if (res.zip_status == 'nozip') {
+							$scope.percent = 0;
+						} else if (res.zip_status == 'zipping') {
+							checkProgress();
+						} else if (res.zip_status == 'zipped') {
+							$scope.percent = 100; // enable download butotn
+						}
+					});
 				}
 
 				function getZipName(options) {
@@ -955,29 +960,29 @@ angular.module('directives', [])
 				}
 
 				function checkProgress() {
-					Export.progress($dlOptions, function(value) {
+					Export.progress($dlOptions, function(res) {
 						if (!$scope.ready) {
-							return;
+							return; // stop checking progress if the dialog is closed
 						}
-						$scope.percent = Math.round(100 * value.zip_size / $scope.totalsize);
-						console.log('checkProgress', value.zip_size, $scope.totalsize, $scope.percent + '%');
+						$scope.percent = Math.round(100 * res.zip_size / $scope.totalsize);
+						console.log('checkProgress', res.zip_size, $scope.totalsize, $scope.percent + '%', res);
 
-						if ($scope.lastsize != null && $scope.lastsize == value.zip_size) {
+						if (res.zip_status == 'zipped') {
 							$scope.percent = 100;
-							$scope.lastsize = $scope.totalsize;
-							$scope.zip_time = value.zip_time;
-							console.log('zipping ok');
+							$scope.zip_time = res.zip_time;
+							$scope.refresh = $dlOptions.refresh = false;
+							console.log('compile zip done');
 							if (download) {
+								download = false;
 								Export.delay({
 									ziphash: $scope.ziphash,
 									dlname: $dlOptions.dlname,
 								});
 								$timeout(function() { // let user have chance to see the 100% progress
 									location.href = cura.pluginUrl + '../photos/' + $scope.ziphash + '/' + $dlOptions.dlname + '.zip';
-								}, 500);
+								}, 100);
 							}
 						} else {
-							$scope.lastsize = value.zip_size;
 							$timeout(checkProgress, 500);
 						}
 					});

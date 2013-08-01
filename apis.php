@@ -252,6 +252,11 @@ function cura_action_export() {
         $status = 'error';
         $error = 'missing dlname';
     }
+    $refresh = false;
+    if ($request->refresh) {
+        $request->refresh = false;
+        $refresh = true;
+    }
     $ziphash = md5(serialize($request));
     $zipname = $request->dlname . '.zip';
     /**
@@ -260,16 +265,25 @@ function cura_action_export() {
     if (empty($status)) {
         $zippath = cura_photo_path() . $ziphash . '/';
         if (is_dir($zippath)) {
-            $files = scandir($zippath);
-            
-            foreach ($files as $file) {
-                if (strpos($file, $zipname) === 0) {
-                    if ($file == $zipname) {
-                        $status = 'zipready';
-                    } else {
-                        $status = 'zipping';
+            if (file_exists($zippath . $zipname)) {
+                if ($refresh) {
+                    unlink($zippath . $zipname);
+                    $status = '';
+                } else {
+                    $status = 'zipready';
+                }
+            } else {
+                $files = scandir($zippath);
+                
+                foreach ($files as $file) {
+                    if (strpos($file, $zipname) === 0) {
+                        if ($file == $zipname) {
+                            $status = 'zipready';
+                        } else {
+                            $status = 'zipping';
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         } else {
@@ -317,6 +331,7 @@ function cura_action_export() {
 }
 function cura_json_progress() {
     $request = cura_request();
+    $request->refresh = false;
     $ziphash = md5(serialize($request));
     $zipname = $request->dlname . '.zip';
     echo json_encode(cura_zip_status($ziphash, $zipname));
