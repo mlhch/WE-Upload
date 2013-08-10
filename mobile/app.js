@@ -376,7 +376,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 					var value = page.find('select[name="' + name + '"]').val();
 					params[name] = value;
 				} else { 
-					var value = page.find('input[name="' + name + '"]').val();
+					var value = page.find('[name="' + name + '"]').val();
 					params[name] = value;
 				}
 			}
