@@ -117,7 +117,7 @@ angular.module('services', ['ngResource'])
 
 	.factory('Photo', ['$resource', '$cookieStore', function($resource, $cookieStore) {
 	return $resource('/wp-admin/admin-ajax.php', {
-		guest: $cookieStore.get('guest'),
+		guest: $cookieStore.get('guest') || '', // '' is important for 'charAt' calling in IE
 	}, {
 		query: {
 			method: 'GET',
