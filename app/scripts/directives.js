@@ -945,7 +945,7 @@ angular.module('directives', [])
 					if (options.locationIds.length) {
 						var surfix = [];
 
-						for (i in options.locationIds) {
+						for (var i in options.locationIds) {
 							surfix.push(options.locationIds[i][1] + '(' + options.locationIds[i][0] + ')');
 						}
 						surfix = surfix.length > 1 ? 'multiple-selected' : surfix[0];
