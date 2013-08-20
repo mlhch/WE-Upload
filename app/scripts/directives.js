@@ -808,11 +808,11 @@ angular.module('directives', [])
 				'			<dd style="padding-bottom: 5px">{{csv_entries}} ({{csv_size_kb}})</dd>',
 				'			<dt><label class="checkbox">',
 				'					<input type="checkbox" ng-model="dlOptions.photos" ng-click="getZipInfo()"',
-				'					 ng-checked="dlOptions.photos && photos_size != 0 && isGroupSelected()"',
-				'					 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100) || !isGroupSelected()" />Observation photos',
+				'					 ng-checked="dlOptions.photos && photos_size != 0 && notViewAll()"',
+				'					 ng-disabled="photos_size == 0 || (percent > 0 && percent < 100) || !notViewAll()" />Observation photos',
 				'			</label></dt>',
 				'			<dd style="padding-bottom: 5px">{{photos_number}} ({{photos_size_mb}})',
-				'				<sub ng-show="!isGroupSelected()" class="muted">Select a Community Group to enable it</sub></dd>',
+				'				<sub ng-show="!notViewAll()" class="muted">Select a Community Group to enable it</sub></dd>',
 				'		</dl>',
 				'		<p>Compile progress: {{percent}}% ',
 				'			<label class="checkbox pull-right"><input type="checkbox"',
@@ -910,8 +910,8 @@ angular.module('directives', [])
 					$el.closest('.ui-dialog').find('button').blur();
 				}
 
-				$scope.isGroupSelected = function() {
-					return $dlOptions.location && !! parseInt($dlOptions.location.id);
+				$scope.notViewAll = function() {
+					return ($dlOptions.location && !! parseInt($dlOptions.location.id)) || ($dlOptions.locationIds && $dlOptions.locationIds.length);
 				}
 
 				$scope.getZipInfo = function() {
