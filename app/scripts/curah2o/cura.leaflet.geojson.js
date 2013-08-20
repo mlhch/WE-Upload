@@ -108,7 +108,7 @@
 
 		filters: {
 			searchText: function(feature, options) {
-				var s = options.searchText || '';
+				var s = (options.searchText || '').toLowerCase();
 				return s == '' || feature.properties.station_name.toLowerCase().indexOf(s) != -1;
 			},
 			byCommunityGroup: function(feature, options) {
