@@ -16,7 +16,7 @@ Author URI: malhch@gmail.com
 // //////// constants and variables
 // //////////////////////////////////////////////////////////
 defined( 'WP_DEBUG' ) or exit(0);
-define ( 'CURAH2O_VERSION', '1.2.10' );
+define ( 'CURAH2O_VERSION', '1.2.11' );
 // use this way to avoid symlink bug if this plugin is linked into plugins directory
 if (strpos(__FILE__, '/wp-content/plugins/') !== false) {
 	define ( 'CURAH2O_PLUGIN_URL', plugin_dir_url ( __FILE__ ) );

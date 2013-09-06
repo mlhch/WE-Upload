@@ -137,11 +137,14 @@ ol.field-manager {
 ol.field-manager li {
 	float: left;
 	margin: 0.25em 1em 0.25em 0;
-	padding: 0px 3px;
+	padding: 0 3px 0 2em;
 	background-color: #f0f0f0;
 	border: 1px solid silver;
 	list-style-position: inside;
 	color: gray;
+}
+ol.field-manager li input {
+	margin: -3px 0 0;
 }
 
 .cura-dlg form {
