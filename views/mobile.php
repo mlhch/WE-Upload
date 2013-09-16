@@ -3,11 +3,17 @@ global $wp_scripts;
 
 $base_url = CURAH2O_PLUGIN_URL . 'mobile';
 // in case that 'jquery' was not registered
-global $wp_scripts;
-if (! is_a ( $wp_scripts, 'WP_Scripts' )) {
-	$wp_scripts = new WP_Scripts ();
-}
-$jq_src = $wp_scripts->base_url . $wp_scripts->registered ['jquery']->src;
+/**
+ * global $wp_scripts;
+ * if (! is_a ( $wp_scripts, 'WP_Scripts' )) {
+ * 	$wp_scripts = new WP_Scripts ();
+ * }
+ * $jq_src = $wp_scripts->base_url . $wp_scripts->registered ['jquery']->src;
+ *
+ * 2013-09-17 01:01 +08:00
+ * Use this static jQuery link instead of previous system's link
+ */
+$jq_src = 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
 /*
  *
  */
