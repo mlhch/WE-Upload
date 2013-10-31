@@ -680,7 +680,7 @@ angular.module('directives', [])
 									// because the returned Resource is not at root node
 									Observation.save(ob, saveSuccess, saveError);
 								} else {
-									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+									var msg = 'One or more observations are outside of the expected data range, do you wish to save the data?';
 									if (confirm(msg)) {
 										Observation.save(ob, saveSuccess, saveError);
 									}
@@ -699,7 +699,7 @@ angular.module('directives', [])
 									// because the returned Resource is not at root node
 									Observation.save(ob, saveSuccess, saveError);
 								} else {
-									var msg = 'One or more observations are outside of the expected data range, do you wish to save the invalid data?';
+									var msg = 'One or more observations are outside of the expected data range, do you wish to save the data?';
 									if (confirm(msg)) {
 										Observation.save(ob, saveSuccess, saveError);
 									}

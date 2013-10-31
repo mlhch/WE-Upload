@@ -570,13 +570,21 @@ function cura_observations_csv($observations, $ouput = false) {
     }
     fputcsv($fp, $headers);
     
+    include 'vendor/Validator.class.php';
+    $asOption = cura_validation_options ();
+    $oValidator = new Validator ( $asOption );
+    $oValidator->addMethod ( "pattern", "cura_validation_pattern" );
+    $oValidator->addMethod ( "secchi_b", "cura_validation_secchi_b", $asOption ['messages'] ['secchi_b'] );
+    $oValidator->addMethod ( "secchi_d", "cura_validation_secchi_d", $asOption ['messages'] ['secchi_d'] );
+
     foreach ($observations as $row) {
         $array = array(
             $row->id
         );
-        
+
+        $errors = $oValidator->validate ( (array)$row );
         foreach ($fields as $field) {
-            $array[] = $row->$field[0];
+            $array[] = (isset($errors[$field[0]]) ? '**' : '') . $row->$field[0];
         }
         fputcsv($fp, $array);
     }
