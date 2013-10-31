@@ -49,7 +49,7 @@ function cura_validation_secchi_b($value, $ruleParam, $values) {
 }
 function cura_validation_secchi_d($value, $ruleParam, $values) {
     
-    return ($values['secchi_a'] + $values['secchi_b']) == ($value + $value);
+    return ($values['secchi_a'] + $values['secchi_b']) - ($value + $value) < 0.000001;
 }
 /*
  * Service, Layer, Data Call

@@ -453,7 +453,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			var b = parseFloat(value_b);
 			
 			if (a && b) {
-				$('input[name=secchi_d]').val(a / 2 + b / 2);
+				$('input[name=secchi_d]').val((a / 2 + b / 2).toString().replace(/(\.\d+?)0{5,}\d+$/, '$1'));
 			}
 			
 			return ('' === value_a && '' === value_b) || (Math.abs(a - b) <= 4);
@@ -467,7 +467,7 @@ jQuery.extend(jQuery.mobile.datebox.prototype.options.lang.default, {
 			var b = parseFloat(value_b);
 			var d = parseFloat(value_d);
 			
-			return ('' === value_a && '' === value_b) || a + b == d + d;
+			return ('' === value_a && '' === value_b) || a + b - d - d < 0.000001;
 		}, cura_validation_options.messages.secchi_d);
 		
 		$('#newob form').validate(cura_validation_options);

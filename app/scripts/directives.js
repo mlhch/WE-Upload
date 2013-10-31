@@ -598,7 +598,8 @@ angular.module('directives', [])
 						var b = parseFloat(value_b);
 
 						if (a && b) {
-							var el = jQuery('input[name=secchi_d]').val(a / 2 + b / 2);
+							var avg = (a / 2 + b / 2).toString().replace(/(\.\d+?)0{5,}\d+$/, '$1');
+							var el = jQuery('input[name=secchi_d]').val(avg);
 							$parse(el.attr('ng-model')).assign($scope, el.val());
 						}
 
@@ -613,7 +614,7 @@ angular.module('directives', [])
 						var b = parseFloat(value_b);
 						var d = parseFloat(value_d);
 
-						return ('' === value_a && '' === value_b) || a + b == d + d;
+						return ('' === value_a && '' === value_b) || a + b - d - d < 0.000001;
 					}, cura_validation_options.messages.secchi_d);
 
 					cura_validation_options.ignore = ''; // override default :hidden
