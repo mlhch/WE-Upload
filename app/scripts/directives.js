@@ -865,7 +865,7 @@ angular.module('directives', [])
 						$scope.$apply();
 					}
 				});
-				$el.closest('.ui-dialog').find('button').attr('class', 'btn').css({
+				$el.closest('.ui-dialog').find('.ui-dialog-buttonset button').attr('class', 'btn').css({
 					fontSize: '12px',
 					minWidth: '100px',
 				});
