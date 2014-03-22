@@ -1,0 +1,217 @@
+{
+	"canEdit": true,
+	"canDelete": true,
+	"canAdd": 1,
+	"canImport": true,
+	"locations": [{
+		"id": 39,
+		"watershed_name": "",
+		"count": 1
+	}, {
+		"id": 24,
+		"watershed_name": "test",
+		"count": 4
+	}, {
+		"id": 3,
+		"watershed_name": "\u5916\u51fa\u5c31\u9910",
+		"count": 8
+	}, {
+		"id": 8,
+		"watershed_name": "\u5ba0\u7269",
+		"count": 3
+	}, {
+		"id": 17,
+		"watershed_name": "\u5e10\u6237",
+		"count": 27
+	}, {
+		"id": 5,
+		"watershed_name": "\u65e5\u7528\u54c1",
+		"count": 8
+	}, {
+		"id": 2,
+		"watershed_name": "\u670d\u88c5",
+		"count": 4
+	}, {
+		"id": 16,
+		"watershed_name": "\u6807\u8bb0",
+		"count": 1
+	}, {
+		"id": 7,
+		"watershed_name": "\u793c\u5c1a\u5f80\u6765",
+		"count": 3
+	}, {
+		"id": 4,
+		"watershed_name": "\u836f\u54c1",
+		"count": 1
+	}, {
+		"id": 10,
+		"watershed_name": "\u8f66",
+		"count": 2
+	}, {
+		"id": 6,
+		"watershed_name": "\u96f6\u98df",
+		"count": 9
+	}, {
+		"id": 1,
+		"watershed_name": "\u98df\u54c1",
+		"count": 43
+	}],
+	"fields": [
+		["watershed_name", "", "Community group Name", 1, 1, ""],
+		["station_name", "", "Station Name", 2, 1, ""],
+		["location_id", "Letters and numbers", "Location ID", 3, 1, ""],
+		["datetime", "", "Date and Time", 4, 1, ""],
+		["latitude", "-90 ~ 90", "Latitude", 5, 0, ""],
+		["longitude", "-180 ~ 180", "Longitude", 6, 0, ""],
+		["do_mgl", "0 ~ 15", "DO (mg\/L)", 7, 0, ""],
+		["do_%", "1 ~ 130", "DO (%)", 8, 0, ""],
+		["cond", "0 ~ 55000", "S. Cond. (\u00b5S\/cm)", 9, 0, ""],
+		["salinity", "0 ~ 55", "Salinity (ppt)", 10, 0, ""],
+		["temp", "0 ~ 30", "Water Temp. (\u2070C)", 11, 0, ""],
+		["air_temp", "-40 ~ 45", "Air Temp. (\u2070C)", 12, 0, ""],
+		["ph", "3 ~ 10", "pH", 13, 0, ""],
+		["secchi_a", "0 ~ 20", "Secchi Disc Reading A (m)", 14, 0, ""],
+		["secchi_b", "between A +\/- 4", "Secchi Disc Reading B (m)", 15, 0, ""],
+		["secchi_d", "average A and B", "Secchi Disc Depth (m)", 16, 0, ""],
+		["lab_sample", "", "Lab Sample", 17, 0, ""],
+		["lab_id", "", "Lab Id", 18, 0, ""],
+		["nitrate", "0 ~ 40", "Nitrate Count", 19, 0, ""],
+		["phosphate", "0 ~ 4", "Phosphate Count", 20, 0, ""],
+		["coliform", "", "Coliform", 21, 0, ""],
+		["note", "", "Note", 22, 0, ""]
+	],
+	"pluginUrl": "http:\/\/localhost\/showcase\/curah2o\/wp-content\/plugins\/water-quality\/",
+	"validationOptions": {
+		"rules": {
+			"watershed_name": {
+				"required": true
+			},
+			"station_name": {
+				"required": true
+			},
+			"location_id": {
+				"required": true
+			},
+			"datetime": {
+				"pattern": "\/^\\d{2}\\\/\\d{2}\\\/\\d{4} \\d{2}:\\d{2} [AP]M$\/"
+			},
+			"latitude": {
+				"pattern": "\/(^[^.]+|\\.\\d{5})$\/",
+				"required": true,
+				"number": true,
+				"min": -90,
+				"max": 90
+			},
+			"longitude": {
+				"pattern": "\/(^[^.]+|\\.\\d{5})$\/",
+				"required": true,
+				"number": true,
+				"min": -180,
+				"max": 180
+			},
+			"do_mgl": {
+				"number": true,
+				"min": 0,
+				"max": 15
+			},
+			"do_%": {
+				"number": true,
+				"min": 1,
+				"max": 130
+			},
+			"cond": {
+				"number": true,
+				"min": 0,
+				"max": 55000
+			},
+			"salinity": {
+				"number": true,
+				"min": 0,
+				"max": 55
+			},
+			"temp": {
+				"number": true,
+				"min": 0,
+				"max": 30
+			},
+			"air_temp": {
+				"number": true,
+				"min": -40,
+				"max": 45
+			},
+			"ph": {
+				"number": true,
+				"min": 3,
+				"max": 10
+			},
+			"secchi_a": {
+				"number": true,
+				"min": 0,
+				"max": 20
+			},
+			"secchi_b": {
+				"number": true,
+				"secchi_b": true
+			},
+			"secchi_d": {
+				"number": true,
+				"secchi_d": true
+			},
+			"lab_sample": {
+				"pattern": "\/^(Y|N)$\/"
+			},
+			"lab_id": {
+				"pattern": "\/^\\d+$\/"
+			},
+			"nitrate": {
+				"number": true,
+				"min": 0,
+				"max": 40
+			},
+			"phosphate": {
+				"number": true,
+				"min": 0,
+				"max": 4
+			},
+			"coliform": {
+				"pattern": "\/^(Present|Absent)$\/"
+			},
+			"note": {
+				"maxlength": 200
+			}
+		},
+		"messages": {
+			"datetime": "Invalid date format, it should like 03\/15\/2014 13:36 PM",
+			"latitude": {
+				"pattern": "Precision of 5 decimal places is required",
+				"required": "Latitude decimal degrees, -90 ~ 90",
+				"number": "Latitude decimal degrees, -90 ~ 90",
+				"min": "Latitude decimal degrees, -90 ~ 90",
+				"max": "Latitude decimal degrees, -90 ~ 90"
+			},
+			"longitude": {
+				"pattern": "Precision of 5 decimal places is required",
+				"required": "Longitude decimal degrees, -180 ~ 180",
+				"number": "Longitude decimal degrees, -180 ~ 180",
+				"min": "Longitude decimal degrees, -180 ~ 180",
+				"max": "Longitude decimal degrees, -180 ~ 180"
+			},
+			"do_mgl": "Typical observed values range from 0-15 mg\/l. Values below 7 are not optimal but should be accepted. D.O. is obviously dependent on temperature (expect lower values with increased temperatures).",
+			"do_%": "A value between 0 and 130 calculated based on amount of oxygen in the water at the given temperature",
+			"cond": "A value between 0 and 55000",
+			"salinity": "A value between 0 and 55",
+			"temp": "A value between 0 and 30",
+			"air_temp": "A value between -40 and 45",
+			"ph": "A value between 3 and 10",
+			"secchi_a": "A value between 0 and 20",
+			"secchi_b": "A value that should not exceed +\/- 4 meters from reading A",
+			"secchi_d": "A value which equals the average of reding a and b",
+			"lab_sample": "Invalid value, should be Y or N",
+			"lab_id": "Invalid integer value",
+			"nitrate": "A value between 0 and 40",
+			"phosphate": "A value between 0 and 4",
+			"coliform": "Invalid value, should be Present or Absent",
+			"note": "200 characters max"
+		}
+	}
+}

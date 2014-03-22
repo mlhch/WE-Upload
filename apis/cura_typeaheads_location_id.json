@@ -1,0 +1,19 @@
+[{
+	"location_id": "bbbb",
+	"station_name": "a",
+	"latitude": "36.15000",
+	"longitude": "114.35000",
+	"datetime": "2013-07-09 23:01:00"
+}, {
+	"location_id": "bb",
+	"station_name": "a",
+	"latitude": "36.15000",
+	"longitude": "114.35000",
+	"datetime": "2013-07-09 22:50:00"
+}, {
+	"location_id": "b",
+	"station_name": "a",
+	"latitude": "36.15000",
+	"longitude": "114.35000",
+	"datetime": "2013-07-09 22:47:00"
+}]

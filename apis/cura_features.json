@@ -1,0 +1,277 @@
+{
+	"type": "FeatureCollection",
+	"features": [{
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "test",
+			"station_name": "a",
+			"location_id": "b",
+			"startDate": "06\/20\/2013 05:45 PM",
+			"endDate": "07\/09\/2013 11:01 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35000", "36.15000"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5916\u51fa\u5c31\u9910",
+			"station_name": "\u67f3\u6a59\u6c41",
+			"location_id": "\u5510\u5b50\u5df7\u8fa3\u5c0f\u7172",
+			"startDate": "06\/09\/2013 11:38 AM",
+			"endDate": "06\/09\/2013 11:38 AM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35119", "36.10139"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5916\u51fa\u5c31\u9910",
+			"station_name": "\u679c\u56ed\u7267\u573a\uff08\u8349\u8393\u5473\uff09",
+			"location_id": "\u963f\u5229\u8304\u6c41\u9762\u4e09\u516b\u5c97\u5e97",
+			"startDate": "02\/07\/2013 09:41 PM",
+			"endDate": "02\/07\/2013 09:41 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35290", "36.11094"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5ba0\u7269",
+			"station_name": "\u5f13\u5f62\u866b\u68c0\u67e5",
+			"location_id": "\u5ba0\u5eb7\u5ba0\u7269\u533b\u9662",
+			"startDate": "06\/17\/2013 06:30 PM",
+			"endDate": "06\/17\/2013 06:30 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.38310", "36.11208"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5ba0\u7269",
+			"station_name": "\u5b9d\u8def\u72d7\u7cae",
+			"location_id": "\u6c83\u5c14\u739b",
+			"startDate": "06\/18\/2013 06:49 PM",
+			"endDate": "06\/18\/2013 06:49 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35337", "36.10977"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5e10\u6237",
+			"station_name": "\u8bdd\u8d39",
+			"location_id": "\u4fe1\u7528\u5361",
+			"startDate": "06\/09\/2013 11:23 AM",
+			"endDate": "06\/19\/2013 11:00 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35304", "36.10691"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u5e10\u6237",
+			"station_name": "\u7f8e\u5143\u5916\u6c47",
+			"location_id": "\u91d1\u5361",
+			"startDate": "10\/10\/2012 10:12 AM",
+			"endDate": "06\/10\/2013 05:32 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.34711", "36.10564"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u65e5\u7528\u54c1",
+			"station_name": "\u6c70\u6e0d\u51c0\u767d\u53bb\u6e0d\u6d17\u8863\u7c891360g",
+			"location_id": "\u534e\u8054\u8d85\u5e02\u6d39\u5317\u5e97",
+			"startDate": "03\/28\/2013 04:12 PM",
+			"endDate": "06\/19\/2013 10:57 AM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35705", "36.12543"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u65e5\u7528\u54c1",
+			"station_name": "\u6d17\u53d1\u9732",
+			"location_id": "\u6c83\u5c14\u739b",
+			"startDate": "12\/12\/2012 06:10 PM",
+			"endDate": "06\/18\/2013 06:56 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35337", "36.10977"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u670d\u88c5",
+			"station_name": "\u53d1\u5939",
+			"location_id": "\u4e09\u798f",
+			"startDate": "06\/09\/2013 12:27 PM",
+			"endDate": "06\/09\/2013 12:27 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35354", "36.10078"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u670d\u88c5",
+			"station_name": "\u624d\u5b50",
+			"location_id": "\u5b89\u9633\u94f6\u5ea7\u5546\u57ce",
+			"startDate": "07\/11\/2012 04:33 PM",
+			"endDate": "07\/11\/2012 04:33 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.34693", "36.10204"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u670d\u88c5",
+			"station_name": "\u7537\u5bb6\u5c45\u886b",
+			"location_id": "\u6c83\u5c14\u739b",
+			"startDate": "06\/10\/2013 06:34 PM",
+			"endDate": "06\/10\/2013 06:34 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35337", "36.10977"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u6807\u8bb0",
+			"station_name": "\u697c",
+			"location_id": "\u5bb6",
+			"startDate": "06\/19\/2013 06:36 PM",
+			"endDate": "06\/19\/2013 06:36 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.37041", "36.14603"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u793c\u5c1a\u5f80\u6765",
+			"station_name": "\u7389\u6eaa",
+			"location_id": "\u5170\u76fe\u9a7e\u6821",
+			"startDate": "06\/17\/2013 04:00 PM",
+			"endDate": "06\/17\/2013 04:00 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.40707", "36.15394"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u793c\u5c1a\u5f80\u6765",
+			"station_name": "\u82cf\u70df",
+			"location_id": "\u738b\u6559\u7ec3\u5bb6",
+			"startDate": "06\/30\/2013 09:50 AM",
+			"endDate": "06\/30\/2013 09:50 AM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.32804", "36.10520"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u836f\u54c1",
+			"station_name": "\u7259\u75bc\u5b89\u80f6\u56ca\u4eba\u5de5\u725b",
+			"location_id": "\u534e\u4ec1\u7965\u836f\u5e97",
+			"startDate": "06\/02\/2013 09:41 PM",
+			"endDate": "06\/02\/2013 09:41 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.33608", "36.09892"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u8f66",
+			"station_name": "93#",
+			"location_id": "\u5317\u73af\u5357\u52a0\u6cb9\u7ad9",
+			"startDate": "06\/17\/2013 07:00 PM",
+			"endDate": "06\/25\/2013 03:51 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35940", "36.14879"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u96f6\u98df",
+			"station_name": "\u7f8e\u5e74\u8fbe\u8461\u8404\u5473600ml",
+			"location_id": "\u534e\u8054\u8d85\u5e02\u6d39\u5317\u5e97",
+			"startDate": "03\/28\/2013 04:12 PM",
+			"endDate": "06\/16\/2013 08:28 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35705", "36.12543"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u98df\u54c1",
+			"station_name": "\u6c47\u6e90\u6a59\u6c41\u996e\u65992.5L",
+			"location_id": "\u534e\u8054\u8d85\u5e02\u6d39\u5317\u5e97",
+			"startDate": "02\/28\/2013 12:12 PM",
+			"endDate": "06\/23\/2013 04:25 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35705", "36.12543"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u98df\u54c1",
+			"station_name": "\u86cb\u7cd5",
+			"location_id": "\u6c83\u5c14\u739b",
+			"startDate": "12\/12\/2012 06:10 PM",
+			"endDate": "06\/10\/2013 06:34 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35337", "36.10977"]
+		}
+	}, {
+		"type": "Feature",
+		"properties": {
+			"watershed_name": "\u98df\u54c1",
+			"station_name": "\u751f\u59dc",
+			"location_id": "\u6d39\u5317\u5c0f\u533a\u83dc\u5e02\u573a",
+			"startDate": "06\/18\/2013 06:58 PM",
+			"endDate": "06\/18\/2013 11:26 PM"
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": ["114.35823", "36.13332"]
+		}
+	}]
+}
